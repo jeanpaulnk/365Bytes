@@ -32,7 +32,7 @@ jobs:
           TEST_SUMMARY: ${{ github.event.client_payload.test }}
           REWRITE_EXISTING: ${{ github.event.client_payload.rewrite }}
           # First choice: Google Gemini Flash on the free Gemini API tier.
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.JPN365Labs_GEMINI_API_KEY || secrets.GEMINI_API_KEY }}
           # Optional AI review. Leave unset to use keyword rules.
           AI_ENDPOINT: ${{ vars.AI_ENDPOINT }}
           AI_MODEL: ${{ vars.AI_MODEL }}
