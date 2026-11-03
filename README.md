@@ -133,8 +133,13 @@ echo '{"event_type":"exchange-blog","client_payload":{"test":"true"}}' | gh api 
 - Summaries are AI-generated. Each post links to the original; check it before acting.
 - Some feeds give an article's last-updated date rather than its first-published date.
 
-## Credits
+## License
 
-- Message Center data: [Microsoft 365 Message Center Archive](https://mc.merill.net/) by Merill Fernando
-  ([source](https://github.com/merill/mc), MIT).
-- Blog content belongs to Microsoft; posts here are short summaries that link to the original articles.
+- **Code** (scripts, workflows, JavaScript, stylesheets, theme overrides and configuration): MIT, see
+  [`LICENSE`](LICENSE).
+- **Written content** (lab notes and other pages I wrote): CC BY 4.0, see
+  [`LICENSE-CONTENT.md`](LICENSE-CONTENT.md).
+- **Not covered:** the `Bytes from …` summaries and Message Center content, which come from Microsoft's
+  articles and data; third-party images and trademarks.
+- **Third-party work** used here, including the Message Center data by Merill Fernando (MIT): see
+  [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

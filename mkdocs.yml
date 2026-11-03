@@ -6,6 +6,7 @@ repo_url: https://github.com/jeanpaulnk/JPN365Labs
 site_name: 'JPN365Labs'
 site_description: 'Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud identity'
 edit_uri: edit/main/docs/
+copyright: 'Content &copy; 2026 Jean Paul Nkundabose, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code: MIT. Summaries of Microsoft articles and Message Center content belong to Microsoft.'
 docs_dir: 'docs'
 not_in_nav: |
   /Message-Center/post.md
