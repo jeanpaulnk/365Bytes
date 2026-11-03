@@ -83,7 +83,7 @@ Reply with JSON only:
  "who_should_act": "who must do what, by when; empty string if nothing to do"}"""
 
 
-def http(url, data=None, headers=None, timeout=90):
+def http(url, data=None, headers=None, timeout=240):
     req = urllib.request.Request(url, data=data, headers={"User-Agent": "JPN365Labs-bot", **(headers or {})})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read()
@@ -206,6 +206,8 @@ def ask_model(item, token=None, post=http):
             {"role": "user", "content": f"Title: {item['title']}\nPublished: {item['published']:%Y-%m-%d}\n\n{to_text(item['body'])}"},
         ],
     }
+    if "googleapis.com" in AI_ENDPOINT:
+        payload["reasoning_effort"] = "low"   # Gemini "thinks" by default; summaries don't need much
     headers = {"Authorization": f"Bearer {AI_KEY}", "Content-Type": "application/json", "Accept": "application/json"}
     if ".azure.com" in AI_ENDPOINT:
         headers["api-key"] = AI_KEY   # Azure OpenAI style
@@ -214,7 +216,8 @@ def ask_model(item, token=None, post=http):
     except urllib.error.HTTPError as e:
         if e.code != 400:
             raise
-        payload.pop("response_format")   # some providers reject JSON mode; the prompt still asks for JSON
+        payload.pop("response_format", None)   # some providers reject JSON mode; the prompt still asks for JSON
+        payload.pop("reasoning_effort", None)
         raw = post(AI_ENDPOINT, json.dumps(payload).encode(), headers)
     try:
         return parse_review(json.loads(raw)["choices"][0]["message"]["content"])
