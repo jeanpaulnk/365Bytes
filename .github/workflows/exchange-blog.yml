@@ -7,7 +7,6 @@ on:
     types: [exchange-blog]
 permissions:
   contents: write   # commit new posts
-  models: read      # GitHub Models AI, no extra key needed
   actions: write    # start the Deploy docs workflow
 concurrency:
   group: exchange-blog
@@ -23,7 +22,10 @@ jobs:
       - id: run
         run: python scripts/exchange_blog.py
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Optional AI review. Leave unset to use keyword rules.
+          AI_ENDPOINT: ${{ vars.AI_ENDPOINT }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
       - name: Commit and publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

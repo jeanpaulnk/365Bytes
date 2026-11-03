@@ -2,12 +2,14 @@
 
 Runs on a schedule in GitHub Actions (.github/workflows/exchange-blog.yml):
   1. Reads the Exchange Team Blog RSS feed.
-  2. For each article not seen before, asks a GitHub Models AI model whether it
-     is significant (security updates, releases, retirements, GA, action required...)
-     and, if so, for a short summary in our own words.
+  2. Decides which new articles are significant:
+     - with an AI key configured (AI_ENDPOINT, AI_MODEL variables and AI_API_KEY
+       secret), an AI model decides and writes a short summary in its own words;
+     - otherwise, or if the AI call fails, keyword rules on the title decide and
+       the post shows the article's opening lines.
   3. Writes docs/Exchange-Team-Blog/<date>-<slug>.md and regenerates the index.
 State (every article already decided) is kept in data/exchange-blog-state.json.
-An article whose AI call fails is left undecided and retried on the next run.
+
 """
 import email.utils
 import html
@@ -21,8 +23,22 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 FEED = "https://techcommunity.microsoft.com/t5/s/gxcuf89792/rss/board?board.id=exchange"
-MODELS_URL = "https://models.github.ai/inference/chat/completions"
-MODEL = os.environ.get("EXCHANGE_BLOG_MODEL", "openai/gpt-4.1-mini")
+AI_ENDPOINT = os.environ.get("AI_ENDPOINT", "").strip()   # OpenAI-compatible chat/completions URL
+AI_MODEL = os.environ.get("AI_MODEL", "").strip()
+AI_KEY = os.environ.get("AI_API_KEY", "").strip()
+
+SIGNIFICANT = re.compile(
+    r"\breleased?\b|security update|\bSUs?\b|cumulative update|\bCU\d*\b|hotfix|action required|"
+    r"deprecat|retir|end of (support|life)|generally available|general availability|\bGA\b|"
+    r"public preview|now available|known issue|unstable|stopped working|not working|breaking|"
+    r"must |required|upgrade|disabled|turned off|blocked|deadline|vulnerab|CVE-", re.I)
+NOT_SIGNIFICANT = re.compile(r"tell us|help us shape|survey|feedback|join us|webinar|\bevent\b|recap|ask the experts|\bAMA\b", re.I)
+CATEGORIES = [("Security update", r"security update|\bSUs?\b|vulnerab|CVE-"),
+              ("Retirement", r"deprecat|retir|end of (support|life)|disabled|turned off"),
+              ("Known issue", r"known issue|unstable|stopped working|not working"),
+              ("Release", r"\breleased?\b|cumulative update|\bCU\d*\b|hotfix"),
+              ("New feature", r"generally available|general availability|\bGA\b|public preview|now available"),
+              ("Action required", r"action required|must |required|upgrade|deadline")]
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "docs" / "Exchange-Team-Blog"
 STATE = ROOT / "data" / "exchange-blog-state.json"
@@ -120,9 +136,30 @@ def to_text(body, limit=14000):
     return re.sub(r"\n\s*\n+", "\n\n", t).strip()[:limit]
 
 
-def ask_model(item, token, post=http):
+def keyword_review(item):
+    title = item["title"]
+    significant = bool(SIGNIFICANT.search(title)) and not NOT_SIGNIFICANT.search(title)
+    category = next((c for c, rx in CATEGORIES if re.search(rx, title, re.I)), "Other")
+    paras, size = [], 0
+    for para in to_text(item["body"]).split("\n"):
+        para = " ".join(para.split())
+        if len(para) < 40:
+            continue
+        paras.append(para)
+        size += len(para)
+        if size > 450 or len(paras) == 2:
+            break
+    excerpt = " ".join(paras)
+    if len(excerpt) > 600:
+        excerpt = excerpt[:600].rsplit(" ", 1)[0] + "…"
+    return {"significant": significant, "reason": "title keywords" if significant else "no significant keywords",
+            "category": category, "excerpt": excerpt,
+            "action_required": bool(re.search(r"action required|must |stopped working|deadline", title, re.I))}
+
+
+def ask_model(item, token=None, post=http):
     payload = {
-        "model": MODEL,
+        "model": AI_MODEL,
         "temperature": 0.2,
         "response_format": {"type": "json_object"},
         "messages": [
@@ -130,8 +167,9 @@ def ask_model(item, token, post=http):
             {"role": "user", "content": f"Title: {item['title']}\nPublished: {item['published']:%Y-%m-%d}\n\n{to_text(item['body'])}"},
         ],
     }
-    raw = post(MODELS_URL, json.dumps(payload).encode(), {
-        "Authorization": f"Bearer {token}", "Content-Type": "application/json", "Accept": "application/json"})
+    raw = post(AI_ENDPOINT, json.dumps(payload).encode(), {
+        "Authorization": f"Bearer {AI_KEY}", "api-key": AI_KEY,   # OpenAI and Azure styles
+        "Content-Type": "application/json", "Accept": "application/json"})
     try:
         content = json.loads(raw)["choices"][0]["message"]["content"] or ""
         content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content.strip())
@@ -159,15 +197,25 @@ def write_post(item, ai):
     path = POSTS / f"{date}-{slugify(item['title'])}.md"
     pts = "\n".join(f"- {md(p)}" for p in (ai.get("key_points") or []) if str(p).strip())
     who = md(ai.get("who_should_act"))
-    action = ""
+    by = f" by {md(item['author'])}" if item["author"] else ""
+    if ai.get("summary"):
+        body = f"## Summary\n\n{md(ai['summary'])}\n" + (f"\n## Key points\n\n{pts}\n" if pts else "")
+        note_line = ("This summary was written automatically with AI from the original article. "
+                     "Check the original for exact details before you act.")
+    else:
+        body = f"## From the article\n\n> {md(ai.get('excerpt'))}\n" if ai.get("excerpt") else ""
+        note_line = "Added automatically from the Exchange Team Blog feed. Read the original article for the full details."
+        if ai.get("action_required") and not who:
+            who = "The original article describes something administrators need to do. Read it for the steps and dates."
     if ai.get("action_required") and who:
         action = f'\n!!! warning "Action required"\n    {who}\n'
     elif who:
         action = f"\n## Who should act\n\n{who}\n"
-    by = f" by {md(item['author'])}" if item["author"] else ""
+    else:
+        action = ""
     text = f"""---
 title: {json.dumps(re.sub(r"[<>]", "", item['title']))}
-description: {json.dumps(md(ai.get('summary'))[:300])}
+description: {json.dumps(md(ai.get('summary') or ai.get('excerpt'))[:300])}
 date: {date}
 category: {json.dumps(ai.get('category') or 'Other')}
 source: {json.dumps(item['link'])}
@@ -176,19 +224,13 @@ source: {json.dumps(item['link'])}
 # {md(item['title'])}
 
 !!! info "From the Exchange Team Blog"
-    Summary of [this article]({item['link']}){by}, published {item['published']:%d %B %Y}.
+    Based on [this article]({item['link']}){by}, published {item['published']:%d %B %Y}.
 
-## Summary
-
-{md(ai.get('summary'))}
-
-## Key points
-
-{pts}
+{body}
 {action}
 [Read the full article on the Exchange Team Blog]({item['link']}){{ .md-button .md-button--primary }}
 
-<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>
+<small>{note_line}</small>
 """
     path.write_text(text, encoding="utf-8")
     return path
@@ -199,7 +241,7 @@ def write_index(state):
     lines = ["---", "title: Exchange Team Blog", "---", "", "# Exchange Team Blog", "",
              "Short summaries of significant articles from Microsoft's "
              "[Exchange Team Blog](https://techcommunity.microsoft.com/category/exchange/blog/exchange), "
-             "picked and summarised automatically. Each one links to the original.", ""]
+             "added automatically. Each one links to the original.", ""]
     if rows:
         lines += ["| Date | Article | Type |", "|---|---|---|"]
         for v in rows:
@@ -209,7 +251,7 @@ def write_index(state):
     (POSTS / "index.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def run(feed_raw, token, ask=ask_model, now=None):
+def run(feed_raw, ask=None, now=None):
     now = now or datetime.now(timezone.utc)
     state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
     items = read_feed(feed_raw)
@@ -220,12 +262,14 @@ def run(feed_raw, token, ask=ask_model, now=None):
     new.sort(key=lambda i: i["published"])
     posted = []
     for item in new[:MAX_PER_RUN]:
-        try:
-            ai = ask(item, token)
-        except Exception as e:  # retried next run
-            detail = e.read().decode(errors="replace")[:300] if hasattr(e, "read") else ""
-            note("warning", f"AI review failed for {item['title']!r}: {e} {detail}")
-            continue
+        ai = None
+        if ask:
+            try:
+                ai = ask(item)
+            except Exception as e:
+                detail = e.read().decode(errors="replace")[:300] if hasattr(e, "read") else ""
+                note("warning", f"AI review failed for {item['title']!r}, using keyword rules: {e} {detail}")
+        ai = ai or keyword_review(item)
         entry = {"title": item["title"], "published": item["published"].isoformat(),
                  "significant": bool(ai.get("significant")), "reason": str(ai.get("reason") or "")[:300],
                  "category": ai.get("category") or "Other"}
@@ -244,9 +288,8 @@ def run(feed_raw, token, ask=ask_model, now=None):
 
 
 if __name__ == "__main__":
-    token = os.environ.get("GITHUB_TOKEN")
-    if not token:
-        sys.exit("GITHUB_TOKEN is not set")
+    use_ai = bool(AI_ENDPOINT and AI_MODEL and AI_KEY)
+    note("notice", "Using AI review" if use_ai else "No AI key configured: using keyword rules")
     try:
         raw = http(FEED, headers={"Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.5"})
     except Exception as e:
@@ -255,7 +298,7 @@ if __name__ == "__main__":
     if not raw.lstrip().startswith(b"<?xml") and b"<rss" not in raw[:2000] and b"<feed" not in raw[:2000]:
         note("warning", f"Feed did not return XML: {raw[:200]!r}")
         sys.exit(0)
-    posted = run(raw, token)
+    posted = run(raw, ask_model if use_ai else None)
     out = os.environ.get("GITHUB_OUTPUT")
     if out:
         with open(out, "a", encoding="utf-8") as f:
