@@ -1,0 +1,38 @@
+name: Exchange Team Blog summaries
+on:
+  schedule:
+    - cron: '41 */3 * * *'   # every 3 hours
+  workflow_dispatch:
+  repository_dispatch:
+    types: [exchange-blog]
+permissions:
+  contents: write   # commit new posts
+  models: read      # GitHub Models AI, no extra key needed
+  actions: write    # start the Deploy docs workflow
+concurrency:
+  group: exchange-blog
+  cancel-in-progress: false
+jobs:
+  summarise:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - id: run
+        run: python scripts/exchange_blog.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit and publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add docs/Exchange-Team-Blog data/exchange-blog-state.json
+          if git diff --cached --quiet; then echo "Nothing new"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Exchange Team Blog: ${{ steps.run.outputs.posted || 0 }} new summary(ies)"
+          git push
+          # Pushes made with GITHUB_TOKEN do not start other workflows, so start the deploy explicitly.
+          if [ "${{ steps.run.outputs.posted || 0 }}" != "0" ]; then gh workflow run docs.yml --ref main; fi
