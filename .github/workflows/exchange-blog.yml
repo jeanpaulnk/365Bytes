@@ -19,9 +19,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+      - name: Install GitHub Copilot CLI (only when the token secret exists)
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        run: |
+          if [ -n "$COPILOT_GITHUB_TOKEN" ]; then npm install -g @github/copilot; else echo "No COPILOT_GITHUB_TOKEN secret: skipping"; fi
       - id: run
         run: python scripts/exchange_blog.py
         env:
+          # Summaries by GitHub Copilot (any plan, including Free): fine-grained PAT with "Copilot Requests".
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
           # Optional AI review. Leave unset to use keyword rules.
           AI_ENDPOINT: ${{ vars.AI_ENDPOINT }}
           AI_MODEL: ${{ vars.AI_MODEL }}

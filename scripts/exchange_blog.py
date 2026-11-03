@@ -3,8 +3,10 @@
 Runs on a schedule in GitHub Actions (.github/workflows/exchange-blog.yml):
   1. Reads the Exchange Team Blog RSS feed.
   2. Posts every new article:
-     - with an AI key configured (AI_ENDPOINT, AI_MODEL variables and AI_API_KEY
-       secret), an AI model writes a short summary in its own words;
+     - with a COPILOT_GITHUB_TOKEN secret, GitHub Copilot (CLI, any plan incl. Free)
+       writes a short summary in its own words;
+     - or, with an AI key configured (AI_ENDPOINT, AI_MODEL variables and AI_API_KEY
+       secret), that AI model does;
      - otherwise, or if the AI call fails, the post shows the article's opening lines.
      Keyword rules on the title only set the post's type (Security update, Change...).
   3. Writes docs/Exchange-Team-Blog/<date>-<slug>.md and regenerates the index.
@@ -16,7 +18,10 @@ import html
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
@@ -26,6 +31,7 @@ FEED = "https://techcommunity.microsoft.com/t5/s/gxcuf89792/rss/board?board.id=e
 AI_ENDPOINT = os.environ.get("AI_ENDPOINT", "").strip()   # OpenAI-compatible chat/completions URL
 AI_MODEL = os.environ.get("AI_MODEL", "").strip()
 AI_KEY = os.environ.get("AI_API_KEY", "").strip()
+COPILOT_TOKEN = os.environ.get("COPILOT_GITHUB_TOKEN", "").strip()
 
 SIGNIFICANT = re.compile(
     r"\breleased?\b|security update|\bSUs?\b|cumulative update|\bCU\d*\b|hotfix|action required|"
@@ -160,6 +166,30 @@ def keyword_review(item):
             "action_required": bool(re.search(r"action required|must |stopped working|deadline", title, re.I))}
 
 
+def parse_review(content):
+    content = re.sub(r"^```(?:json)?\s*|\s*```$", "", (content or "").strip())
+    start, end = content.find("{"), content.rfind("}")
+    if start < 0 or end <= start:
+        raise ValueError(f"no JSON in reply: {content[:200]!r}")
+    result = json.loads(content[start:end + 1])
+    if not isinstance(result, dict) or not str(result.get("summary") or "").strip():
+        raise ValueError("reply has no summary")
+    return result
+
+
+def ask_copilot(item, run=subprocess.run):
+    """Summarise with GitHub Copilot CLI in programmatic mode.
+    It gets only the article text, runs in an empty folder, and may not use any tools."""
+    prompt = (SYSTEM + "\n\n--- ARTICLE ---\n"
+              f"Title: {item['title']}\nPublished: {item['published']:%Y-%m-%d}\n\n{to_text(item['body'], 12000)}")
+    env = {k: v for k, v in os.environ.items() if k not in ("GH_TOKEN", "GITHUB_TOKEN")}
+    with tempfile.TemporaryDirectory() as empty:
+        out = run(["copilot", "-p", prompt, "-s"], cwd=empty, env=env, capture_output=True, text=True, timeout=300)
+    if out.returncode != 0:
+        raise RuntimeError(f"copilot exited {out.returncode}: {(out.stderr or out.stdout)[:300]}")
+    return parse_review(out.stdout)
+
+
 def ask_model(item, token=None, post=http):
     payload = {
         "model": AI_MODEL,
@@ -174,14 +204,9 @@ def ask_model(item, token=None, post=http):
         "Authorization": f"Bearer {AI_KEY}", "api-key": AI_KEY,   # OpenAI and Azure styles
         "Content-Type": "application/json", "Accept": "application/json"})
     try:
-        content = json.loads(raw)["choices"][0]["message"]["content"] or ""
-        content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content.strip())
-        result = json.loads(content)
+        return parse_review(json.loads(raw)["choices"][0]["message"]["content"])
     except (ValueError, KeyError, IndexError, TypeError) as e:
         raise ValueError(f"unreadable AI reply ({e}); first bytes: {raw[:300]!r}") from None
-    if not isinstance(result, dict) or "significant" not in result:
-        raise ValueError("model reply missing 'significant'")
-    return result
 
 
 def md(text):
@@ -203,7 +228,7 @@ def write_post(item, ai):
     by = f" by {md(item['author'])}" if item["author"] else ""
     if ai.get("summary"):
         body = f"## Summary\n\n{md(ai['summary'])}\n" + (f"\n## Key points\n\n{pts}\n" if pts else "")
-        note_line = ("This summary was written automatically with AI from the original article. "
+        note_line = ("This summary was written automatically with AI (GitHub Copilot or another model) from the original article. "
                      "Check the original for exact details before you act.")
     else:
         body = f"## From the article\n\n> {md(ai.get('excerpt'))}\n" if ai.get("excerpt") else ""
@@ -291,8 +316,13 @@ def run(feed_raw, ask=None, now=None):
 
 
 if __name__ == "__main__":
-    use_ai = bool(AI_ENDPOINT and AI_MODEL and AI_KEY)
-    note("notice", "Using AI review" if use_ai else "No AI key configured: using keyword rules")
+    if COPILOT_TOKEN and shutil.which("copilot"):
+        reviewer, label = ask_copilot, "GitHub Copilot"
+    elif AI_ENDPOINT and AI_MODEL and AI_KEY:
+        reviewer, label = ask_model, "AI endpoint"
+    else:
+        reviewer, label = None, None
+    note("notice", f"Summaries by {label}" if label else "No Copilot token or AI key: posting the article's opening lines")
     try:
         raw = http(FEED, headers={"Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.5"})
     except Exception as e:
@@ -301,7 +331,7 @@ if __name__ == "__main__":
     if not raw.lstrip().startswith(b"<?xml") and b"<rss" not in raw[:2000] and b"<feed" not in raw[:2000]:
         note("warning", f"Feed did not return XML: {raw[:200]!r}")
         sys.exit(0)
-    posted = run(raw, ask_model if use_ai else None)
+    posted = run(raw, reviewer)
     out = os.environ.get("GITHUB_OUTPUT")
     if out:
         with open(out, "a", encoding="utf-8") as f:
