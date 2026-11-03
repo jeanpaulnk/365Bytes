@@ -262,5 +262,15 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-02-what-exploited-vulnerabilities-have-in-common-a-data-driven-analysis-o.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/microsoft-entra-global-secure-access-one-offering-for-private/ba-p/4569098": {
+    "title": "Microsoft Entra Global Secure Access: one offering for Private Access and Internet Access",
+    "published": "2026-11-02T14:15:00+00:00",
+    "significant": true,
+    "reason": "Announces a new unified purchasing option and multiple new public preview and generally available features for Microsoft Entra Global Secure Access.",
+    "category": "New feature",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-02-microsoft-entra-global-secure-access-one-offering-for-private-access-a.md"
   }
 }
