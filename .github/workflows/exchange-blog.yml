@@ -31,8 +31,8 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
           TEST_SUMMARY: ${{ github.event.client_payload.test }}
           REWRITE_EXISTING: ${{ github.event.client_payload.rewrite }}
-          # First choice: DeepSeek-V3 on SiliconFlow's free tier.
-          SILICONFLOW_API_KEY: ${{ secrets.SILICONFLOW_API_KEY }}
+          # First choice: Google Gemini Flash on the free Gemini API tier.
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # Optional AI review. Leave unset to use keyword rules.
           AI_ENDPOINT: ${{ vars.AI_ENDPOINT }}
           AI_MODEL: ${{ vars.AI_MODEL }}

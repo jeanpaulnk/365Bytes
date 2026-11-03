@@ -3,7 +3,7 @@
 Runs on a schedule in GitHub Actions (.github/workflows/exchange-blog.yml):
   1. Reads the Exchange Team Blog RSS feed.
   2. Posts every new article:
-     - first choice: DeepSeek-V3 on SiliconFlow's free tier (SILICONFLOW_API_KEY secret),
+     - first choice: Google Gemini Flash on the free Gemini API tier (GEMINI_API_KEY secret),
        or any OpenAI-compatible endpoint set with AI_ENDPOINT / AI_MODEL variables and
        an AI_API_KEY secret, writes a short summary in its own words;
      - backup: GitHub Copilot (CLI, any plan incl. Free) with a COPILOT_GITHUB_TOKEN secret;
@@ -29,12 +29,14 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 FEED = "https://techcommunity.microsoft.com/t5/s/gxcuf89792/rss/board?board.id=exchange"
-SILICONFLOW_KEY = os.environ.get("SILICONFLOW_API_KEY", "").strip()
-# Backup model: any OpenAI-compatible chat/completions endpoint; defaults to DeepSeek-V3 on SiliconFlow.
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
+# First-choice model: any OpenAI-compatible chat/completions endpoint; defaults to Gemini Flash
+# (gemini-flash-latest always points at Google's current free Flash model).
 AI_ENDPOINT = (os.environ.get("AI_ENDPOINT", "").strip()
-               or ("https://api.siliconflow.cn/v1/chat/completions" if SILICONFLOW_KEY else ""))
-AI_MODEL = os.environ.get("AI_MODEL", "").strip() or ("deepseek-ai/DeepSeek-V3" if SILICONFLOW_KEY else "")
-AI_KEY = os.environ.get("AI_API_KEY", "").strip() or SILICONFLOW_KEY
+               or ("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions" if GEMINI_KEY else ""))
+AI_MODEL = os.environ.get("AI_MODEL", "").strip() or ("gemini-flash-latest" if GEMINI_KEY else "")
+AI_KEY = os.environ.get("AI_API_KEY", "").strip() or GEMINI_KEY
+AI_LABEL = "Google Gemini" if (GEMINI_KEY and "googleapis.com" in AI_ENDPOINT) else AI_MODEL.rsplit("/", 1)[-1]
 COPILOT_TOKEN = os.environ.get("COPILOT_GITHUB_TOKEN", "").strip()
 
 SIGNIFICANT = re.compile(
@@ -204,8 +206,9 @@ def ask_model(item, token=None, post=http):
             {"role": "user", "content": f"Title: {item['title']}\nPublished: {item['published']:%Y-%m-%d}\n\n{to_text(item['body'])}"},
         ],
     }
-    headers = {"Authorization": f"Bearer {AI_KEY}", "api-key": AI_KEY,   # OpenAI and Azure styles
-               "Content-Type": "application/json", "Accept": "application/json"}
+    headers = {"Authorization": f"Bearer {AI_KEY}", "Content-Type": "application/json", "Accept": "application/json"}
+    if ".azure.com" in AI_ENDPOINT:
+        headers["api-key"] = AI_KEY   # Azure OpenAI style
     try:
         raw = post(AI_ENDPOINT, json.dumps(payload).encode(), headers)
     except urllib.error.HTTPError as e:
@@ -332,7 +335,7 @@ def run(feed_raw, ask=None, now=None):
 if __name__ == "__main__":
     chain = []   # first that works writes the summary
     if AI_ENDPOINT and AI_MODEL and AI_KEY:
-        chain.append((AI_MODEL.rsplit("/", 1)[-1], ask_model))
+        chain.append((AI_LABEL, ask_model))
     if COPILOT_TOKEN and shutil.which("copilot"):
         chain.append(("GitHub Copilot", ask_copilot))
     label = " then ".join(n for n, _ in chain) or None
