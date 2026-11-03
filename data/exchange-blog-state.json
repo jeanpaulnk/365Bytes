@@ -54,5 +54,35 @@
     "source": "Microsoft Defender for Office 365 Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-10-27-part-4-see-investigate-and-measure-email-and-collaboration-attacks-wit.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-purview-blog/meet-the-new-microsoft-purview-classifiers-experience-your-admin/ba-p/4561324": {
+    "title": "Meet the New Microsoft Purview Classifiers Experience: Your Admin Playbook for Public Preview",
+    "published": "2026-10-01T15:01:07+00:00",
+    "significant": true,
+    "reason": "The announcement introduces a public preview for a new unified Microsoft Purview classifiers experience and admin playbook.",
+    "category": "New feature",
+    "source": "Microsoft Purview Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-01-meet-the-new-microsoft-purview-classifiers-experience-your-admin-playb.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-purview-blog/troubleshooting-playbook-for-auto-labelling-in-sharepoint-and/ba-p/4564103": {
+    "title": "Troubleshooting playbook for Auto labelling in SharePoint and OneDrive",
+    "published": "2026-10-19T18:38:09+00:00",
+    "significant": true,
+    "reason": "The article is a comprehensive troubleshooting and guidance playbook for existing Auto-labeling features in SharePoint and OneDrive rather than a new security update or breaking change announcement.",
+    "category": "Other",
+    "source": "Microsoft Purview Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-19-troubleshooting-playbook-for-auto-labelling-in-sharepoint-and-onedrive.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-purview-blog/scaling-classification-and-labeling-an-interactive-reference/ba-p/4560925": {
+    "title": "Scaling classification and labeling: an interactive reference architecture update",
+    "published": "2026-11-02T18:31:43+00:00",
+    "significant": true,
+    "reason": "The article announces multiple public previews and scalability limits increases for Microsoft Purview auto-labeling and sensitivity labeling.",
+    "category": "New feature",
+    "source": "Microsoft Purview Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-02-scaling-classification-and-labeling-an-interactive-reference-architect.md"
   }
 }
