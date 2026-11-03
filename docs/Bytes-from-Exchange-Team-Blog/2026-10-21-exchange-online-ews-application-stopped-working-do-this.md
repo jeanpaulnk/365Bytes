@@ -1,8 +1,8 @@
 ---
 title: "Exchange Online EWS application stopped working? Do this."
-description: "As we have been announcing , Exchange Web Services (EWS) protocol is being turned off in Exchange Online. This protocol is used by various applications such as: Outdated versions of Outlook Desktop on Windows"
+description: "Microsoft explains how tenant administrators can temporarily restore Exchange Web Services (EWS) if applications stop working after EWS is disabled. This workaround will no longer be available starting in April 2027, so affected applications must be updated to versions that do not rely on EWS."
 date: 2026-10-21
-category: "Known issue"
+category: "Retirement"
 source: "https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-online-ews-application-stopped-working-do-this/ba-p/4566215"
 ---
 
@@ -11,14 +11,22 @@ source: "https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-onli
 !!! info "From the Exchange Team Blog"
     Based on [this article](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-online-ews-application-stopped-working-do-this/ba-p/4566215) by The_Exchange_Team, published 21 October 2026.
 
-## From the article
+## Summary
 
-> As we have been announcing , Exchange Web Services (EWS) protocol is being turned off in Exchange Online. This protocol is used by various applications such as: Outdated versions of Outlook Desktop on Windows
+Microsoft explains how tenant administrators can temporarily restore Exchange Web Services (EWS) if applications stop working after EWS is disabled. This workaround will no longer be available starting in April 2027, so affected applications must be updated to versions that do not rely on EWS.
+
+## Key points
+
+- Check Message Center to confirm whether EWS was disabled in your tenant.
+- Administrators can temporarily re-enable EWS through Baseline Security Mode or Exchange Online PowerShell.
+- Restoring EWS usually takes under an hour, but may take up to four hours.
+- Changes to the EWS application allow list can take 24 hours to apply.
+- EWS re-enablement ends in April 2027; dependent apps must transition away from EWS.
 
 
 !!! warning "Action required"
-    The original article describes something administrators need to do. Read it for the steps and dates.
+    Tenant administrators with EWS-dependent apps should restore EWS temporarily if needed; administrators, application owners, and vendors must move those apps off EWS before April 2027.
 
 [Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-online-ews-application-stopped-working-do-this/ba-p/4566215){ .md-button .md-button--primary }
 
-<small>Added automatically from the Exchange Team Blog feed. Read the original article for the full details.</small>
+<small>This summary was written automatically with AI (GitHub Copilot or another model) from the original article. Check the original for exact details before you act.</small>

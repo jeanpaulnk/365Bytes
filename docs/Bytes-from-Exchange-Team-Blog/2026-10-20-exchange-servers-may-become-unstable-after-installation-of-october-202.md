@@ -1,6 +1,6 @@
 ---
 title: "Exchange servers may become unstable after installation of October 2026 Windows updates"
-description: "Update October 20, 2026: Added a FAQ to this post. Since October 13, 2026 (Microsoft \u201cPatch Tuesday\u201d release cycle), we have seen some reports of customer issues where Exchange Servers become unstable after a set of October updates are installed."
+description: "Some Exchange servers may become unstable after installing the October 2026 Windows Server updates, causing OWA failures, growing mail queues, or DAG quorum problems. Microsoft advises keeping the security updates installed, adding a registry setting, rebooting, and monitoring for recurrence."
 date: 2026-10-20
 category: "Known issue"
 source: "https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-servers-may-become-unstable-after-installation-of/ba-p/4565382"
@@ -11,11 +11,22 @@ source: "https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-serv
 !!! info "From the Exchange Team Blog"
     Based on [this article](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-servers-may-become-unstable-after-installation-of/ba-p/4565382) by The_Exchange_Team, published 20 October 2026.
 
-## From the article
+## Summary
 
-> Update October 20, 2026: Added a FAQ to this post. Since October 13, 2026 (Microsoft “Patch Tuesday” release cycle), we have seen some reports of customer issues where Exchange Servers become unstable after a set of October updates are installed.
+Some Exchange servers may become unstable after installing the October 2026 Windows Server updates, causing OWA failures, growing mail queues, or DAG quorum problems. Microsoft advises keeping the security updates installed, adding a registry setting, rebooting, and monitoring for recurrence.
 
+## Key points
+
+- The issue may affect Exchange Server 2016, 2019, and Subscription Edition on impacted Windows Server versions.
+- Symptoms can include OWA connection errors, delayed email, and DAG quorum failures.
+- Microsoft says not to uninstall or delay the October Windows security updates.
+- The recommended workaround is to set EpmapSavedContextCap to 65536 and reboot the Exchange server.
+- Monitor servers after reboot; Microsoft has not seen a need to raise the limit further.
+
+
+!!! warning "Action required"
+    Administrators of Exchange servers on affected Windows Server versions should install the October 2026 Windows updates, apply the registry setting, reboot, and monitor for recurrence.
 
 [Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-servers-may-become-unstable-after-installation-of/ba-p/4565382){ .md-button .md-button--primary }
 
-<small>Added automatically from the Exchange Team Blog feed. Read the original article for the full details.</small>
+<small>This summary was written automatically with AI (GitHub Copilot or another model) from the original article. Check the original for exact details before you act.</small>

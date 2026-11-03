@@ -5,7 +5,8 @@
     "significant": true,
     "reason": "title keywords",
     "category": "Known issue",
-    "file": "2026-10-20-exchange-servers-may-become-unstable-after-installation-of-october-202.md"
+    "file": "2026-10-20-exchange-servers-may-become-unstable-after-installation-of-october-202.md",
+    "summarised_by": "GitHub Copilot"
   },
   "https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-online-ews-application-stopped-working-do-this/ba-p/4566215": {
     "title": "Exchange Online EWS application stopped working? Do this.",
@@ -13,7 +14,8 @@
     "significant": true,
     "reason": "title keywords",
     "category": "Known issue",
-    "file": "2026-10-21-exchange-online-ews-application-stopped-working-do-this.md"
+    "file": "2026-10-21-exchange-online-ews-application-stopped-working-do-this.md",
+    "summarised_by": "GitHub Copilot"
   },
   "https://techcommunity.microsoft.com/t5/exchange-team-blog/ews-deprecation-is-here-what-this-means-to-you/ba-p/4561431": {
     "title": "EWS Deprecation Is Here – What This Means To You",
@@ -21,7 +23,8 @@
     "significant": true,
     "reason": "title keywords",
     "category": "Retirement",
-    "file": "2026-10-26-ews-deprecation-is-here-what-this-means-to-you.md"
+    "file": "2026-10-26-ews-deprecation-is-here-what-this-means-to-you.md",
+    "summarised_by": "GitHub Copilot"
   },
   "https://techcommunity.microsoft.com/t5/exchange-team-blog/cross-tenant-free-busy-mailtips-and-calendar-sharing-are-moving/ba-p/4545169": {
     "title": "Cross-tenant Free/Busy, MailTips, and Calendar Sharing are moving to Cross-Tenant Access Policy",
@@ -29,6 +32,7 @@
     "significant": true,
     "reason": "title keywords",
     "category": "Change",
-    "file": "2026-10-29-cross-tenant-free-busy-mailtips-and-calendar-sharing-are-moving-to-cro.md"
+    "file": "2026-10-29-cross-tenant-free-busy-mailtips-and-calendar-sharing-are-moving-to-cro.md",
+    "summarised_by": "GitHub Copilot"
   }
 }
