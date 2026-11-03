@@ -8,6 +8,7 @@ source: "https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/pa
 
 # Part 4: See, investigate, and measure email and collaboration attacks with Defender reporting
 
+*Published 27 October 2026*
 
 ## Summary
 

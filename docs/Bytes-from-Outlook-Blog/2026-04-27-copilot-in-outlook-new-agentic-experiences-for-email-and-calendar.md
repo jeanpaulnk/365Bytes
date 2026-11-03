@@ -8,6 +8,7 @@ source: "https://techcommunity.microsoft.com/t5/outlook-blog/copilot-in-outlook-
 
 # Copilot in Outlook: New agentic experiences for email and calendar
 
+*Published 27 April 2026*
 
 ## Summary
 

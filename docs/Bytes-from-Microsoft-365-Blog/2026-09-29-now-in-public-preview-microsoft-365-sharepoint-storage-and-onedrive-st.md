@@ -8,6 +8,7 @@ source: "https://techcommunity.microsoft.com/t5/microsoft-365-blog/now-in-public
 
 # Now in public preview: Microsoft 365 SharePoint Storage and OneDrive Storage
 
+*Published 29 September 2026*
 
 ## Summary
 

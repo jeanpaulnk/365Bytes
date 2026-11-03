@@ -8,6 +8,7 @@ source: "https://techcommunity.microsoft.com/t5/microsoft-purview-blog/troublesh
 
 # Troubleshooting playbook for Auto labelling in SharePoint and OneDrive
 
+*Published 19 October 2026*
 
 ## Summary
 

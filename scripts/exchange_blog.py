@@ -2,7 +2,7 @@
 
 Runs on a schedule in GitHub Actions (.github/workflows/exchange-blog.yml):
   1. Reads the RSS feed of each blog in SOURCES (Exchange Team, Defender for Office 365,
-     Purview, Outlook, Microsoft 365 and Microsoft Security blogs); each gets its own
+     Purview, Outlook, Microsoft 365, Entra and Microsoft Security blogs); each gets its own
      "Bytes from ..." section.
   2. Posts every new article:
      - first choice: Google Gemini Flash on the free Gemini API tier (GEMINI_API_KEY secret),
@@ -42,6 +42,8 @@ SOURCES = [
      "home": "https://techcommunity.microsoft.com/category/outlook/blog/outlook"},
     {"name": "Microsoft 365 Blog", "board": "microsoft_365blog",
      "home": "https://techcommunity.microsoft.com/category/microsoft365/blog/microsoft_365blog"},
+    {"name": "Microsoft Entra Blog", "board": "microsoft-entra-blog",
+     "home": "https://techcommunity.microsoft.com/category/microsoft-entra/blog/microsoft-entra-blog"},
     {"name": "Microsoft Security Blog", "feed": "https://www.microsoft.com/en-us/security/blog/feed/",
      "home": "https://www.microsoft.com/en-us/security/blog/"},
 ]
@@ -103,7 +105,7 @@ MAX_AGE_DAYS = 14      # ignore older articles, so the first run does not backfi
 MAX_PER_RUN = 3        # keep each run small; the rest are picked up next run
 
 SYSTEM = """You review articles from Microsoft's official blogs (Exchange, Outlook, Microsoft 365,
-Defender for Office 365, Purview, Microsoft Security) for a blog read by
+Defender for Office 365, Purview, Entra, Microsoft Security) for a blog read by
 Microsoft 365 / Exchange administrators. Summarise the article in your own words. Never copy
 sentences verbatim. Also say whether it is significant (the post is published either way).
 
@@ -341,6 +343,8 @@ source: {json.dumps(item['link'])}
 ---
 
 # {md(item['title'])}
+
+*Published {item['published'].day} {item['published']:%B %Y}*
 
 {body}
 {action}

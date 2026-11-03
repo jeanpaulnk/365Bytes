@@ -8,6 +8,7 @@ source: "https://techcommunity.microsoft.com/t5/exchange-team-blog/cross-tenant-
 
 # Cross-tenant Free/Busy, MailTips, and Calendar Sharing are moving to Cross-Tenant Access Policy
 
+*Published 29 October 2026*
 
 ## Summary
 

@@ -48,6 +48,12 @@ Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud 
 |---|---|
 | [Bytes from Microsoft Security Blog](Bytes-from-Microsoft-Security-Blog/index.md) | Short AI summaries of every new Microsoft Security Blog article, added automatically with links to the originals. |
 
+## Bytes from Microsoft Entra Blog
+
+| Article | Description |
+|---|---|
+| [Bytes from Microsoft Entra Blog](Bytes-from-Microsoft-Entra-Blog/index.md) | Short AI summaries of every new Microsoft Entra Blog article, added automatically with links to the originals. |
+
 ## Exchange Online
 
 | Article | Description |

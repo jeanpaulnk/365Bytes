@@ -8,6 +8,7 @@ source: "https://techcommunity.microsoft.com/t5/microsoft-365-blog/office-ltsc-2
 
 # Office LTSC 2021 support ends today
 
+*Published 13 October 2026*
 
 ## Summary
 
