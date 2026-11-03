@@ -4,7 +4,7 @@ title: Bytes from Exchange Team Blog
 
 # Bytes from Exchange Team Blog
 
-Short summaries of significant articles from Microsoft's [Exchange Team Blog](https://techcommunity.microsoft.com/category/exchange/blog/exchange), added automatically. Each one links to the original.
+Short summaries of new articles from Microsoft's [Exchange Team Blog](https://techcommunity.microsoft.com/category/exchange/blog/exchange), added automatically. Each one links to the original.
 
 | Date | Article | Type |
 |---|---|---|

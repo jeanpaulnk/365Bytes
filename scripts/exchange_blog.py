@@ -1,12 +1,12 @@
-"""Publish short summaries of significant Exchange Team Blog articles.
+"""Publish a short post for every new Exchange Team Blog article.
 
 Runs on a schedule in GitHub Actions (.github/workflows/exchange-blog.yml):
   1. Reads the Exchange Team Blog RSS feed.
-  2. Decides which new articles are significant:
+  2. Posts every new article:
      - with an AI key configured (AI_ENDPOINT, AI_MODEL variables and AI_API_KEY
-       secret), an AI model decides and writes a short summary in its own words;
-     - otherwise, or if the AI call fails, keyword rules on the title decide and
-       the post shows the article's opening lines.
+       secret), an AI model writes a short summary in its own words;
+     - otherwise, or if the AI call fails, the post shows the article's opening lines.
+     Keyword rules on the title only set the post's type (Security update, Change...).
   3. Writes docs/Exchange-Team-Blog/<date>-<slug>.md and regenerates the index.
 State (every article already decided) is kept in data/exchange-blog-state.json.
 
@@ -49,8 +49,8 @@ MAX_AGE_DAYS = 14      # ignore older articles, so the first run does not backfi
 MAX_PER_RUN = 3        # keep each run small; the rest are picked up next run
 
 SYSTEM = """You review articles from Microsoft's official Exchange Team Blog for a blog read by
-Microsoft 365 / Exchange administrators. Decide whether the article is SIGNIFICANT and, if it is,
-summarise it in your own words. Never copy sentences verbatim.
+Microsoft 365 / Exchange administrators. Summarise the article in your own words. Never copy
+sentences verbatim. Also say whether it is significant (the post is published either way).
 
 Significant: security updates and Cumulative/Security Update releases, known issues that break
 servers or mail flow, deprecations and retirements (e.g. EWS, basic auth), features reaching
@@ -141,7 +141,7 @@ def to_text(body, limit=14000):
 
 def keyword_review(item):
     title = item["title"]
-    significant = bool(SIGNIFICANT.search(title)) and not NOT_SIGNIFICANT.search(title)
+    significant = True  # every new article is posted; keywords only set the type
     category = next((c for c, rx in CATEGORIES if re.search(rx, title, re.I)), "Other")
     paras, size = [], 0
     for para in to_text(item["body"]).split("\n"):
@@ -155,7 +155,7 @@ def keyword_review(item):
     excerpt = " ".join(paras)
     if len(excerpt) > 600:
         excerpt = excerpt[:600].rsplit(" ", 1)[0] + "…"
-    return {"significant": significant, "reason": "title keywords" if significant else "no significant keywords",
+    return {"significant": significant, "reason": "every new article is posted",
             "category": category, "excerpt": excerpt,
             "action_required": bool(re.search(r"action required|must |stopped working|deadline", title, re.I))}
 
@@ -242,7 +242,7 @@ source: {json.dumps(item['link'])}
 def write_index(state):
     rows = sorted((v for v in state.values() if v.get("file")), key=lambda v: v["published"], reverse=True)
     lines = ["---", "title: Bytes from Exchange Team Blog", "---", "", "# Bytes from Exchange Team Blog", "",
-             "Short summaries of significant articles from Microsoft's "
+             "Short summaries of new articles from Microsoft's "
              "[Exchange Team Blog](https://techcommunity.microsoft.com/category/exchange/blog/exchange), "
              "added automatically. Each one links to the original.", ""]
     if rows:
@@ -274,7 +274,7 @@ def run(feed_raw, ask=None, now=None):
                 note("warning", f"AI review failed for {item['title']!r}, using keyword rules: {e} {detail}")
         ai = ai or keyword_review(item)
         entry = {"title": item["title"], "published": item["published"].isoformat(),
-                 "significant": bool(ai.get("significant")), "reason": str(ai.get("reason") or "")[:300],
+                 "significant": True, "reason": str(ai.get("reason") or "")[:300],
                  "category": ai.get("category") or "Other"}
         if entry["significant"]:
             entry["file"] = write_post(item, ai).name
