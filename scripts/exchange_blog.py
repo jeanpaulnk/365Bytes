@@ -5,8 +5,9 @@ Runs on a schedule in GitHub Actions (.github/workflows/exchange-blog.yml):
   2. Posts every new article:
      - with a COPILOT_GITHUB_TOKEN secret, GitHub Copilot (CLI, any plan incl. Free)
        writes a short summary in its own words;
-     - or, with an AI key configured (AI_ENDPOINT, AI_MODEL variables and AI_API_KEY
-       secret), that AI model does;
+     - if Copilot fails or is not set up, a backup OpenAI-compatible model does:
+       DeepSeek-V3 on SiliconFlow's free tier with a SILICONFLOW_API_KEY secret, or any
+       endpoint set with AI_ENDPOINT / AI_MODEL variables and an AI_API_KEY secret;
      - otherwise, or if the AI call fails, the post shows the article's opening lines.
      Keyword rules on the title only set the post's type (Security update, Change...).
   3. Writes docs/Exchange-Team-Blog/<date>-<slug>.md and regenerates the index.
@@ -22,15 +23,19 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 FEED = "https://techcommunity.microsoft.com/t5/s/gxcuf89792/rss/board?board.id=exchange"
-AI_ENDPOINT = os.environ.get("AI_ENDPOINT", "").strip()   # OpenAI-compatible chat/completions URL
-AI_MODEL = os.environ.get("AI_MODEL", "").strip()
-AI_KEY = os.environ.get("AI_API_KEY", "").strip()
+SILICONFLOW_KEY = os.environ.get("SILICONFLOW_API_KEY", "").strip()
+# Backup model: any OpenAI-compatible chat/completions endpoint; defaults to DeepSeek-V3 on SiliconFlow.
+AI_ENDPOINT = (os.environ.get("AI_ENDPOINT", "").strip()
+               or ("https://api.siliconflow.cn/v1/chat/completions" if SILICONFLOW_KEY else ""))
+AI_MODEL = os.environ.get("AI_MODEL", "").strip() or ("deepseek-ai/DeepSeek-V3" if SILICONFLOW_KEY else "")
+AI_KEY = os.environ.get("AI_API_KEY", "").strip() or SILICONFLOW_KEY
 COPILOT_TOKEN = os.environ.get("COPILOT_GITHUB_TOKEN", "").strip()
 
 SIGNIFICANT = re.compile(
@@ -200,9 +205,15 @@ def ask_model(item, token=None, post=http):
             {"role": "user", "content": f"Title: {item['title']}\nPublished: {item['published']:%Y-%m-%d}\n\n{to_text(item['body'])}"},
         ],
     }
-    raw = post(AI_ENDPOINT, json.dumps(payload).encode(), {
-        "Authorization": f"Bearer {AI_KEY}", "api-key": AI_KEY,   # OpenAI and Azure styles
-        "Content-Type": "application/json", "Accept": "application/json"})
+    headers = {"Authorization": f"Bearer {AI_KEY}", "api-key": AI_KEY,   # OpenAI and Azure styles
+               "Content-Type": "application/json", "Accept": "application/json"}
+    try:
+        raw = post(AI_ENDPOINT, json.dumps(payload).encode(), headers)
+    except urllib.error.HTTPError as e:
+        if e.code != 400:
+            raise
+        payload.pop("response_format")   # some providers reject JSON mode; the prompt still asks for JSON
+        raw = post(AI_ENDPOINT, json.dumps(payload).encode(), headers)
     try:
         return parse_review(json.loads(raw)["choices"][0]["message"]["content"])
     except (ValueError, KeyError, IndexError, TypeError) as e:
@@ -228,7 +239,7 @@ def write_post(item, ai, filename=None):
     by = f" by {md(item['author'])}" if item["author"] else ""
     if ai.get("summary"):
         body = f"## Summary\n\n{md(ai['summary'])}\n" + (f"\n## Key points\n\n{pts}\n" if pts else "")
-        note_line = ("This summary was written automatically with AI (GitHub Copilot or another model) from the original article. "
+        note_line = (f"This summary was written automatically with AI ({md(ai.get('_by') or 'AI model')}) from the original article. "
                      "Check the original for exact details before you act.")
     else:
         body = f"## From the article\n\n> {md(ai.get('excerpt'))}\n" if ai.get("excerpt") else ""
@@ -298,11 +309,13 @@ def run(feed_raw, ask=None, now=None):
                 detail = e.read().decode(errors="replace")[:300] if hasattr(e, "read") else ""
                 note("warning", f"AI review failed for {item['title']!r}, using keyword rules: {e} {detail}")
         ai = ai or keyword_review(item)
+        if not ai.get("category") or ai.get("category") == "Other":
+            ai["category"] = keyword_review(item)["category"]
         entry = {"title": item["title"], "published": item["published"].isoformat(),
                  "significant": True, "reason": str(ai.get("reason") or "")[:300],
                  "category": ai.get("category") or "Other"}
         if ai.get("summary"):
-            entry["summarised_by"] = "AI"
+            entry["summarised_by"] = ai.get("_by", "AI")
         if entry["significant"]:
             entry["file"] = write_post(item, ai).name
             posted.append(item["title"])
@@ -318,12 +331,27 @@ def run(feed_raw, ask=None, now=None):
 
 
 if __name__ == "__main__":
+    chain = []
     if COPILOT_TOKEN and shutil.which("copilot"):
-        reviewer, label = ask_copilot, "GitHub Copilot"
-    elif AI_ENDPOINT and AI_MODEL and AI_KEY:
-        reviewer, label = ask_model, "AI endpoint"
-    else:
-        reviewer, label = None, None
+        chain.append(("GitHub Copilot", ask_copilot))
+    if AI_ENDPOINT and AI_MODEL and AI_KEY:
+        chain.append((AI_MODEL.rsplit("/", 1)[-1], ask_model))
+    label = " then ".join(n for n, _ in chain) or None
+
+    def reviewer(item):
+        errors = []
+        for name, fn in chain:
+            try:
+                result = fn(item)
+                result["_by"] = name
+                return result
+            except Exception as e:
+                errors.append(f"{name}: {e}")
+                note("warning", f"{name} failed for {item['title']!r}: {str(e)[:300]}")
+        raise RuntimeError("; ".join(errors) or "no reviewer")
+
+    if not chain:
+        reviewer = None
     note("notice", f"Summaries by {label}" if label else "No Copilot token or AI key: posting the article's opening lines")
     try:
         raw = http(FEED, headers={"Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.5"})
@@ -339,11 +367,12 @@ if __name__ == "__main__":
         if not reviewer or not items:
             note("warning", "Test: nothing to test (no reviewer configured or empty feed)")
             sys.exit(0)
-        try:
-            r = reviewer(items[0])
-            note("notice", f"Test OK ({label}) for {items[0]['title']!r}: {str(r.get('summary'))[:400]}")
-        except Exception as e:
-            note("warning", f"Test FAILED ({label}): {e}")
+        for name, fn in chain:
+            try:
+                r = fn(items[0])
+                note("notice", f"Test OK ({name}) for {items[0]['title']!r}: {str(r.get('summary'))[:400]}")
+            except Exception as e:
+                note("warning", f"Test FAILED ({name}): {str(e)[:400]}")
         sys.exit(0)
     if os.environ.get("REWRITE_EXISTING") == "true" and reviewer:
         # Rewrite posts that still show opening lines, keeping their file names (and web addresses).
@@ -360,7 +389,7 @@ if __name__ == "__main__":
                 continue
             r.setdefault("category", entry.get("category"))
             write_post(item, r, entry["file"])
-            entry["summarised_by"] = label
+            entry["summarised_by"] = r.get("_by", label)
             done.append(item["title"])
             note("notice", f"Rewritten with {label}: {item['title']}")
         STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
