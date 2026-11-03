@@ -37,3 +37,9 @@ Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud 
 |---|---|
 | [Mark Outlook Email as Read with PowerShell](Outlook/Mark-Email-As-Read-PowerShell.md) | Mark every unread item in a folder as read, with classic Outlook (COM) on the PC or server-side with Microsoft Graph. |
 | [Share Calendars and Contacts in Microsoft 365](Outlook/Share-Calendar-and-Contacts.md) | Team calendars with a shared mailbox, sharing your own calendar or contacts, PowerShell equivalents and the external sharing policy. |
+
+## Message Center
+
+| Article | Description |
+|---|---|
+| [Microsoft 365 Message Center](Message-Center/index.md) | Browse and search Microsoft 365 Message Center, Roadmap and Azure Updates posts without signing in to the admin center, powered by mc.merill.net. |
