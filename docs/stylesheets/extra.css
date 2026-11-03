@@ -16,3 +16,18 @@
 
 /* Hide the duplicate site name above the left menu on desktop */
 @media screen and (min-width: 76.25em) { .md-nav--primary > .md-nav__title { display: none; } }
+
+/* Message Center page */
+.mc-buttons { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.mc-buttons .md-button { margin: 0; }
+.mc-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.mc-input { flex: 1 1 16rem; width: 100%; padding: .55rem .75rem; font-size: .8rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: .2rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color); }
+.mc-row .md-button { margin: 0; }
+.mc-hint { font-size: .7rem; color: var(--md-default-fg-color--light); }
+.mc-tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .6rem; }
+.mc-tabs button { padding: .3rem .8rem; font-size: .7rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: 1rem; background: transparent; color: var(--md-default-fg-color); cursor: pointer; }
+.mc-tabs button[aria-pressed="true"] { background: var(--md-primary-fg-color); border-color: var(--md-primary-fg-color); color: #fff; }
+.md-typeset ul.mc-posts { list-style: none; margin: .6rem 0 0; padding: 0; }
+.md-typeset ul.mc-posts li { margin: 0; padding: .55rem 0; border-top: 1px solid var(--md-default-fg-color--lightest); }
+.mc-id { font-family: var(--md-code-font-family); font-size: .65rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: .2rem; padding: 0 .3rem; margin-right: .4rem; color: var(--md-default-fg-color--light); }
+.mc-meta { font-size: .65rem; color: var(--md-default-fg-color--light); }
