@@ -8,6 +8,8 @@ Short summaries of new articles from the [Microsoft Security Blog](https://www.m
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-02 | [What exploited vulnerabilities have in common: A data-driven analysis of real-world attacks](2026-11-02-what-exploited-vulnerabilities-have-in-common-a-data-driven-analysis-o.md) | Security update |
+| 2026-10-31 | [Inside a malicious Claude Code-branded extension and its persistent SSH backdoor](2026-10-31-inside-a-malicious-claude-code-branded-extension-and-its-persistent-ss.md) | Action required |
 | 2026-10-30 | [From help desk impersonation to AD CS abuse: Investigating ESC1 and ESC8 intrusion paths](2026-10-30-from-help-desk-impersonation-to-ad-cs-abuse-investigating-esc1-and-esc.md) | Security update |
 | 2026-10-29 | [Tracking AI adoption in North Korean threat actor tradecraft](2026-10-29-tracking-ai-adoption-in-north-korean-threat-actor-tradecraft.md) | Other |
 | 2026-10-29 | [IDC MarketScape names Microsoft a Leader in the 2026 Worldwide Modern Endpoint Security for Enterprises Vendor Assessment](2026-10-29-idc-marketscape-names-microsoft-a-leader-in-the-2026-worldwide-modern.md) | Other |

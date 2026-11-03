@@ -242,5 +242,25 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-10-30-from-help-desk-impersonation-to-ad-cs-abuse-investigating-esc1-and-esc.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/": {
+    "title": "Inside a malicious Claude Code-branded extension and its persistent SSH backdoor",
+    "published": "2026-10-31T01:02:57+00:00",
+    "significant": true,
+    "reason": "Details a severe supply chain attack involving a malicious code editor extension establishing persistent SSH backdoors.",
+    "category": "Action required",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-31-inside-a-malicious-claude-code-branded-extension-and-its-persistent-ss.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/02/exploited-vulnerabilities-common-data-driven-analysis-real-world-attacks/": {
+    "title": "What exploited vulnerabilities have in common: A data-driven analysis of real-world attacks",
+    "published": "2026-11-02T20:20:59+00:00",
+    "significant": true,
+    "reason": "The article provides a data-driven analysis of historical vulnerability trends and threat intelligence insights rather than announcing a new product feature, update, or breaking change.",
+    "category": "Security update",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-02-what-exploited-vulnerabilities-have-in-common-a-data-driven-analysis-o.md"
   }
 }
