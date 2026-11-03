@@ -8,8 +8,6 @@ source: "https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-lit
 
 # Inside the LiteLLM 1.107.0 supply chain compromise: Credential theft through Python startup hooks
 
-!!! info "From the Microsoft Security Blog"
-    Based on [this article](https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/) by Microsoft Security Research, Mahesh Mandava, Srinivasan Govindarajan, Sagar Patil and Suriyaraj Natarajan, published 23 October 2026.
 
 ## Summary
 

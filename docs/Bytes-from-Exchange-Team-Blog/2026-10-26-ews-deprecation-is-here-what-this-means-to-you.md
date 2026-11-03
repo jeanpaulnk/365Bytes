@@ -8,8 +8,6 @@ source: "https://techcommunity.microsoft.com/t5/exchange-team-blog/ews-deprecati
 
 # EWS Deprecation Is Here – What This Means To You
 
-!!! info "From the Exchange Team Blog"
-    Based on [this article](https://techcommunity.microsoft.com/t5/exchange-team-blog/ews-deprecation-is-here-what-this-means-to-you/ba-p/4561431) by The_Exchange_Team, published 26 October 2026.
 
 ## Summary
 

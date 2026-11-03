@@ -8,8 +8,6 @@ source: "https://techcommunity.microsoft.com/t5/microsoft-purview-blog/meet-the-
 
 # Meet the New Microsoft Purview Classifiers Experience: Your Admin Playbook for Public Preview
 
-!!! info "From the Microsoft Purview Blog"
-    Based on [this article](https://techcommunity.microsoft.com/t5/microsoft-purview-blog/meet-the-new-microsoft-purview-classifiers-experience-your-admin/ba-p/4561324) by Sarahzin_Shane, published 01 October 2026.
 
 ## Summary
 

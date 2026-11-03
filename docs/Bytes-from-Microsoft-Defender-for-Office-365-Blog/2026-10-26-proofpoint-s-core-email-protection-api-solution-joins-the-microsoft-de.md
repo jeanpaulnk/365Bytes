@@ -8,8 +8,6 @@ source: "https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/pr
 
 # Proofpoint’s Core Email Protection API solution joins the Microsoft Defender ICES vendor ecosystem
 
-!!! info "From the Microsoft Defender for Office 365 Blog"
-    Based on [this article](https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/proofpoint-s-core-email-protection-api-solution-joins-the/ba-p/4567264) by Oz_Wilder, published 26 October 2026.
 
 ## Summary
 

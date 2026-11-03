@@ -8,8 +8,6 @@ source: "https://www.microsoft.com/en-us/security/blog/2026/10/28/the-cisos-evol
 
 # The CISO’s evolving role: Protecting and defending in the agentic era
 
-!!! info "From the Microsoft Security Blog"
-    Based on [this article](https://www.microsoft.com/en-us/security/blog/2026/10/28/the-cisos-evolving-role-protecting-and-defending-in-the-agentic-era/) by Aarti Borkar, published 28 October 2026.
 
 ## Summary
 

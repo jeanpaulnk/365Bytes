@@ -8,8 +8,6 @@ source: "https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/de
 
 # Defending the Inbox Against Prompt Injection Attacks
 
-!!! info "From the Microsoft Defender for Office 365 Blog"
-    Based on [this article](https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/defending-the-inbox-against-prompt-injection-attacks/ba-p/4534636) by nithinnara, published 22 July 2026.
 
 ## Summary
 

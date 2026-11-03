@@ -98,12 +98,11 @@
   "https://techcommunity.microsoft.com/t5/microsoft-365-blog/more-than-a-conference-connect-with-the-microsoft-community-at/ba-p/4567771": {
     "title": "More Than a Conference: Connect with the Microsoft Community at ESPC 2026",
     "published": "2026-10-26T20:49:49+00:00",
-    "significant": true,
-    "reason": "This is an event and conference announcement detailing community activities and sessions for ESPC 2026.",
+    "significant": false,
+    "reason": "event announcement (title)",
     "category": "Other",
     "source": "Microsoft 365 Blog",
-    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
-    "file": "2026-10-26-more-than-a-conference-connect-with-the-microsoft-community-at-espc-20.md"
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest"
   },
   "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/": {
     "title": "AI-driven, large-scale nation-state campaign using ARTEX enables supply chain compromise",
@@ -158,12 +157,11 @@
   "https://techcommunity.microsoft.com/t5/microsoft-365-blog/discover-the-experts-bringing-microsoft-365-ai-and-copilot-to/ba-p/4559112": {
     "title": "Discover the Experts Bringing Microsoft 365, AI, and Copilot to Life at ESPC 2026",
     "published": "2026-09-23T16:18:49+00:00",
-    "significant": true,
-    "reason": "The article is an announcement for an upcoming conference and does not contain technical updates, breaking changes, or required administrative actions.",
+    "significant": false,
+    "reason": "event announcement (title)",
     "category": "Other",
     "source": "Microsoft 365 Blog",
-    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
-    "file": "2026-09-23-discover-the-experts-bringing-microsoft-365-ai-and-copilot-to-life-at.md"
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest"
   },
   "https://techcommunity.microsoft.com/t5/microsoft-365-blog/now-in-public-preview-microsoft-365-sharepoint-storage-and/ba-p/4559758": {
     "title": "Now in public preview: Microsoft 365 SharePoint Storage and OneDrive Storage",

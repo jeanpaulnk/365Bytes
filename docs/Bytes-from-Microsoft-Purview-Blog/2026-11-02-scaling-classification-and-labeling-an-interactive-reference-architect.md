@@ -8,8 +8,6 @@ source: "https://techcommunity.microsoft.com/t5/microsoft-purview-blog/scaling-c
 
 # Scaling classification and labeling: an interactive reference architecture update
 
-!!! info "From the Microsoft Purview Blog"
-    Based on [this article](https://techcommunity.microsoft.com/t5/microsoft-purview-blog/scaling-classification-and-labeling-an-interactive-reference/ba-p/4560925) by MaximeBombardier, published 02 November 2026.
 
 ## Summary
 

@@ -8,8 +8,6 @@ source: "https://techcommunity.microsoft.com/t5/microsoft-365-blog/now-in-public
 
 # Now in public preview: Microsoft 365 SharePoint Storage and OneDrive Storage
 
-!!! info "From the Microsoft 365 Blog"
-    Based on [this article](https://techcommunity.microsoft.com/t5/microsoft-365-blog/now-in-public-preview-microsoft-365-sharepoint-storage-and/ba-p/4559758) by SharonYam, published 29 September 2026.
 
 ## Summary
 

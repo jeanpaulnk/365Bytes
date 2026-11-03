@@ -63,6 +63,18 @@ SIGNIFICANT = re.compile(
     r"moving to|\bmov(e|es|ing) from\b|migrat|changes? (to|in|for|coming)|chang(e|es|ing) how|replac|"
     r"transition|new requirement|no longer", re.I)
 NOT_SIGNIFICANT = re.compile(r"tell us|help us shape|survey|feedback|join us|webinar|\bevent\b|recap|ask the experts|\bAMA\b", re.I)
+# Conference / event announcements are not posted.
+EVENT_TITLE = re.compile(
+    r"\bconference\b|\bESPC\b|\bIgnite\b|Microsoft Build\b|\bwebinar|\bAMA\b|ask microsoft anything|"
+    r"\bjoin us\b|register (now|today|here)|registration (is )?open|\bsummit\b|"
+    r"(upcoming|virtual|in-person|live|community|partner|digital) events?\b|meetup|livestream|live stream|"
+    r"\bkeynote|\bsessions? at\b|see you at|\bRSAC\b|Black Hat|\bbooth\b", re.I)
+
+
+def is_event(title):
+    return bool(EVENT_TITLE.search(title or ""))
+
+
 CATEGORIES = [("Security update", r"security update|\bSUs?\b|vulnerab|CVE-"),
               ("Retirement", r"deprecat|retir|end of (support|life)|disabled|turned off"),
               ("Known issue", r"known issue|unstable|stopped working|not working"),
@@ -111,7 +123,8 @@ Reply with JSON only:
  "summary": "2-3 sentence plain-English summary",
  "key_points": ["3 to 6 short bullets"],
  "action_required": true|false,
- "who_should_act": "who must do what, by when; empty string if nothing to do"}"""
+ "who_should_act": "who must do what, by when; empty string if nothing to do",
+ "event_announcement": true if the article mainly promotes a conference, event, webinar, AMA or session, else false}"""
 
 
 def http(url, data=None, headers=None, timeout=240):
@@ -329,9 +342,6 @@ source: {json.dumps(item['link'])}
 
 # {md(item['title'])}
 
-!!! info "From the {SOURCE['name']}"
-    Based on [this article]({item['link']}){by}, published {item['published']:%d %B %Y}.
-
 {body}
 {action}
 [Read the full article on the {SOURCE['name']}]({item['link']})
@@ -374,6 +384,12 @@ def run(feed_raw, ask=None, now=None):
         new = new[-MAX_PER_RUN:]   # catch-up: the newest few, not the oldest
     posted = []
     for item in new[:MAX_PER_RUN]:
+        if is_event(item["title"]):
+            state[item["link"]] = {"title": item["title"], "published": item["published"].isoformat(),
+                                   "significant": False, "reason": "event announcement (title)",
+                                   "source": SOURCE["name"]}
+            print(f"skipped (event): {item['title']}")
+            continue
         ai = None
         if ask:
             try:
@@ -384,8 +400,9 @@ def run(feed_raw, ask=None, now=None):
         ai = ai or keyword_review(item)
         if not ai.get("category") or ai.get("category") == "Other":
             ai["category"] = keyword_review(item)["category"]
+        event = ai.get("event_announcement") is True
         entry = {"title": item["title"], "published": item["published"].isoformat(),
-                 "significant": True, "reason": str(ai.get("reason") or "")[:300],
+                 "significant": not event, "reason": "event announcement (AI)" if event else str(ai.get("reason") or "")[:300],
                  "category": ai.get("category") or "Other", "source": SOURCE["name"]}
         if ai.get("summary"):
             entry["summarised_by"] = ai.get("_by", "AI")

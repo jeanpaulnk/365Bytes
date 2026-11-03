@@ -8,8 +8,6 @@ source: "https://techcommunity.microsoft.com/t5/outlook-blog/15-productivity-fea
 
 # 15 productivity features in the new Outlook for Windows
 
-!!! info "From the Outlook Blog"
-    Based on [this article](https://techcommunity.microsoft.com/t5/outlook-blog/15-productivity-features-in-the-new-outlook-for-windows/ba-p/4522796) by Vicki_Milton, published 03 June 2026.
 
 ## Summary
 

@@ -8,8 +8,6 @@ source: "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-use
 
 # AI-driven, large-scale nation-state campaign using ARTEX enables supply chain compromise
 
-!!! info "From the Microsoft Security Blog"
-    Based on [this article](https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/) by Microsoft Security Research and Microsoft Threat Intelligence, published 21 October 2026.
 
 ## Summary
 

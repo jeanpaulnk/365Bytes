@@ -8,8 +8,6 @@ source: "https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-serv
 
 # Exchange servers may become unstable after installation of October 2026 Windows updates
 
-!!! info "From the Exchange Team Blog"
-    Based on [this article](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-servers-may-become-unstable-after-installation-of/ba-p/4565382) by The_Exchange_Team, published 20 October 2026.
 
 ## Summary
 

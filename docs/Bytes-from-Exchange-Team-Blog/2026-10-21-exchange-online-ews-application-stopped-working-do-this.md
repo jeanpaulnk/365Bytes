@@ -8,8 +8,6 @@ source: "https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-onli
 
 # Exchange Online EWS application stopped working? Do this.
 
-!!! info "From the Exchange Team Blog"
-    Based on [this article](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-online-ews-application-stopped-working-do-this/ba-p/4566215) by The_Exchange_Team, published 21 October 2026.
 
 ## Summary
 
