@@ -103,6 +103,7 @@ POSTS = ROOT / "docs" / folder_for(SOURCE)
 STATE = ROOT / "data" / "exchange-blog-state.json"
 HEALTH = ROOT / "data" / "feed-health.json"
 ALERT_AFTER = 3   # consecutive failed runs (about 9 hours) before an issue is opened
+ALERT_OWNER = os.environ.get("ALERT_OWNER") or (os.environ.get("GITHUB_REPOSITORY", "").split("/")[0] or None)
 MAX_AGE_DAYS = 14      # ignore older articles, so the first run does not backfill the archive
 MAX_PER_RUN = 3        # keep each run small; the rest are picked up next run
 
@@ -459,7 +460,8 @@ def track_health(src, ok, detail, api=None):
             if h["failures"] >= ALERT_AFTER and not h.get("issue"):
                 issue = api("POST", "/issues", {
                     "title": f"Bytes from {src['name']}: feed not working",
-                    "body": (f"The **{src['name']}** feed has failed on {h['failures']} runs in a row "
+                    "assignees": [ALERT_OWNER] if ALERT_OWNER else [],
+                    "body": (f"@{ALERT_OWNER} " if ALERT_OWNER else "") + (f"The **{src['name']}** feed has failed on {h['failures']} runs in a row "
                              f"(about {h['failures'] * 3} hours), so no new posts are being added to this section.\n\n"
                              f"- Feed: {feed}\n- Blog: {src['home']}\n- Last error: `{h['last_error']}`\n\n"
                              "Microsoft may have moved or renamed the blog. Find its new RSS feed and update this "
@@ -514,13 +516,15 @@ if __name__ == "__main__":
         try:
             issue = _api("POST", "/issues", {
                 "title": "[Test] Bytes from Microsoft blogs: feed alert",
-                "body": "This is a **test** of the feed alert. Nothing is wrong.\n\n"
+                "assignees": [ALERT_OWNER] if ALERT_OWNER else [],
+                "body": (f"@{ALERT_OWNER} " if ALERT_OWNER else "") + "This is a **test** of the feed alert. Nothing is wrong.\n\n"
                         "When a blog feed fails 3 runs in a row (about 9 hours), an issue like this one opens "
                         "with the feed address, the last error and how to fix it, and closes itself when the "
                         "feed works again. This test issue closes automatically."})
             _api("POST", f"/issues/{issue['number']}/comments", {"body": "Test complete. Closing automatically."})
             _api("PATCH", f"/issues/{issue['number']}", {"state": "closed"})
-            note("notice", f"Alert test: opened and closed issue #{issue['number']} {issue.get('html_url', '')}")
+            note("notice", f"Alert test: opened and closed issue #{issue['number']} {issue.get('html_url', '')} "
+                           f"assignees={[a.get('login') for a in issue.get('assignees') or []]}")
         except Exception as e:
             note("warning", f"Alert test FAILED: {e}")
         sys.exit(0)
