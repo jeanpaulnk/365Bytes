@@ -23,6 +23,6 @@ Proofpoint's Core Email Protection API is now part of the Microsoft Defender ICE
 - Reduces SOC friction and context switching for organizations using both platforms.
 
 
-[Read the full article on the Microsoft Defender for Office 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/proofpoint-s-core-email-protection-api-solution-joins-the/ba-p/4567264){ .md-button .md-button--primary }
+[Read the full article on the Microsoft Defender for Office 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/proofpoint-s-core-email-protection-api-solution-joins-the/ba-p/4567264)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

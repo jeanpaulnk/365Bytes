@@ -27,6 +27,6 @@ Microsoft has released version 4 of its Detections and Insights reporting templa
 !!! warning "Action required"
     Microsoft 365 and security administrators should update their Microsoft Defender XDR solution in Sentinel, download the new Power BI templates, and deploy the updated workbooks and hunting queries from GitHub if they wish to use the new reporting features.
 
-[Read the full article on the Microsoft Defender for Office 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/part-4-see-investigate-and-measure-email-and-collaboration/ba-p/4562274){ .md-button .md-button--primary }
+[Read the full article on the Microsoft Defender for Office 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/part-4-see-investigate-and-measure-email-and-collaboration/ba-p/4562274)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

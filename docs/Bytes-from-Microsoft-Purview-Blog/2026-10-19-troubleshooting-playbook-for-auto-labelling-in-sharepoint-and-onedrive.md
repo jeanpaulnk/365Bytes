@@ -24,6 +24,6 @@ This troubleshooting guide provides administrators with a centralized checklist,
 - Provides PowerShell snippets for restarting stuck simulations and checking distribution progress.
 
 
-[Read the full article on the Microsoft Purview Blog](https://techcommunity.microsoft.com/t5/microsoft-purview-blog/troubleshooting-playbook-for-auto-labelling-in-sharepoint-and/ba-p/4564103){ .md-button .md-button--primary }
+[Read the full article on the Microsoft Purview Blog](https://techcommunity.microsoft.com/t5/microsoft-purview-blog/troubleshooting-playbook-for-auto-labelling-in-sharepoint-and/ba-p/4564103)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

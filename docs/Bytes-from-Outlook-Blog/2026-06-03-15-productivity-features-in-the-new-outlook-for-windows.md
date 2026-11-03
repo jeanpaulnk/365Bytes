@@ -22,6 +22,6 @@ Microsoft highlighted 15 productivity features available in the new Outlook for 
 - Mentions personalization options such as custom account names, modern themes, and keyboard shortcuts.
 
 
-[Read the full article on the Outlook Blog](https://techcommunity.microsoft.com/t5/outlook-blog/15-productivity-features-in-the-new-outlook-for-windows/ba-p/4522796){ .md-button .md-button--primary }
+[Read the full article on the Outlook Blog](https://techcommunity.microsoft.com/t5/outlook-blog/15-productivity-features-in-the-new-outlook-for-windows/ba-p/4522796)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

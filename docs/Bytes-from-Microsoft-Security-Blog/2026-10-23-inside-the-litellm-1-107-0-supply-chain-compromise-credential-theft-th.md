@@ -27,6 +27,6 @@ A malicious version of the LiteLLM package was published to PyPI and container r
 !!! warning "Action required"
     Administrators, developers, and security teams using LiteLLM 1.107.0 must isolate affected systems, remove residual startup files, and rotate all exposed credentials.
 
-[Read the full article on the Microsoft Security Blog](https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/){ .md-button .md-button--primary }
+[Read the full article on the Microsoft Security Blog](https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

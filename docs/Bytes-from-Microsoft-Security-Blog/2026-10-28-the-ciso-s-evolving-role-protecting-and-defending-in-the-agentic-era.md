@@ -23,6 +23,6 @@ This article discusses the changing responsibilities of Chief Information Securi
 - Defenders need integrated security tools, threat intelligence, and defensive AI agents to keep pace with fast-moving cyberattacks.
 
 
-[Read the full article on the Microsoft Security Blog](https://www.microsoft.com/en-us/security/blog/2026/10/28/the-cisos-evolving-role-protecting-and-defending-in-the-agentic-era/){ .md-button .md-button--primary }
+[Read the full article on the Microsoft Security Blog](https://www.microsoft.com/en-us/security/blog/2026/10/28/the-cisos-evolving-role-protecting-and-defending-in-the-agentic-era/)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

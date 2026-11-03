@@ -26,6 +26,6 @@ Microsoft is introducing agentic capabilities for Copilot in Outlook, allowing t
 !!! warning "Action required"
     Administrators and users interested in early evaluation can join the Frontier program to access the new Copilot agentic experiences starting April 27.
 
-[Read the full article on the Outlook Blog](https://techcommunity.microsoft.com/t5/outlook-blog/copilot-in-outlook-new-agentic-experiences-for-email-and/ba-p/4514601){ .md-button .md-button--primary }
+[Read the full article on the Outlook Blog](https://techcommunity.microsoft.com/t5/outlook-blog/copilot-in-outlook-new-agentic-experiences-for-email-and/ba-p/4514601)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

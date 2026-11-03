@@ -27,6 +27,6 @@ Microsoft reports that the China-state aligned actor Storm-0940 used the agentic
 !!! warning "Action required"
     Microsoft 365 and Exchange administrators using ConnectWise cloud backup applications must immediately disable the integration, preserve logs, inventory specified application IDs, and review Entra ID and M365 audit records for unauthorized changes.
 
-[Read the full article on the Microsoft Security Blog](https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/){ .md-button .md-button--primary }
+[Read the full article on the Microsoft Security Blog](https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

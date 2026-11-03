@@ -23,6 +23,6 @@ Microsoft has launched a public preview of the new unified Classifiers experienc
 - Accompanied by an administrator playbook offering workflows, testing guidance, and scenarios.
 
 
-[Read the full article on the Microsoft Purview Blog](https://techcommunity.microsoft.com/t5/microsoft-purview-blog/meet-the-new-microsoft-purview-classifiers-experience-your-admin/ba-p/4561324){ .md-button .md-button--primary }
+[Read the full article on the Microsoft Purview Blog](https://techcommunity.microsoft.com/t5/microsoft-purview-blog/meet-the-new-microsoft-purview-classifiers-experience-your-admin/ba-p/4561324)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>
