@@ -219,10 +219,10 @@ def slugify(title):
     return (s[:70].rstrip("-") or "post")
 
 
-def write_post(item, ai):
+def write_post(item, ai, filename=None):
     POSTS.mkdir(parents=True, exist_ok=True)
     date = item["published"].astimezone(timezone.utc).strftime("%Y-%m-%d")
-    path = POSTS / f"{date}-{slugify(item['title'])}.md"
+    path = POSTS / (filename or f"{date}-{slugify(item['title'])}.md")
     pts = "\n".join(f"- {md(p)}" for p in (ai.get("key_points") or []) if str(p).strip())
     who = md(ai.get("who_should_act"))
     by = f" by {md(item['author'])}" if item["author"] else ""
@@ -301,6 +301,8 @@ def run(feed_raw, ask=None, now=None):
         entry = {"title": item["title"], "published": item["published"].isoformat(),
                  "significant": True, "reason": str(ai.get("reason") or "")[:300],
                  "category": ai.get("category") or "Other"}
+        if ai.get("summary"):
+            entry["summarised_by"] = "AI"
         if entry["significant"]:
             entry["file"] = write_post(item, ai).name
             posted.append(item["title"])
@@ -342,6 +344,30 @@ if __name__ == "__main__":
             note("notice", f"Test OK ({label}) for {items[0]['title']!r}: {str(r.get('summary'))[:400]}")
         except Exception as e:
             note("warning", f"Test FAILED ({label}): {e}")
+        sys.exit(0)
+    if os.environ.get("REWRITE_EXISTING") == "true" and reviewer:
+        # Rewrite posts that still show opening lines, keeping their file names (and web addresses).
+        state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
+        done = []
+        for item in read_feed(raw):
+            entry = state.get(item["link"])
+            if not entry or not entry.get("file") or entry.get("summarised_by"):
+                continue
+            try:
+                r = reviewer(item)
+            except Exception as e:
+                note("warning", f"Rewrite failed for {item['title']!r}: {e}")
+                continue
+            r.setdefault("category", entry.get("category"))
+            write_post(item, r, entry["file"])
+            entry["summarised_by"] = label
+            done.append(item["title"])
+            note("notice", f"Rewritten with {label}: {item['title']}")
+        STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        out = os.environ.get("GITHUB_OUTPUT")
+        if out:
+            with open(out, "a", encoding="utf-8") as f:
+                f.write(f"posted={len(done)}\n")
         sys.exit(0)
     posted = run(raw, reviewer)
     out = os.environ.get("GITHUB_OUTPUT")

@@ -30,6 +30,7 @@ jobs:
           # Summaries by GitHub Copilot (any plan, including Free): fine-grained PAT with "Copilot Requests".
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
           TEST_SUMMARY: ${{ github.event.client_payload.test }}
+          REWRITE_EXISTING: ${{ github.event.client_payload.rewrite }}
           # Optional AI review. Leave unset to use keyword rules.
           AI_ENDPOINT: ${{ vars.AI_ENDPOINT }}
           AI_MODEL: ${{ vars.AI_MODEL }}
