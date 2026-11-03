@@ -1,1 +1,26 @@
-{}
+{
+  "https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-servers-may-become-unstable-after-installation-of/ba-p/4565382": {
+    "title": "Exchange servers may become unstable after installation of October 2026 Windows updates",
+    "published": "2026-10-20T19:11:22+00:00",
+    "significant": true,
+    "reason": "title keywords",
+    "category": "Known issue",
+    "file": "2026-10-20-exchange-servers-may-become-unstable-after-installation-of-october-202.md"
+  },
+  "https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-online-ews-application-stopped-working-do-this/ba-p/4566215": {
+    "title": "Exchange Online EWS application stopped working? Do this.",
+    "published": "2026-10-21T17:42:20+00:00",
+    "significant": true,
+    "reason": "title keywords",
+    "category": "Known issue",
+    "file": "2026-10-21-exchange-online-ews-application-stopped-working-do-this.md"
+  },
+  "https://techcommunity.microsoft.com/t5/exchange-team-blog/ews-deprecation-is-here-what-this-means-to-you/ba-p/4561431": {
+    "title": "EWS Deprecation Is Here – What This Means To You",
+    "published": "2026-10-26T18:17:26+00:00",
+    "significant": true,
+    "reason": "title keywords",
+    "category": "Retirement",
+    "file": "2026-10-26-ews-deprecation-is-here-what-this-means-to-you.md"
+  }
+}
