@@ -1,8 +1,9 @@
 """Publish a short post for every new article on selected Microsoft Tech Community blogs.
 
 Runs on a schedule in GitHub Actions (.github/workflows/exchange-blog.yml):
-  1. Reads the RSS feed of each blog in SOURCES (Exchange Team Blog, Defender for
-     Office 365 Blog, Microsoft Purview Blog); each gets its own "Bytes from ..." section.
+  1. Reads the RSS feed of each blog in SOURCES (Exchange Team, Defender for Office 365,
+     Purview, Outlook, Microsoft 365 and Microsoft Security blogs); each gets its own
+     "Bytes from ..." section.
   2. Posts every new article:
      - first choice: Google Gemini Flash on the free Gemini API tier (GEMINI_API_KEY secret),
        or any OpenAI-compatible endpoint set with AI_ENDPOINT / AI_MODEL variables and
@@ -37,6 +38,12 @@ SOURCES = [
      "home": "https://techcommunity.microsoft.com/category/microsoft-defender-for-office-365/blog/microsoftdefenderforoffice365blog"},
     {"name": "Microsoft Purview Blog", "board": "microsoft-purview-blog",
      "home": "https://techcommunity.microsoft.com/category/microsoft-purview/blog/microsoft-purview-blog"},
+    {"name": "Outlook Blog", "board": "Outlook",
+     "home": "https://techcommunity.microsoft.com/category/outlook/blog/outlook"},
+    {"name": "Microsoft 365 Blog", "board": "microsoft_365blog",
+     "home": "https://techcommunity.microsoft.com/category/microsoft365/blog/microsoft_365blog"},
+    {"name": "Microsoft Security Blog", "feed": "https://www.microsoft.com/en-us/security/blog/feed/",
+     "home": "https://www.microsoft.com/en-us/security/blog/"},
 ]
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 # First-choice model: any OpenAI-compatible chat/completions endpoint; defaults to Gemini Flash
@@ -83,8 +90,8 @@ STATE = ROOT / "data" / "exchange-blog-state.json"
 MAX_AGE_DAYS = 14      # ignore older articles, so the first run does not backfill the archive
 MAX_PER_RUN = 3        # keep each run small; the rest are picked up next run
 
-SYSTEM = """You review articles from Microsoft's official Tech Community blogs (Exchange, Defender for
-Office 365, Purview) for a blog read by
+SYSTEM = """You review articles from Microsoft's official blogs (Exchange, Outlook, Microsoft 365,
+Defender for Office 365, Purview, Microsoft Security) for a blog read by
 Microsoft 365 / Exchange administrators. Summarise the article in your own words. Never copy
 sentences verbatim. Also say whether it is significant (the post is published either way).
 
@@ -421,7 +428,7 @@ if __name__ == "__main__":
     note("notice", f"Summaries by {label}" if label else "No Copilot token or AI key: posting the article's opening lines")
     def fetch(src):
         try:
-            raw = http(RSS + src["board"], headers={"Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.5"})
+            raw = http(src.get("feed") or RSS + src["board"], headers={"Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.5"})
         except Exception as e:
             note("warning", f"Could not read the {src['name']} feed: {e}")
             return None

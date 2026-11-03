@@ -30,6 +30,24 @@ Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud 
 |---|---|
 | [Bytes from Microsoft Purview Blog](Bytes-from-Microsoft-Purview-Blog/index.md) | Short AI summaries of every new Microsoft Purview Blog article, added automatically with links to the originals. |
 
+## Bytes from Outlook Blog
+
+| Article | Description |
+|---|---|
+| [Bytes from Outlook Blog](Bytes-from-Outlook-Blog/index.md) | Short AI summaries of every new Outlook Blog article, added automatically with links to the originals. |
+
+## Bytes from Microsoft 365 Blog
+
+| Article | Description |
+|---|---|
+| [Bytes from Microsoft 365 Blog](Bytes-from-Microsoft-365-Blog/index.md) | Short AI summaries of every new Microsoft 365 Blog article, added automatically with links to the originals. |
+
+## Bytes from Microsoft Security Blog
+
+| Article | Description |
+|---|---|
+| [Bytes from Microsoft Security Blog](Bytes-from-Microsoft-Security-Blog/index.md) | Short AI summaries of every new Microsoft Security Blog article, added automatically with links to the originals. |
+
 ## Exchange Online
 
 | Article | Description |
