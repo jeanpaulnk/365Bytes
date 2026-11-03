@@ -3,11 +3,10 @@
 Runs on a schedule in GitHub Actions (.github/workflows/exchange-blog.yml):
   1. Reads the Exchange Team Blog RSS feed.
   2. Posts every new article:
-     - with a COPILOT_GITHUB_TOKEN secret, GitHub Copilot (CLI, any plan incl. Free)
-       writes a short summary in its own words;
-     - if Copilot fails or is not set up, a backup OpenAI-compatible model does:
-       DeepSeek-V3 on SiliconFlow's free tier with a SILICONFLOW_API_KEY secret, or any
-       endpoint set with AI_ENDPOINT / AI_MODEL variables and an AI_API_KEY secret;
+     - first choice: DeepSeek-V3 on SiliconFlow's free tier (SILICONFLOW_API_KEY secret),
+       or any OpenAI-compatible endpoint set with AI_ENDPOINT / AI_MODEL variables and
+       an AI_API_KEY secret, writes a short summary in its own words;
+     - backup: GitHub Copilot (CLI, any plan incl. Free) with a COPILOT_GITHUB_TOKEN secret;
      - otherwise, or if the AI call fails, the post shows the article's opening lines.
      Keyword rules on the title only set the post's type (Security update, Change...).
   3. Writes docs/Exchange-Team-Blog/<date>-<slug>.md and regenerates the index.
@@ -331,11 +330,11 @@ def run(feed_raw, ask=None, now=None):
 
 
 if __name__ == "__main__":
-    chain = []
-    if COPILOT_TOKEN and shutil.which("copilot"):
-        chain.append(("GitHub Copilot", ask_copilot))
+    chain = []   # first that works writes the summary
     if AI_ENDPOINT and AI_MODEL and AI_KEY:
         chain.append((AI_MODEL.rsplit("/", 1)[-1], ask_model))
+    if COPILOT_TOKEN and shutil.which("copilot"):
+        chain.append(("GitHub Copilot", ask_copilot))
     label = " then ".join(n for n, _ in chain) or None
 
     def reviewer(item):
