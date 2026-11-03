@@ -6,4 +6,8 @@ title: Bytes from Microsoft Entra Blog
 
 Short summaries of new articles from the [Microsoft Entra Blog](https://techcommunity.microsoft.com/category/microsoft-entra/blog/microsoft-entra-blog), added automatically. Each one links to the original.
 
-No articles yet. New ones appear here automatically.
+| Date | Article | Type |
+|---|---|---|
+| 2026-10-30 | [AI agents are coming—are your identity controls prepared?](2026-10-30-ai-agents-are-coming-are-your-identity-controls-prepared.md) | Action required |
+| 2026-10-27 | [Why identity needs network insight to make Zero Trust work](2026-10-27-why-identity-needs-network-insight-to-make-zero-trust-work.md) | Other |
+| 2026-10-22 | [Designing smarter access policies for hybrid enterprises](2026-10-22-designing-smarter-access-policies-for-hybrid-enterprises.md) | Other |

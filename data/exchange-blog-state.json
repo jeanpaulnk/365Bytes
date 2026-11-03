@@ -182,5 +182,65 @@
     "source": "Microsoft 365 Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-10-13-office-ltsc-2021-support-ends-today.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/designing-smarter-access-policies-for-hybrid-enterprises/ba-p/4529308": {
+    "title": "Designing smarter access policies for hybrid enterprises",
+    "published": "2026-10-22T15:00:00+00:00",
+    "significant": true,
+    "reason": "The article provides general best practices and design principles for hybrid access policies rather than announcing a new feature, retirement, or breaking change.",
+    "category": "Other",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-22-designing-smarter-access-policies-for-hybrid-enterprises.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/why-identity-needs-network-insight-to-make-zero-trust-work/ba-p/4566630": {
+    "title": "Why identity needs network insight to make Zero Trust work",
+    "published": "2026-10-27T15:00:00+00:00",
+    "significant": true,
+    "reason": "This is a conceptual and promotional article discussing the integration of identity and network signals for Zero Trust without introducing new required actions, deprecations, or features.",
+    "category": "Other",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-27-why-identity-needs-network-insight-to-make-zero-trust-work.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/ai-agents-are-coming-are-your-identity-controls-prepared/ba-p/4515964": {
+    "title": "AI agents are coming—are your identity controls prepared?",
+    "published": "2026-10-30T19:54:24+00:00",
+    "significant": true,
+    "reason": "The article details critical strategic guidance on securing identity infrastructure against AI-driven threats and preparing for AI agent identities.",
+    "category": "Action required",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-30-ai-agents-are-coming-are-your-identity-controls-prepared.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/10/29/tracking-ai-adoption-in-north-korean-threat-actor-tradecraft/": {
+    "title": "Tracking AI adoption in North Korean threat actor tradecraft",
+    "published": "2026-10-29T16:00:00+00:00",
+    "significant": true,
+    "reason": "This is a threat intelligence report discussing trends in threat actor behavior rather than a product update, security patch, or actionable administrative change.",
+    "category": "Other",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-29-tracking-ai-adoption-in-north-korean-threat-actor-tradecraft.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/10/29/idc-marketscape-names-microsoft-a-leader-in-the-2026-worldwide-modern-endpoint-security-for-enterprises-vendor-assessment/": {
+    "title": "IDC MarketScape names Microsoft a Leader in the 2026 Worldwide Modern Endpoint Security for Enterprises Vendor Assessment",
+    "published": "2026-10-29T16:00:00+00:00",
+    "significant": true,
+    "reason": "The article is an award and vendor assessment announcement rather than a technical release, security update, or actionable change.",
+    "category": "Other",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-29-idc-marketscape-names-microsoft-a-leader-in-the-2026-worldwide-modern.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/10/30/help-desk-impersonation-ad-cs-abuse-investigating-esc1-esc8-intrusion-paths/": {
+    "title": "From help desk impersonation to AD CS abuse: Investigating ESC1 and ESC8 intrusion paths",
+    "published": "2026-10-30T16:11:44+00:00",
+    "significant": true,
+    "reason": "Analyzes active human-operated intrusions using Teams social engineering to exploit AD CS vulnerabilities ESC1 and ESC8.",
+    "category": "Security update",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-30-from-help-desk-impersonation-to-ad-cs-abuse-investigating-esc1-and-esc.md"
   }
 }
