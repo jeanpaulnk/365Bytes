@@ -5,13 +5,13 @@ description: Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure 
 
 # Microsoft 365 Message Center
 
-Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts without signing in to the Microsoft 365 admin center.
+Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts here, without signing in to the Microsoft 365 admin center. Every post also links to its source.
 
 !!! info "Source"
-    Posts come from the [Microsoft 365 Message Center Archive](https://mc.merill.net/) by Merill Fernando, which refreshes every hour.
+    Posts come from the [Microsoft 365 Message Center Archive](https://mc.merill.net/) by Merill Fernando and are refreshed on this site every few hours.
 
 <div class="mc-buttons">
-  <a class="md-button md-button--primary" href="https://mc.merill.net/" target="_blank" rel="noopener">Browse all posts</a>
+  <a class="md-button md-button--primary" href="https://mc.merill.net/" target="_blank" rel="noopener">Browse the full archive</a>
   <a class="md-button" href="https://mc.merill.net/?source=messageCenter" target="_blank" rel="noopener">Message Center</a>
   <a class="md-button" href="https://mc.merill.net/?source=roadmap" target="_blank" rel="noopener">M365 Roadmap</a>
   <a class="md-button" href="https://mc.merill.net/?source=azure" target="_blank" rel="noopener">Azure Updates</a>
@@ -24,7 +24,7 @@ Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts
   <input type="text" id="mc-go-input" class="mc-input" placeholder="MC1234567, RM570662, or words like Teams passkeys" aria-label="Post ID or search text">
   <button type="submit" class="md-button md-button--primary">Go</button>
 </form>
-<p class="mc-hint">An ID (MC…, RM…, AZ…) opens that post. Anything else searches the archive.</p>
+<p class="mc-hint">An ID (MC…, RM…, AZ…) opens the post here. Anything else searches the full archive on mc.merill.net.</p>
 
 ## Latest posts
 
@@ -35,7 +35,7 @@ Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts
     <button type="button" data-src="roadmap" aria-pressed="false">Roadmap</button>
     <button type="button" data-src="azure" aria-pressed="false">Azure</button>
   </div>
-  <input type="text" id="mc-filter" class="mc-input" placeholder="Filter by title or service" aria-label="Filter posts">
+  <input type="text" id="mc-filter" class="mc-input" placeholder="Filter by title, service or ID" aria-label="Filter posts">
   <p id="mc-status" class="mc-hint">Loading latest posts…</p>
   <ul id="mc-posts" class="mc-posts"></ul>
 </div>

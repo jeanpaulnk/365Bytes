@@ -7,6 +7,8 @@ site_name: 'JPN365Labs'
 site_description: 'Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud identity'
 edit_uri: edit/main/docs/
 docs_dir: 'docs'
+not_in_nav: |
+  /Message-Center/post.md
 theme:
   name: 'material'
   custom_dir: overrides
@@ -29,6 +31,6 @@ markdown_extensions:
 plugins:
   - search
   - rss:
-      match_path: '.+/.+'
+      match_path: '(?!Message-Center/).+/.+'
       feed_title: 'JPN365Labs'
       length: 50

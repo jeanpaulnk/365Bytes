@@ -2,6 +2,8 @@ name: Deploy docs
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '17 */3 * * *'   # refresh Message Center posts every 3 hours
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,6 +24,7 @@ jobs:
           python-version: '3.x'
       - run: pip install mkdocs-material mkdocs-rss-plugin
       - run: mkdocs build --site-dir site
+      - run: python scripts/build_mc_data.py site/mc-data
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
