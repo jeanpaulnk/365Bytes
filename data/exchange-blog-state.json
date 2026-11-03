@@ -22,5 +22,13 @@
     "reason": "title keywords",
     "category": "Retirement",
     "file": "2026-10-26-ews-deprecation-is-here-what-this-means-to-you.md"
+  },
+  "https://techcommunity.microsoft.com/t5/exchange-team-blog/cross-tenant-free-busy-mailtips-and-calendar-sharing-are-moving/ba-p/4545169": {
+    "title": "Cross-tenant Free/Busy, MailTips, and Calendar Sharing are moving to Cross-Tenant Access Policy",
+    "published": "2026-10-29T18:00:55+00:00",
+    "significant": true,
+    "reason": "title keywords",
+    "category": "Change",
+    "file": "2026-10-29-cross-tenant-free-busy-mailtips-and-calendar-sharing-are-moving-to-cro.md"
   }
 }
