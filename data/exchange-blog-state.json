@@ -34,5 +34,25 @@
     "category": "Change",
     "file": "2026-10-29-cross-tenant-free-busy-mailtips-and-calendar-sharing-are-moving-to-cro.md",
     "summarised_by": "GitHub Copilot"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/proofpoint-s-core-email-protection-api-solution-joins-the/ba-p/4567264": {
+    "title": "Proofpoint’s Core Email Protection API solution joins the Microsoft Defender ICES vendor ecosystem",
+    "published": "2026-10-26T16:00:00+00:00",
+    "significant": true,
+    "reason": "Proofpoint has joined the Microsoft Defender Integrated Cloud Email Security (ICES) vendor ecosystem, bringing new integration capabilities.",
+    "category": "New feature",
+    "source": "Microsoft Defender for Office 365 Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-26-proofpoint-s-core-email-protection-api-solution-joins-the-microsoft-de.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/part-4-see-investigate-and-measure-email-and-collaboration/ba-p/4562274": {
+    "title": "Part 4: See, investigate, and measure email and collaboration attacks with Defender reporting",
+    "published": "2026-10-27T16:00:00+00:00",
+    "significant": true,
+    "reason": "Microsoft has released version 4 of the Detections and Insights reports, featuring new Teams and collaboration views, advanced hunting queries, and an Attack Simulation Training report.",
+    "category": "New feature",
+    "source": "Microsoft Defender for Office 365 Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-27-part-4-see-investigate-and-measure-email-and-collaboration-attacks-wit.md"
   }
 }
