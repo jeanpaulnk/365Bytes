@@ -58,25 +58,58 @@ def http(url, data=None, headers=None, timeout=90):
         return r.read()
 
 
+def _local(tag):
+    return tag.rsplit("}", 1)[-1].lower()
+
+
+def _child(el, *names):
+    for c in el:
+        if _local(c.tag) in names:
+            return c
+    return None
+
+
+def _text(el, *names):
+    c = _child(el, *names)
+    return (c.text or "").strip() if c is not None and c.text else ""
+
+
 def read_feed(raw):
+    """RSS 2.0 or Atom, with or without namespaces."""
     root = ET.fromstring(raw)
-    dc = "{http://purl.org/dc/elements/1.1/}creator"
     items = []
-    for it in root.iter("item"):
-        link = (it.findtext("link") or "").strip()
-        title = html.unescape((it.findtext("title") or "").strip())
+    for it in root.iter():
+        if _local(it.tag) not in ("item", "entry"):
+            continue
+        link = _text(it, "link")
+        if not link:
+            l = _child(it, "link")
+            link = (l.get("href") or "").strip() if l is not None else ""
+        title = html.unescape(_text(it, "title"))
         if not link.startswith("https://") or not title or re.search(r"[\s()<>]", link):
             continue
+        stamp = _text(it, "pubdate", "published", "updated", "date")
         try:
-            when = email.utils.parsedate_to_datetime(it.findtext("pubDate") or "")
-            if when.tzinfo is None:
-                when = when.replace(tzinfo=timezone.utc)
+            when = email.utils.parsedate_to_datetime(stamp)
         except (TypeError, ValueError):
-            when = datetime.now(timezone.utc)
-        items.append({"link": link, "title": title, "published": when,
-                      "author": (it.findtext(dc) or "").strip(),
-                      "body": it.findtext("description") or ""})
+            try:
+                when = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+            except ValueError:
+                when = datetime.now(timezone.utc)
+        if when.tzinfo is None:
+            when = when.replace(tzinfo=timezone.utc)
+        author = _text(it, "creator")
+        if not author:
+            a = _child(it, "author")
+            author = _text(a, "name") if a is not None else ""
+        body = _text(it, "encoded") or _text(it, "description", "content", "summary")
+        items.append({"link": link, "title": title, "published": when, "author": author, "body": body})
     return items
+
+
+def note(level, msg):
+    """Print, and also surface in the Actions run summary as an annotation."""
+    print(f"::{level}::{msg}" if os.environ.get("GITHUB_ACTIONS") else msg, file=sys.stderr)
 
 
 def to_text(body, limit=14000):
@@ -176,15 +209,19 @@ def write_index(state):
 def run(feed_raw, token, ask=ask_model, now=None):
     now = now or datetime.now(timezone.utc)
     state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
-    new = [i for i in read_feed(feed_raw)
+    items = read_feed(feed_raw)
+    new = [i for i in items
            if i["link"] not in state and i["published"] >= now - timedelta(days=MAX_AGE_DAYS)]
+    note("notice", f"Feed: {len(items)} articles, {len(new)} new in the last {MAX_AGE_DAYS} days, "
+                   f"newest {max((i['published'] for i in items), default=None)}")
     new.sort(key=lambda i: i["published"])
     posted = []
     for item in new[:MAX_PER_RUN]:
         try:
             ai = ask(item, token)
         except Exception as e:  # retried next run
-            print(f"AI review failed for {item['title']!r}: {e}", file=sys.stderr)
+            detail = e.read().decode(errors="replace")[:300] if hasattr(e, "read") else ""
+            note("warning", f"AI review failed for {item['title']!r}: {e} {detail}")
             continue
         entry = {"title": item["title"], "published": item["published"].isoformat(),
                  "significant": bool(ai.get("significant")), "reason": str(ai.get("reason") or "")[:300],
@@ -207,7 +244,15 @@ if __name__ == "__main__":
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
         sys.exit("GITHUB_TOKEN is not set")
-    posted = run(http(FEED), token)
+    try:
+        raw = http(FEED, headers={"Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.5"})
+    except Exception as e:
+        note("warning", f"Could not read the Exchange Team Blog feed: {e}")
+        sys.exit(0)
+    if not raw.lstrip().startswith(b"<?xml") and b"<rss" not in raw[:2000] and b"<feed" not in raw[:2000]:
+        note("warning", f"Feed did not return XML: {raw[:200]!r}")
+        sys.exit(0)
+    posted = run(raw, token)
     out = os.environ.get("GITHUB_OUTPUT")
     if out:
         with open(out, "a", encoding="utf-8") as f:
