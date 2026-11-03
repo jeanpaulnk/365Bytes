@@ -196,9 +196,39 @@ def ask_copilot(item, run=subprocess.run):
     return parse_review(out.stdout)
 
 
-def ask_model(item, token=None, post=http):
+GEMINI_MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-3.5-flash-lite"]
+
+
+def ask_model(item, token=None, post=http, sleep=None):
+    """Try the configured model; for Gemini also its lighter free models. Busy or slow
+    answers (429, 500-504, timeouts) are retried once after a pause."""
+    import time
+    sleep = sleep or time.sleep
+    models = [AI_MODEL]
+    if "googleapis.com" in AI_ENDPOINT and not os.environ.get("AI_MODEL"):
+        models = GEMINI_MODELS
+    errors = []
+    for model in models:
+        for attempt in range(2):
+            try:
+                result = _ask_one(item, model, post)
+                if "googleapis.com" in AI_ENDPOINT:
+                    result["_by"] = f"Google Gemini, {model}"
+                return result
+            except Exception as e:
+                code = getattr(e, "code", None)
+                busy = code in (429, 500, 502, 503, 504) or "timed out" in str(e).lower()
+                errors.append(f"{model}: {e}")
+                if not busy:
+                    break
+                if attempt == 0:
+                    sleep(20)
+    raise RuntimeError("; ".join(errors)[:600])
+
+
+def _ask_one(item, model, post):
     payload = {
-        "model": AI_MODEL,
+        "model": model,
         "temperature": 0.2,
         "response_format": {"type": "json_object"},
         "messages": [
@@ -348,7 +378,7 @@ if __name__ == "__main__":
         for name, fn in chain:
             try:
                 result = fn(item)
-                result["_by"] = name
+                result["_by"] = result.get("_by") or name
                 return result
             except Exception as e:
                 errors.append(f"{name}: {e}")
@@ -375,7 +405,7 @@ if __name__ == "__main__":
         for name, fn in chain:
             try:
                 r = fn(items[0])
-                note("notice", f"Test OK ({name}) for {items[0]['title']!r}: {str(r.get('summary'))[:400]}")
+                note("notice", f"Test OK ({r.get('_by') or name}) for {items[0]['title']!r}: {str(r.get('summary'))[:400]}")
             except Exception as e:
                 note("warning", f"Test FAILED ({name}): {str(e)[:400]}")
         sys.exit(0)
