@@ -94,5 +94,45 @@
     "source": "Microsoft Defender for Office 365 Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-07-22-defending-the-inbox-against-prompt-injection-attacks.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-365-blog/more-than-a-conference-connect-with-the-microsoft-community-at/ba-p/4567771": {
+    "title": "More Than a Conference: Connect with the Microsoft Community at ESPC 2026",
+    "published": "2026-10-26T20:49:49+00:00",
+    "significant": true,
+    "reason": "This is an event and conference announcement detailing community activities and sessions for ESPC 2026.",
+    "category": "Other",
+    "source": "Microsoft 365 Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-26-more-than-a-conference-connect-with-the-microsoft-community-at-espc-20.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/": {
+    "title": "AI-driven, large-scale nation-state campaign using ARTEX enables supply chain compromise",
+    "published": "2026-10-21T18:23:55+00:00",
+    "significant": true,
+    "reason": "A major nation-state threat actor used an agentic AI framework to execute a large-scale supply chain compromise via ConnectWise applications, requiring immediate tenant reviews and mitigations.",
+    "category": "Action required",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-21-ai-driven-large-scale-nation-state-campaign-using-artex-enables-supply.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/": {
+    "title": "Inside the LiteLLM 1.107.0 supply chain compromise: Credential theft through Python startup hooks",
+    "published": "2026-10-23T18:12:19+00:00",
+    "significant": true,
+    "reason": "A major supply chain compromise of LiteLLM 1.107.0 distributed malware that automatically harvested credentials upon Python startup.",
+    "category": "Action required",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-23-inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-th.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/10/28/the-cisos-evolving-role-protecting-and-defending-in-the-agentic-era/": {
+    "title": "The CISO’s evolving role: Protecting and defending in the agentic era",
+    "published": "2026-10-28T16:00:00+00:00",
+    "significant": true,
+    "reason": "The post discusses high-level cybersecurity strategy and trends rather than announcing specific product releases, updates, or mandatory actions.",
+    "category": "Other",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-10-28-the-ciso-s-evolving-role-protecting-and-defending-in-the-agentic-era.md"
   }
 }
