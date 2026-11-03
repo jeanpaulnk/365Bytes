@@ -31,11 +31,14 @@ SIGNIFICANT = re.compile(
     r"\breleased?\b|security update|\bSUs?\b|cumulative update|\bCU\d*\b|hotfix|action required|"
     r"deprecat|retir|end of (support|life)|generally available|general availability|\bGA\b|"
     r"public preview|now available|known issue|unstable|stopped working|not working|breaking|"
-    r"must |required|upgrade|disabled|turned off|blocked|deadline|vulnerab|CVE-", re.I)
+    r"must |required|upgrade|disabled|turned off|blocked|deadline|vulnerab|CVE-|"
+    r"moving to|\bmov(e|es|ing) from\b|migrat|changes? (to|in|for|coming)|chang(e|es|ing) how|replac|"
+    r"transition|new requirement|no longer", re.I)
 NOT_SIGNIFICANT = re.compile(r"tell us|help us shape|survey|feedback|join us|webinar|\bevent\b|recap|ask the experts|\bAMA\b", re.I)
 CATEGORIES = [("Security update", r"security update|\bSUs?\b|vulnerab|CVE-"),
               ("Retirement", r"deprecat|retir|end of (support|life)|disabled|turned off"),
               ("Known issue", r"known issue|unstable|stopped working|not working"),
+              ("Change", r"moving to|\bmov(e|es|ing) from\b|migrat|changes? (to|in|for|coming)|chang(e|es|ing) how|replac|transition|new requirement|no longer"),
               ("Release", r"\breleased?\b|cumulative update|\bCU\d*\b|hotfix"),
               ("New feature", r"generally available|general availability|\bGA\b|public preview|now available"),
               ("Action required", r"action required|must |required|upgrade|deadline")]
