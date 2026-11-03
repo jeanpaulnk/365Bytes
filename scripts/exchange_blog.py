@@ -509,6 +509,21 @@ if __name__ == "__main__":
         return raw
 
     out = os.environ.get("GITHUB_OUTPUT")
+    if os.environ.get("ALERT_TEST") == "true":
+        # Test the alert: open a sample issue (GitHub emails it), then close it straight away.
+        try:
+            issue = _api("POST", "/issues", {
+                "title": "[Test] Bytes from Microsoft blogs: feed alert",
+                "body": "This is a **test** of the feed alert. Nothing is wrong.\n\n"
+                        "When a blog feed fails 3 runs in a row (about 9 hours), an issue like this one opens "
+                        "with the feed address, the last error and how to fix it, and closes itself when the "
+                        "feed works again. This test issue closes automatically."})
+            _api("POST", f"/issues/{issue['number']}/comments", {"body": "Test complete. Closing automatically."})
+            _api("PATCH", f"/issues/{issue['number']}", {"state": "closed"})
+            note("notice", f"Alert test: opened and closed issue #{issue['number']} {issue.get('html_url', '')}")
+        except Exception as e:
+            note("warning", f"Alert test FAILED: {e}")
+        sys.exit(0)
     if os.environ.get("TEST_SUMMARY") == "true":
         # Test mode: summarise the newest article of the first readable feed; publish nothing.
         for src in SOURCES:
