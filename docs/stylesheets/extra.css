@@ -11,7 +11,8 @@
   background-color: #424242;
 }
 /* Force colours over the theme defaults */
-.md-header, .md-tabs { background-color: #2e7d32 !important; }
+/* Top bar (header and tabs) in dark grey */
+.md-header, .md-tabs { background-color: #424242 !important; }
 .md-footer, .md-footer-meta { background-color: #424242 !important; }
 
 /* Hide the duplicate site name above the left menu on desktop */
