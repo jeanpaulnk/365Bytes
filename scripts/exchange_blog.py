@@ -331,6 +331,18 @@ if __name__ == "__main__":
     if not raw.lstrip().startswith(b"<?xml") and b"<rss" not in raw[:2000] and b"<feed" not in raw[:2000]:
         note("warning", f"Feed did not return XML: {raw[:200]!r}")
         sys.exit(0)
+    if os.environ.get("TEST_SUMMARY") == "true":
+        # Test mode: summarise the newest article and report it; publish nothing.
+        items = sorted(read_feed(raw), key=lambda i: i["published"], reverse=True)
+        if not reviewer or not items:
+            note("warning", "Test: nothing to test (no reviewer configured or empty feed)")
+            sys.exit(0)
+        try:
+            r = reviewer(items[0])
+            note("notice", f"Test OK ({label}) for {items[0]['title']!r}: {str(r.get('summary'))[:400]}")
+        except Exception as e:
+            note("warning", f"Test FAILED ({label}): {e}")
+        sys.exit(0)
     posted = run(raw, reviewer)
     out = os.environ.get("GITHUB_OUTPUT")
     if out:
