@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write   # commit new posts
   actions: write    # start the Deploy docs workflow
+  issues: write     # open an issue when a blog feed stops working
 concurrency:
   group: exchange-blog
   cancel-in-progress: false
@@ -29,6 +30,7 @@ jobs:
         env:
           # Backup: GitHub Copilot (any plan, including Free): fine-grained PAT with "Copilot Requests".
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          ISSUE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TEST_SUMMARY: ${{ github.event.client_payload.test }}
           REWRITE_EXISTING: ${{ github.event.client_payload.rewrite }}
           BACKFILL_DAYS: ${{ github.event.client_payload.backfill_days }}
@@ -43,7 +45,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git add docs/Bytes-from-* data/exchange-blog-state.json
+          git add docs/Bytes-from-* data/exchange-blog-state.json data/feed-health.json
           if git diff --cached --quiet; then echo "Nothing new"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

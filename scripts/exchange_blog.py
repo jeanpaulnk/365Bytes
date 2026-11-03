@@ -101,6 +101,8 @@ def use_source(src):
 
 POSTS = ROOT / "docs" / folder_for(SOURCE)
 STATE = ROOT / "data" / "exchange-blog-state.json"
+HEALTH = ROOT / "data" / "feed-health.json"
+ALERT_AFTER = 3   # consecutive failed runs (about 9 hours) before an issue is opened
 MAX_AGE_DAYS = 14      # ignore older articles, so the first run does not backfill the archive
 MAX_PER_RUN = 3        # keep each run small; the rest are picked up next run
 
@@ -424,6 +426,54 @@ def run(feed_raw, ask=None, now=None):
     return posted
 
 
+def _api(method, path, body=None):
+    """github_api with the real HTTP method (urllib only does GET/POST by default)."""
+    token, repo = os.environ.get("ISSUE_TOKEN"), os.environ.get("GITHUB_REPOSITORY")
+    if not token or not repo:
+        return None
+    req = urllib.request.Request(f"https://api.github.com/repos/{repo}{path}", method=method,
+                                 data=json.dumps(body).encode() if body is not None else None,
+                                 headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
+                                          "Content-Type": "application/json", "User-Agent": "JPN365Labs-bot"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read() or b"null")
+
+
+def track_health(src, ok, detail, api=None):
+    """Count consecutive failures per blog; open an issue after ALERT_AFTER, close it on recovery."""
+    api = api or _api
+    health = json.loads(HEALTH.read_text(encoding="utf-8")) if HEALTH.exists() else {}
+    h = health.setdefault(src["name"], {"failures": 0})
+    feed = src.get("feed") or RSS + src["board"]
+    try:
+        if ok:
+            if h.get("issue"):
+                api("POST", f"/issues/{h['issue']}/comments",
+                    {"body": f"The {src['name']} feed is working again. Closing automatically."})
+                api("PATCH", f"/issues/{h['issue']}", {"state": "closed"})
+                note("notice", f"{src['name']}: feed recovered, closed issue #{h['issue']}")
+            health[src["name"]] = {"failures": 0}
+        else:
+            h["failures"] = h.get("failures", 0) + 1
+            h["last_error"] = detail[:300]
+            if h["failures"] >= ALERT_AFTER and not h.get("issue"):
+                issue = api("POST", "/issues", {
+                    "title": f"Bytes from {src['name']}: feed not working",
+                    "body": (f"The **{src['name']}** feed has failed on {h['failures']} runs in a row "
+                             f"(about {h['failures'] * 3} hours), so no new posts are being added to this section.\n\n"
+                             f"- Feed: {feed}\n- Blog: {src['home']}\n- Last error: `{h['last_error']}`\n\n"
+                             "Microsoft may have moved or renamed the blog. Find its new RSS feed and update this "
+                             "blog's entry in `SOURCES` at the top of `scripts/exchange_blog.py`. "
+                             "This issue closes itself when the feed works again.")})
+                if issue and issue.get("number"):
+                    h["issue"] = issue["number"]
+                    note("warning", f"{src['name']}: opened issue #{issue['number']}")
+    except Exception as e:
+        note("warning", f"{src['name']}: could not update the alert issue: {e}")
+    HEALTH.parent.mkdir(parents=True, exist_ok=True)
+    HEALTH.write_text(json.dumps(health, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
 if __name__ == "__main__":
     chain = []   # first that works writes the summary
     if AI_ENDPOINT and AI_MODEL and AI_KEY:
@@ -511,6 +561,8 @@ if __name__ == "__main__":
             continue
         raw = fetch(src)
         use_source(src)
+        items_ok = bool(raw) and bool(read_feed(raw))
+        track_health(src, items_ok, "feed unreachable or not XML" if not raw else "feed returned no articles")
         if raw:
             posted += run(raw, reviewer)
         elif not (POSTS / "index.md").exists():
