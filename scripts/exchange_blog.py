@@ -36,7 +36,7 @@ SOURCES = [
     {"name": "Microsoft Defender for Office 365 Blog", "board": "MicrosoftDefenderforOffice365Blog",
      "home": "https://techcommunity.microsoft.com/category/microsoft-defender-for-office-365/blog/microsoftdefenderforoffice365blog"},
     {"name": "Microsoft Purview Blog", "board": "microsoft-purview-blog",
-     "home": "https://techcommunity.microsoft.com/category/microsoft-security/blog/microsoft-purview-blog"},
+     "home": "https://techcommunity.microsoft.com/category/microsoft-purview/blog/microsoft-purview-blog"},
 ]
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 # First-choice model: any OpenAI-compatible chat/completions endpoint; defaults to Gemini Flash
@@ -357,11 +357,14 @@ def run(feed_raw, ask=None, now=None):
     now = now or datetime.now(timezone.utc)
     state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
     items = read_feed(feed_raw)
+    max_age = int(os.environ.get("BACKFILL_DAYS") or MAX_AGE_DAYS)   # one-off catch-up can look further back
     new = [i for i in items
-           if i["link"] not in state and i["published"] >= now - timedelta(days=MAX_AGE_DAYS)]
-    note("notice", f"{SOURCE['name']}: {len(items)} articles, {len(new)} new in the last {MAX_AGE_DAYS} days, "
+           if i["link"] not in state and i["published"] >= now - timedelta(days=max_age)]
+    note("notice", f"{SOURCE['name']}: {len(items)} articles, {len(new)} new in the last {max_age} days, "
                    f"newest {max((i['published'] for i in items), default=None)}")
     new.sort(key=lambda i: i["published"])
+    if os.environ.get("BACKFILL_DAYS"):
+        new = new[-MAX_PER_RUN:]   # catch-up: the newest few, not the oldest
     posted = []
     for item in new[:MAX_PER_RUN]:
         ai = None
@@ -474,7 +477,10 @@ if __name__ == "__main__":
                 f.write(f"posted={len(done)}\n")
         sys.exit(0)
     posted = []
+    only = (os.environ.get("ONLY_SOURCE") or "").strip().lower()
     for src in SOURCES:
+        if only and only not in src["name"].lower():
+            continue
         raw = fetch(src)
         use_source(src)
         if raw:

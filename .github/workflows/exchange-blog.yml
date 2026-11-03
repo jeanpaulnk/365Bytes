@@ -31,6 +31,8 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
           TEST_SUMMARY: ${{ github.event.client_payload.test }}
           REWRITE_EXISTING: ${{ github.event.client_payload.rewrite }}
+          BACKFILL_DAYS: ${{ github.event.client_payload.backfill_days }}
+          ONLY_SOURCE: ${{ github.event.client_payload.source }}
           # First choice: Google Gemini Flash on the free Gemini API tier.
           GEMINI_API_KEY: ${{ secrets.JPN365Labs_GEMINI_API_KEY || secrets.GEMINI_API_KEY }}
           # Optional AI review. Leave unset to use keyword rules.
