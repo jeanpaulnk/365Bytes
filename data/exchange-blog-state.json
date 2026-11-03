@@ -84,5 +84,15 @@
     "source": "Microsoft Purview Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-02-scaling-classification-and-labeling-an-interactive-reference-architect.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/defending-the-inbox-against-prompt-injection-attacks/ba-p/4534636": {
+    "title": "Defending the Inbox Against Prompt Injection Attacks",
+    "published": "2026-07-22T18:50:10+00:00",
+    "significant": true,
+    "reason": "Announces a new public preview feature in Microsoft Defender that automatically detects and quarantines indirect prompt injection attacks in emails.",
+    "category": "New feature",
+    "source": "Microsoft Defender for Office 365 Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-07-22-defending-the-inbox-against-prompt-injection-attacks.md"
   }
 }
