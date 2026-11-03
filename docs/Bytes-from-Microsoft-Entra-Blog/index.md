@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Entra Blog](https://techcomm
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-02 | [Global Secure Access: Private Access and Internet Access in one offering](2026-11-02-global-secure-access-private-access-and-internet-access-in-one-offerin.md) | New feature |
 | 2026-11-02 | [Microsoft Entra Global Secure Access: one offering for Private Access and Internet Access](2026-11-02-microsoft-entra-global-secure-access-one-offering-for-private-access-a.md) | New feature |
 | 2026-10-30 | [AI agents are coming—are your identity controls prepared?](2026-10-30-ai-agents-are-coming-are-your-identity-controls-prepared.md) | Action required |
 | 2026-10-27 | [Why identity needs network insight to make Zero Trust work](2026-10-27-why-identity-needs-network-insight-to-make-zero-trust-work.md) | Other |

@@ -272,5 +272,35 @@
     "source": "Microsoft Entra Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-02-microsoft-entra-global-secure-access-one-offering-for-private-access-a.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/global-secure-access-private-access-and-internet-access-in-one/ba-p/4569098": {
+    "title": "Global Secure Access: Private Access and Internet Access in one offering",
+    "published": "2026-11-02T22:05:34+00:00",
+    "significant": true,
+    "reason": "Microsoft announced a new unified purchasing option for Global Secure Access alongside multiple new public preview and generally available features.",
+    "category": "New feature",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-02-global-secure-access-private-access-and-internet-access-in-one-offerin.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/03/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-ai-agent-management-platforms/": {
+    "title": "Microsoft named a Leader in the 2026 Gartner® Magic Quadrant™ for AI Agent Management Platforms",
+    "published": "2026-11-03T17:00:00+00:00",
+    "significant": true,
+    "reason": "The post discusses Microsoft being named a Leader in a Gartner Magic Quadrant and highlights existing features of Microsoft Agent 365 without introducing mandatory admin actions or breaking changes.",
+    "category": "Other",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-03-microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-ai-age.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/03/fake-download-campaign-uses-trojanized-installers-deliver-monetization-payloads/": {
+    "title": "Fake-download campaign uses trojanized installers to deliver monetization payloads",
+    "published": "2026-11-03T17:32:47+00:00",
+    "significant": true,
+    "reason": "Microsoft Threat Intelligence detailed a widespread fake-download campaign distributing trojanized installers and monetization payloads.",
+    "category": "Security update",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-03-fake-download-campaign-uses-trojanized-installers-to-deliver-monetizat.md"
   }
 }
