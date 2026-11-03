@@ -220,7 +220,8 @@ def ask_copilot(item, run=subprocess.run):
     return parse_review(out.stdout)
 
 
-GEMINI_MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-3.5-flash-lite"]
+# Flash-Lite first: on the free tier it answers in seconds, while full Flash is often busy or slow.
+GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-flash-latest", "gemini-3.5-flash-lite"]
 
 
 def ask_model(item, token=None, post=http, sleep=None):
@@ -241,9 +242,9 @@ def ask_model(item, token=None, post=http, sleep=None):
                 return result
             except Exception as e:
                 code = getattr(e, "code", None)
-                busy = code in (429, 500, 502, 503, 504) or "timed out" in str(e).lower()
+                busy = code in (429, 500, 502, 503, 504)
                 errors.append(f"{model}: {e}")
-                if not busy:
+                if not busy:   # timeouts and other errors: move straight to the next model
                     break
                 if attempt == 0:
                     sleep(20)
@@ -266,13 +267,13 @@ def _ask_one(item, model, post):
     if ".azure.com" in AI_ENDPOINT:
         headers["api-key"] = AI_KEY   # Azure OpenAI style
     try:
-        raw = post(AI_ENDPOINT, json.dumps(payload).encode(), headers)
+        raw = post(AI_ENDPOINT, json.dumps(payload).encode(), headers, timeout=120)
     except urllib.error.HTTPError as e:
         if e.code != 400:
             raise
         payload.pop("response_format", None)   # some providers reject JSON mode; the prompt still asks for JSON
         payload.pop("reasoning_effort", None)
-        raw = post(AI_ENDPOINT, json.dumps(payload).encode(), headers)
+        raw = post(AI_ENDPOINT, json.dumps(payload).encode(), headers, timeout=120)
     try:
         return parse_review(json.loads(raw)["choices"][0]["message"]["content"])
     except (ValueError, KeyError, IndexError, TypeError) as e:
