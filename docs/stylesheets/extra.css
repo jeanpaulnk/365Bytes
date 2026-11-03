@@ -31,3 +31,9 @@
 .md-typeset ul.mc-posts li { margin: 0; padding: .55rem 0; border-top: 1px solid var(--md-default-fg-color--lightest); }
 .mc-id { font-family: var(--md-code-font-family); font-size: .65rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: .2rem; padding: 0 .3rem; margin-right: .4rem; color: var(--md-default-fg-color--light); }
 .mc-meta { font-size: .65rem; color: var(--md-default-fg-color--light); }
+
+/* Message Center reader */
+.md-typeset table.mc-facts { display: table; font-size: .7rem; margin: .5rem 0 1rem; }
+.md-typeset table.mc-facts th { white-space: nowrap; width: 8rem; }
+.mc-body img { max-width: 100%; height: auto; }
+.mc-body { overflow-wrap: anywhere; }
