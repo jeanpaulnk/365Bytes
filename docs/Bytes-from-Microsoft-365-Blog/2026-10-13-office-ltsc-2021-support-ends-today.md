@@ -26,6 +26,6 @@ Support for Office LTSC 2021 suites and standalone apps officially ended today, 
 !!! warning "Action required"
     IT administrators running Office LTSC 2021 must upgrade or migrate those devices to a supported product version immediately.
 
-[Read the full article on the Microsoft 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-365-blog/office-ltsc-2021-support-ends-today/ba-p/4562577){ .md-button .md-button--primary }
+[Read the full article on the Microsoft 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-365-blog/office-ltsc-2021-support-ends-today/ba-p/4562577)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

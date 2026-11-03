@@ -27,6 +27,6 @@ Microsoft explains how tenant administrators can temporarily restore Exchange We
 !!! warning "Action required"
     Tenant administrators with EWS-dependent apps should restore EWS temporarily if needed; administrators, application owners, and vendors must move those apps off EWS before April 2027.
 
-[Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-online-ews-application-stopped-working-do-this/ba-p/4566215){ .md-button .md-button--primary }
+[Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-online-ews-application-stopped-working-do-this/ba-p/4566215)
 
-<small>This summary was written automatically with AI (GitHub Copilot or another model) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

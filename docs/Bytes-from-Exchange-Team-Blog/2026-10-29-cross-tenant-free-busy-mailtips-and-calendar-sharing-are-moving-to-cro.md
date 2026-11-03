@@ -27,6 +27,6 @@ Exchange Online is moving cross-tenant Free/Busy, MailTips, and calendar sharing
 !!! warning "Action required"
     Admins of organizations using affected cross-tenant sharing should confirm scope, migrate to Cross-Tenant Access Policy after rollout reaches both tenants, and finish by April 1, 2027. If migration is delayed, set EWSEnabled to True in both tenants for bidirectional sharing until migration is complete.
 
-[Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/cross-tenant-free-busy-mailtips-and-calendar-sharing-are-moving/ba-p/4545169){ .md-button .md-button--primary }
+[Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/cross-tenant-free-busy-mailtips-and-calendar-sharing-are-moving/ba-p/4545169)
 
-<small>This summary was written automatically with AI (GitHub Copilot or another model) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

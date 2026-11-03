@@ -306,7 +306,7 @@ def write_post(item, ai, filename=None):
     by = f" by {md(item['author'])}" if item["author"] else ""
     if ai.get("summary"):
         body = f"## Summary\n\n{md(ai['summary'])}\n" + (f"\n## Key points\n\n{pts}\n" if pts else "")
-        note_line = (f"This summary was written automatically with AI ({md(ai.get('_by') or 'AI model')}) from the original article. "
+        note_line = ("This summary was written automatically with AI from the original article. "
                      "Check the original for exact details before you act.")
     else:
         body = f"## From the article\n\n> {md(ai.get('excerpt'))}\n" if ai.get("excerpt") else ""
@@ -334,7 +334,7 @@ source: {json.dumps(item['link'])}
 
 {body}
 {action}
-[Read the full article on the {SOURCE['name']}]({item['link']}){{ .md-button .md-button--primary }}
+[Read the full article on the {SOURCE['name']}]({item['link']})
 
 <small>{note_line}</small>
 """

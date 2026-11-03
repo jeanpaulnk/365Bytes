@@ -23,6 +23,6 @@ Microsoft highlights its upcoming participation and community-focused events at 
 - Attendees have opportunities to network directly with Microsoft MVPs and product engineers.
 
 
-[Read the full article on the Microsoft 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-365-blog/more-than-a-conference-connect-with-the-microsoft-community-at/ba-p/4567771){ .md-button .md-button--primary }
+[Read the full article on the Microsoft 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-365-blog/more-than-a-conference-connect-with-the-microsoft-community-at/ba-p/4567771)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

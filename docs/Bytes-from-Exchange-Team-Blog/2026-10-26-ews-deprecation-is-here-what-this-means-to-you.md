@@ -27,6 +27,6 @@ Exchange Online now requires tenants with EWS enabled to specify permitted appli
 !!! warning "Action required"
     Exchange Online tenant admins in the WW cloud: review EWS usage and configure EWSAllowedAppIDs for apps that must retain access; monitor Message Center warnings and re-enable EWS if needed. Admins whose tenants already have EWSEnabled=True have until April 2027 before Microsoft-initiated changes. Update affected Outlook clients; sovereign cloud admins should watch for a separate timeline.
 
-[Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/ews-deprecation-is-here-what-this-means-to-you/ba-p/4561431){ .md-button .md-button--primary }
+[Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/ews-deprecation-is-here-what-this-means-to-you/ba-p/4561431)
 
-<small>This summary was written automatically with AI (GitHub Copilot or another model) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

@@ -24,6 +24,6 @@ Microsoft has introduced a public preview of pay-as-you-go billing for SharePoin
 - Quota notification banners are suppressed while enrolled in the pay-as-you-go SharePoint storage.
 
 
-[Read the full article on the Microsoft 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-365-blog/now-in-public-preview-microsoft-365-sharepoint-storage-and/ba-p/4559758){ .md-button .md-button--primary }
+[Read the full article on the Microsoft 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-365-blog/now-in-public-preview-microsoft-365-sharepoint-storage-and/ba-p/4559758)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

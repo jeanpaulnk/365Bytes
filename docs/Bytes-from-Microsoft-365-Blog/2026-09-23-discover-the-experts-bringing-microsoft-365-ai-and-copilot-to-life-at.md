@@ -23,6 +23,6 @@ Microsoft has announced the upcoming ESPC 2026 conference, scheduled to take pla
 - Registration is currently open for IT professionals and developers.
 
 
-[Read the full article on the Microsoft 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-365-blog/discover-the-experts-bringing-microsoft-365-ai-and-copilot-to/ba-p/4559112){ .md-button .md-button--primary }
+[Read the full article on the Microsoft 365 Blog](https://techcommunity.microsoft.com/t5/microsoft-365-blog/discover-the-experts-bringing-microsoft-365-ai-and-copilot-to/ba-p/4559112)
 
-<small>This summary was written automatically with AI (Google Gemini, gemini-flash-lite-latest) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>

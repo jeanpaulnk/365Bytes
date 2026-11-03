@@ -27,6 +27,6 @@ Some Exchange servers may become unstable after installing the October 2026 Wind
 !!! warning "Action required"
     Administrators of Exchange servers on affected Windows Server versions should install the October 2026 Windows updates, apply the registry setting, reboot, and monitor for recurrence.
 
-[Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-servers-may-become-unstable-after-installation-of/ba-p/4565382){ .md-button .md-button--primary }
+[Read the full article on the Exchange Team Blog](https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-servers-may-become-unstable-after-installation-of/ba-p/4565382)
 
-<small>This summary was written automatically with AI (GitHub Copilot or another model) from the original article. Check the original for exact details before you act.</small>
+<small>This summary was written automatically with AI from the original article. Check the original for exact details before you act.</small>
