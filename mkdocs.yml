@@ -31,6 +31,6 @@ markdown_extensions:
 plugins:
   - search
   - rss:
-      match_path: '(?!Message-Center/|Bytes-from-Exchange-Team-Blog/index).+/.+'
+      match_path: '(?!Message-Center/|Bytes-from-[^/]+/index).+/.+'
       feed_title: 'JPN365Labs'
       length: 50

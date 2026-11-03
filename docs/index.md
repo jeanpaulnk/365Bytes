@@ -18,6 +18,18 @@ Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud 
 |---|---|
 | [Bytes from Exchange Team Blog](Bytes-from-Exchange-Team-Blog/index.md) | Short summaries of significant Exchange Team Blog articles (security updates, releases, retirements, new features), added automatically with links to the originals. |
 
+## Bytes from Microsoft Defender for Office 365 Blog
+
+| Article | Description |
+|---|---|
+| [Bytes from Microsoft Defender for Office 365 Blog](Bytes-from-Microsoft-Defender-for-Office-365-Blog/index.md) | Short AI summaries of every new Microsoft Defender for Office 365 Blog article, added automatically with links to the originals. |
+
+## Bytes from Microsoft Purview Blog
+
+| Article | Description |
+|---|---|
+| [Bytes from Microsoft Purview Blog](Bytes-from-Microsoft-Purview-Blog/index.md) | Short AI summaries of every new Microsoft Purview Blog article, added automatically with links to the originals. |
+
 ## Exchange Online
 
 | Article | Description |

@@ -1,7 +1,8 @@
-"""Publish a short post for every new Exchange Team Blog article.
+"""Publish a short post for every new article on selected Microsoft Tech Community blogs.
 
 Runs on a schedule in GitHub Actions (.github/workflows/exchange-blog.yml):
-  1. Reads the Exchange Team Blog RSS feed.
+  1. Reads the RSS feed of each blog in SOURCES (Exchange Team Blog, Defender for
+     Office 365 Blog, Microsoft Purview Blog); each gets its own "Bytes from ..." section.
   2. Posts every new article:
      - first choice: Google Gemini Flash on the free Gemini API tier (GEMINI_API_KEY secret),
        or any OpenAI-compatible endpoint set with AI_ENDPOINT / AI_MODEL variables and
@@ -28,7 +29,15 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-FEED = "https://techcommunity.microsoft.com/t5/s/gxcuf89792/rss/board?board.id=exchange"
+RSS = "https://techcommunity.microsoft.com/t5/s/gxcuf89792/rss/board?board.id="
+SOURCES = [
+    {"name": "Exchange Team Blog", "board": "exchange",
+     "home": "https://techcommunity.microsoft.com/category/exchange/blog/exchange"},
+    {"name": "Microsoft Defender for Office 365 Blog", "board": "MicrosoftDefenderforOffice365Blog",
+     "home": "https://techcommunity.microsoft.com/category/microsoft-defender-for-office-365/blog/microsoftdefenderforoffice365blog"},
+    {"name": "Microsoft Purview Blog", "board": "microsoft-purview-blog",
+     "home": "https://techcommunity.microsoft.com/category/microsoft-security/blog/microsoft-purview-blog"},
+]
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 # First-choice model: any OpenAI-compatible chat/completions endpoint; defaults to Gemini Flash
 # (gemini-flash-latest always points at Google's current free Flash model).
@@ -55,12 +64,27 @@ CATEGORIES = [("Security update", r"security update|\bSUs?\b|vulnerab|CVE-"),
               ("New feature", r"generally available|general availability|\bGA\b|public preview|now available"),
               ("Action required", r"action required|must |required|upgrade|deadline")]
 ROOT = Path(__file__).resolve().parent.parent
-POSTS = ROOT / "docs" / "Bytes-from-Exchange-Team-Blog"
+SOURCE = SOURCES[0]
+
+
+def folder_for(src):
+    return "Bytes-from-" + re.sub(r"[^A-Za-z0-9]+", "-", src["name"]).strip("-")
+
+
+def use_source(src):
+    """Point the writers at one blog's section."""
+    global SOURCE, POSTS
+    SOURCE = src
+    POSTS = ROOT / "docs" / folder_for(src)
+
+
+POSTS = ROOT / "docs" / folder_for(SOURCE)
 STATE = ROOT / "data" / "exchange-blog-state.json"
 MAX_AGE_DAYS = 14      # ignore older articles, so the first run does not backfill the archive
 MAX_PER_RUN = 3        # keep each run small; the rest are picked up next run
 
-SYSTEM = """You review articles from Microsoft's official Exchange Team Blog for a blog read by
+SYSTEM = """You review articles from Microsoft's official Tech Community blogs (Exchange, Defender for
+Office 365, Purview) for a blog read by
 Microsoft 365 / Exchange administrators. Summarise the article in your own words. Never copy
 sentences verbatim. Also say whether it is significant (the post is published either way).
 
@@ -278,7 +302,7 @@ def write_post(item, ai, filename=None):
                      "Check the original for exact details before you act.")
     else:
         body = f"## From the article\n\n> {md(ai.get('excerpt'))}\n" if ai.get("excerpt") else ""
-        note_line = "Added automatically from the Exchange Team Blog feed. Read the original article for the full details."
+        note_line = f"Added automatically from the {SOURCE['name']} feed. Read the original article for the full details."
         if ai.get("action_required") and not who:
             who = "The original article describes something administrators need to do. Read it for the steps and dates."
     if ai.get("action_required") and who:
@@ -297,12 +321,12 @@ source: {json.dumps(item['link'])}
 
 # {md(item['title'])}
 
-!!! info "From the Exchange Team Blog"
+!!! info "From the {SOURCE['name']}"
     Based on [this article]({item['link']}){by}, published {item['published']:%d %B %Y}.
 
 {body}
 {action}
-[Read the full article on the Exchange Team Blog]({item['link']}){{ .md-button .md-button--primary }}
+[Read the full article on the {SOURCE['name']}]({item['link']}){{ .md-button .md-button--primary }}
 
 <small>{note_line}</small>
 """
@@ -311,10 +335,12 @@ source: {json.dumps(item['link'])}
 
 
 def write_index(state):
-    rows = sorted((v for v in state.values() if v.get("file")), key=lambda v: v["published"], reverse=True)
-    lines = ["---", "title: Bytes from Exchange Team Blog", "---", "", "# Bytes from Exchange Team Blog", "",
-             "Short summaries of new articles from Microsoft's "
-             "[Exchange Team Blog](https://techcommunity.microsoft.com/category/exchange/blog/exchange), "
+    name = SOURCE["name"]
+    rows = sorted((v for v in state.values()
+                   if v.get("file") and v.get("source", SOURCES[0]["name"]) == name),
+                  key=lambda v: v["published"], reverse=True)
+    lines = ["---", f"title: Bytes from {name}", "---", "", f"# Bytes from {name}", "",
+             f"Short summaries of new articles from the [{name}]({SOURCE['home']}), "
              "added automatically. Each one links to the original.", ""]
     if rows:
         lines += ["| Date | Article | Type |", "|---|---|---|"]
@@ -322,6 +348,7 @@ def write_index(state):
             lines.append(f"| {v['published'][:10]} | [{md(v['title']).replace('|', '-')}]({v['file']}) | {md(v.get('category'))} |")
     else:
         lines.append("No articles yet. New ones appear here automatically.")
+    POSTS.mkdir(parents=True, exist_ok=True)
     (POSTS / "index.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -331,7 +358,7 @@ def run(feed_raw, ask=None, now=None):
     items = read_feed(feed_raw)
     new = [i for i in items
            if i["link"] not in state and i["published"] >= now - timedelta(days=MAX_AGE_DAYS)]
-    note("notice", f"Feed: {len(items)} articles, {len(new)} new in the last {MAX_AGE_DAYS} days, "
+    note("notice", f"{SOURCE['name']}: {len(items)} articles, {len(new)} new in the last {MAX_AGE_DAYS} days, "
                    f"newest {max((i['published'] for i in items), default=None)}")
     new.sort(key=lambda i: i["published"])
     posted = []
@@ -348,7 +375,7 @@ def run(feed_raw, ask=None, now=None):
             ai["category"] = keyword_review(item)["category"]
         entry = {"title": item["title"], "published": item["published"].isoformat(),
                  "significant": True, "reason": str(ai.get("reason") or "")[:300],
-                 "category": ai.get("category") or "Other"}
+                 "category": ai.get("category") or "Other", "source": SOURCE["name"]}
         if ai.get("summary"):
             entry["summarised_by"] = ai.get("_by", "AI")
         if entry["significant"]:
@@ -388,19 +415,27 @@ if __name__ == "__main__":
     if not chain:
         reviewer = None
     note("notice", f"Summaries by {label}" if label else "No Copilot token or AI key: posting the article's opening lines")
-    try:
-        raw = http(FEED, headers={"Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.5"})
-    except Exception as e:
-        note("warning", f"Could not read the Exchange Team Blog feed: {e}")
-        sys.exit(0)
-    if not raw.lstrip().startswith(b"<?xml") and b"<rss" not in raw[:2000] and b"<feed" not in raw[:2000]:
-        note("warning", f"Feed did not return XML: {raw[:200]!r}")
-        sys.exit(0)
+    def fetch(src):
+        try:
+            raw = http(RSS + src["board"], headers={"Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.5"})
+        except Exception as e:
+            note("warning", f"Could not read the {src['name']} feed: {e}")
+            return None
+        if not raw.lstrip().startswith(b"<?xml") and b"<rss" not in raw[:2000] and b"<feed" not in raw[:2000]:
+            note("warning", f"{src['name']} feed did not return XML: {raw[:200]!r}")
+            return None
+        return raw
+
+    out = os.environ.get("GITHUB_OUTPUT")
     if os.environ.get("TEST_SUMMARY") == "true":
-        # Test mode: summarise the newest article and report it; publish nothing.
-        items = sorted(read_feed(raw), key=lambda i: i["published"], reverse=True)
+        # Test mode: summarise the newest article of the first readable feed; publish nothing.
+        for src in SOURCES:
+            raw = fetch(src)
+            items = sorted(read_feed(raw), key=lambda i: i["published"], reverse=True) if raw else []
+            if items:
+                break
         if not reviewer or not items:
-            note("warning", "Test: nothing to test (no reviewer configured or empty feed)")
+            note("warning", "Test: nothing to test (no reviewer configured or empty feeds)")
             sys.exit(0)
         for name, fn in chain:
             try:
@@ -413,28 +448,38 @@ if __name__ == "__main__":
         # Rewrite posts that still show opening lines, keeping their file names (and web addresses).
         state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
         done = []
-        for item in read_feed(raw):
-            entry = state.get(item["link"])
-            if not entry or not entry.get("file") or entry.get("summarised_by"):
+        for src in SOURCES:
+            raw = fetch(src)
+            if not raw:
                 continue
-            try:
-                r = reviewer(item)
-            except Exception as e:
-                note("warning", f"Rewrite failed for {item['title']!r}: {e}")
-                continue
-            r.setdefault("category", entry.get("category"))
-            write_post(item, r, entry["file"])
-            entry["summarised_by"] = r.get("_by", label)
-            done.append(item["title"])
-            note("notice", f"Rewritten with {label}: {item['title']}")
+            use_source(src)
+            for item in read_feed(raw):
+                entry = state.get(item["link"])
+                if not entry or not entry.get("file") or entry.get("summarised_by"):
+                    continue
+                try:
+                    r = reviewer(item)
+                except Exception as e:
+                    note("warning", f"Rewrite failed for {item['title']!r}: {e}")
+                    continue
+                r.setdefault("category", entry.get("category"))
+                write_post(item, r, entry["file"])
+                entry["summarised_by"] = r.get("_by", label)
+                done.append(item["title"])
+                note("notice", f"Rewritten with {entry['summarised_by']}: {item['title']}")
         STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        out = os.environ.get("GITHUB_OUTPUT")
         if out:
             with open(out, "a", encoding="utf-8") as f:
                 f.write(f"posted={len(done)}\n")
         sys.exit(0)
-    posted = run(raw, reviewer)
-    out = os.environ.get("GITHUB_OUTPUT")
+    posted = []
+    for src in SOURCES:
+        raw = fetch(src)
+        use_source(src)
+        if raw:
+            posted += run(raw, reviewer)
+        elif not (POSTS / "index.md").exists():
+            write_index(json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {})
     if out:
         with open(out, "a", encoding="utf-8") as f:
             f.write(f"posted={len(posted)}\n")
