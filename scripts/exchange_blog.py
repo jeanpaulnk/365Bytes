@@ -132,9 +132,12 @@ def ask_model(item, token, post=http):
     }
     raw = post(MODELS_URL, json.dumps(payload).encode(), {
         "Authorization": f"Bearer {token}", "Content-Type": "application/json", "Accept": "application/json"})
-    content = json.loads(raw)["choices"][0]["message"]["content"]
-    content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content.strip())
-    result = json.loads(content)
+    try:
+        content = json.loads(raw)["choices"][0]["message"]["content"] or ""
+        content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content.strip())
+        result = json.loads(content)
+    except (ValueError, KeyError, IndexError, TypeError) as e:
+        raise ValueError(f"unreadable AI reply ({e}); first bytes: {raw[:300]!r}") from None
     if not isinstance(result, dict) or "significant" not in result:
         raise ValueError("model reply missing 'significant'")
     return result
