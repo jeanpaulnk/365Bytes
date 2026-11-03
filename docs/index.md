@@ -12,11 +12,11 @@ Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud 
 |---|---|
 | [Postfix relay as an add-on service](Transport/Postfix-Relay-Add-On-Service.md) | Build a Postfix relay in Azure and wire it into Exchange Online following the "email add-on service" pattern, including troubleshooting 4.4.317 and 5.7.606. |
 
-## Exchange Team Blog
+## Bytes from Exchange Team Blog
 
 | Article | Description |
 |---|---|
-| [Exchange Team Blog summaries](Exchange-Team-Blog/index.md) | Short summaries of significant Exchange Team Blog articles (security updates, releases, retirements, new features), added automatically with links to the originals. |
+| [Bytes from Exchange Team Blog](Bytes-from-Exchange-Team-Blog/index.md) | Short summaries of significant Exchange Team Blog articles (security updates, releases, retirements, new features), added automatically with links to the originals. |
 
 ## Exchange Online
 

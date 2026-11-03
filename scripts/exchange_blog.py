@@ -40,7 +40,7 @@ CATEGORIES = [("Security update", r"security update|\bSUs?\b|vulnerab|CVE-"),
               ("New feature", r"generally available|general availability|\bGA\b|public preview|now available"),
               ("Action required", r"action required|must |required|upgrade|deadline")]
 ROOT = Path(__file__).resolve().parent.parent
-POSTS = ROOT / "docs" / "Exchange-Team-Blog"
+POSTS = ROOT / "docs" / "Bytes-from-Exchange-Team-Blog"
 STATE = ROOT / "data" / "exchange-blog-state.json"
 MAX_AGE_DAYS = 14      # ignore older articles, so the first run does not backfill the archive
 MAX_PER_RUN = 3        # keep each run small; the rest are picked up next run
@@ -238,7 +238,7 @@ source: {json.dumps(item['link'])}
 
 def write_index(state):
     rows = sorted((v for v in state.values() if v.get("file")), key=lambda v: v["published"], reverse=True)
-    lines = ["---", "title: Exchange Team Blog", "---", "", "# Exchange Team Blog", "",
+    lines = ["---", "title: Bytes from Exchange Team Blog", "---", "", "# Bytes from Exchange Team Blog", "",
              "Short summaries of significant articles from Microsoft's "
              "[Exchange Team Blog](https://techcommunity.microsoft.com/category/exchange/blog/exchange), "
              "added automatically. Each one links to the original.", ""]
