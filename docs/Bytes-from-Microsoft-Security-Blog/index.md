@@ -8,6 +8,9 @@ Short summaries of new articles from the [Microsoft Security Blog](https://www.m
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-05 | [New investments to reduce on-premises security risk](2026-11-05-new-investments-to-reduce-on-premises-security-risk.md) | Action required |
+| 2026-11-05 | [​​​​What’s new in Microsoft Security: November 2026](2026-11-05-what-s-new-in-microsoft-security-november-2026.md) | New feature |
+| 2026-11-05 | [Email threat landscape: Q3 2026 trends and insights](2026-11-05-email-threat-landscape-q3-2026-trends-and-insights.md) | Other |
 | 2026-11-03 | [Fake-download campaign uses trojanized installers to deliver monetization payloads](2026-11-03-fake-download-campaign-uses-trojanized-installers-to-deliver-monetizat.md) | Security update |
 | 2026-11-03 | [Microsoft named a Leader in the 2026 Gartner® Magic Quadrant™ for AI Agent Management Platforms](2026-11-03-microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-ai-age.md) | Other |
 | 2026-11-02 | [What exploited vulnerabilities have in common: A data-driven analysis of real-world attacks](2026-11-02-what-exploited-vulnerabilities-have-in-common-a-data-driven-analysis-o.md) | Security update |

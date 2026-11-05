@@ -339,5 +339,42 @@
     "source": "Microsoft Entra Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-04-scale-access-controls-with-microsoft-entra-conditional-access-policy-p.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/catch-microsoft-entra-at-ignite-2026/ba-p/4513159": {
+    "title": "Catch Microsoft Entra at Ignite 2026",
+    "published": "2026-11-05T16:00:00+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft Entra Blog"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/05/email-threat-landscape-q3-2026-trends-and-insights/": {
+    "title": "Email threat landscape: Q3 2026 trends and insights",
+    "published": "2026-11-05T16:00:00+00:00",
+    "significant": true,
+    "reason": "The article provides a quarterly threat intelligence summary of email and collaboration trends without announcing new products, mandatory security updates, or immediate required administrative actions.",
+    "category": "Other",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-05-email-threat-landscape-q3-2026-trends-and-insights.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/05/whats-new-in-microsoft-security-november-2026/": {
+    "title": "​​​​What’s new in Microsoft Security: November 2026",
+    "published": "2026-11-05T17:00:00+00:00",
+    "significant": true,
+    "reason": "The post announces multiple general availability features and capabilities across Microsoft Intune, Defender, and AI security governance.",
+    "category": "New feature",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-05-what-s-new-in-microsoft-security-november-2026.md"
+  },
+  "https://techcommunity.microsoft.com/blog/microsoft-security-blog/new-investments-to-reduce-on-premises-security-risk/4570381": {
+    "title": "New investments to reduce on-premises security risk",
+    "published": "2026-11-05T17:10:14+00:00",
+    "significant": true,
+    "reason": "Microsoft announced major security changes for on-premises servers, including automatic updates and hardened default configurations starting in late 2026 and early 2027.",
+    "category": "Action required",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-05-new-investments-to-reduce-on-premises-security-risk.md"
   }
 }
