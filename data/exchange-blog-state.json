@@ -302,5 +302,25 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-03-fake-download-campaign-uses-trojanized-installers-to-deliver-monetizat.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-purview-blog/what-stops-a-service-side-auto-labeling-rollout-from-being/ba-p/4567706": {
+    "title": "What stops a service-side auto-labeling rollout from being approved — and how to unblock it",
+    "published": "2026-11-03T22:21:54+00:00",
+    "significant": true,
+    "reason": "Provides guidance and technical details on navigating service-side auto-labeling rollouts, limits, and approval gates for Microsoft Purview.",
+    "category": "Action required",
+    "source": "Microsoft Purview Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-03-what-stops-a-service-side-auto-labeling-rollout-from-being-approved-an.md"
+  },
+  "https://techcommunity.microsoft.com/t5/outlook-blog/how-outlook-search-is-changing-ranking-resilience-and-the/ba-p/4568760": {
+    "title": "How Outlook Search is changing: ranking, resilience, and the feedback loop",
+    "published": "2026-11-03T16:30:00+00:00",
+    "significant": true,
+    "reason": "Outlines major changes to Outlook search functionality, including expanded relevance ranking, cloud-first routing with local fallback, and performance optimizations affecting commercial mailboxes.",
+    "category": "New feature",
+    "source": "Outlook Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-03-how-outlook-search-is-changing-ranking-resilience-and-the-feedback-loo.md"
   }
 }
