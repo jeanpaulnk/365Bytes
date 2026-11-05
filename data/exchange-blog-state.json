@@ -322,5 +322,22 @@
     "source": "Outlook Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-03-how-outlook-search-is-changing-ranking-resilience-and-the-feedback-loo.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/microsoft-entra-deep-dives-join-our-december-15-17-webinar/ba-p/4448760": {
+    "title": "Microsoft Entra deep dives: Join our December 15–17 webinar series",
+    "published": "2026-11-04T16:19:58+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft Entra Blog"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/scale-access-controls-with-microsoft-entra-conditional-access/ba-p/4569647": {
+    "title": "Scale access controls with Microsoft Entra Conditional Access policy plans",
+    "published": "2026-11-04T17:00:00+00:00",
+    "significant": true,
+    "reason": "Microsoft Entra has announced the public preview of Conditional Access policy plans, a major new feature for enterprise-scale identity management and access control.",
+    "category": "New feature",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-04-scale-access-controls-with-microsoft-entra-conditional-access-policy-p.md"
   }
 }
