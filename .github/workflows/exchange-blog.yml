@@ -31,7 +31,7 @@ jobs:
           # Backup: GitHub Copilot (any plan, including Free): fine-grained PAT with "Copilot Requests".
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
           ISSUE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TEST_SUMMARY: ${{ github.event.client_payload.test }}
+          TEST_SUMMARY: ${{ github.event.client_payload.test || inputs.test }}
           ALERT_TEST: ${{ github.event.client_payload.alert_test }}
           REWRITE_EXISTING: ${{ github.event.client_payload.rewrite }}
           BACKFILL_DAYS: ${{ github.event.client_payload.backfill_days }}
