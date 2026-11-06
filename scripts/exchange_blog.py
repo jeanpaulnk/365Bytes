@@ -133,7 +133,7 @@ Reply with JSON only:
 
 
 def http(url, data=None, headers=None, timeout=240):
-    req = urllib.request.Request(url, data=data, headers={"User-Agent": "JPN365Labs-bot", **(headers or {})})
+    req = urllib.request.Request(url, data=data, headers={"User-Agent": "365Bytes-bot", **(headers or {})})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read()
 
@@ -435,7 +435,7 @@ def _api(method, path, body=None):
     req = urllib.request.Request(f"https://api.github.com/repos/{repo}{path}", method=method,
                                  data=json.dumps(body).encode() if body is not None else None,
                                  headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
-                                          "Content-Type": "application/json", "User-Agent": "JPN365Labs-bot"})
+                                          "Content-Type": "application/json", "User-Agent": "365Bytes-bot"})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.loads(r.read() or b"null")
 
