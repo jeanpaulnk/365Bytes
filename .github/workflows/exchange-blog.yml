@@ -2,7 +2,7 @@ name: Bytes from Microsoft blogs
 on:
   schedule:
     - cron: '41 */3 * * *'   # every 3 hours
-  workflow_dispatch:
+  workflow_dispatch: {inputs: {test: {description: 'Test the AI summary only (publishes nothing)', type: boolean, default: false}}}
   repository_dispatch:
     types: [exchange-blog]
 permissions:
