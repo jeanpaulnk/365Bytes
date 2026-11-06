@@ -1,9 +1,9 @@
-extra: {social: [{icon: fontawesome/brands/linkedin, link: 'https://www.linkedin.com/in/jeanpaulnkundabose/', name: LinkedIn}, {icon: fontawesome/brands/x-twitter, link: 'https://x.com/Paulnkundabose', name: X (@Paulnkundabose)}, {icon: fontawesome/brands/microsoft, link: 'https://learn.microsoft.com/en-au/users/jeanpaulnkundabose/', name: Microsoft Learn}, {icon: fontawesome/solid/rss, link: 'https://jeanpaulnk.github.io/JPN365Labs/feed_rss_created.xml', name: Subscribe via RSS}]}
+extra: {social: [{icon: fontawesome/brands/linkedin, link: 'https://www.linkedin.com/in/jeanpaulnkundabose/', name: LinkedIn}, {icon: fontawesome/brands/x-twitter, link: 'https://x.com/Paulnkundabose', name: X (@Paulnkundabose)}, {icon: fontawesome/brands/microsoft, link: 'https://learn.microsoft.com/en-au/users/jeanpaulnkundabose/', name: Microsoft Learn}, {icon: fontawesome/solid/rss, link: 'https://jeanpaulnk.github.io/365Bytes/feed_rss_created.xml', name: Subscribe via RSS}]}
 extra_css: [stylesheets/extra.css]
 extra_javascript: [javascripts/message-center.js]
-site_url: https://jeanpaulnk.github.io/JPN365Labs/
-repo_url: https://github.com/jeanpaulnk/JPN365Labs
-site_name: 'JPN365Labs'
+site_url: https://jeanpaulnk.github.io/365Bytes/
+repo_url: https://github.com/jeanpaulnk/365Bytes
+site_name: '365Bytes'
 site_description: 'Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud identity'
 edit_uri: edit/main/docs/
 copyright: 'Content &copy; 2026 Jean Paul Nkundabose, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code: MIT. Summaries of Microsoft articles and Message Center content belong to Microsoft.'
@@ -33,5 +33,5 @@ plugins:
   - search
   - rss:
       match_path: '(?!Message-Center/|Bytes-from-[^/]+/index).+/.+'
-      feed_title: 'JPN365Labs'
+      feed_title: '365Bytes'
       length: 50
