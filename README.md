@@ -76,7 +76,7 @@ Set in **Settings → Secrets and variables → Actions → Repository secrets**
 
 | Secret | Used for | How to get it |
 |---|---|---|
-| `JPN365Labs_GEMINI_API_KEY` (or `GEMINI_API_KEY`) | Gemini summaries | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
+| `BYTES365_GEMINI_API_KEY` (or `GEMINI_API_KEY`) | Gemini summaries | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 | `COPILOT_GITHUB_TOKEN` | Copilot backup summaries | Fine-grained personal access token with the **Copilot Requests** account permission. Expires: renew it under the same name. |
 | `AI_API_KEY` + variables `AI_ENDPOINT`, `AI_MODEL` | Optional: any other OpenAI-compatible model instead of Gemini | Your provider |
 
