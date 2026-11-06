@@ -2,7 +2,7 @@
 title: Home
 ---
 
-# JPN365Labs
+# 365Bytes
 
 Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud identity.
 
