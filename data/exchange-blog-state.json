@@ -376,5 +376,15 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-05-new-investments-to-reduce-on-premises-security-risk.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/05/threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets/": {
+    "title": "Threat actors use agentic AI tooling to find and abuse exposed secrets",
+    "published": "2026-11-05T23:46:50+00:00",
+    "significant": true,
+    "reason": "Microsoft warns about threat actors using agentic AI frameworks to rapidly find exposed secrets and execute subsequent cloud compromises, detailing specific mitigation steps.",
+    "category": "Action required",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-05-threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets.md"
   }
 }

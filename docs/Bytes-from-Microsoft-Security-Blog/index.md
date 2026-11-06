@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Security Blog](https://www.m
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-05 | [Threat actors use agentic AI tooling to find and abuse exposed secrets](2026-11-05-threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets.md) | Action required |
 | 2026-11-05 | [New investments to reduce on-premises security risk](2026-11-05-new-investments-to-reduce-on-premises-security-risk.md) | Action required |
 | 2026-11-05 | [​​​​What’s new in Microsoft Security: November 2026](2026-11-05-what-s-new-in-microsoft-security-november-2026.md) | New feature |
 | 2026-11-05 | [Email threat landscape: Q3 2026 trends and insights](2026-11-05-email-threat-landscape-q3-2026-trends-and-insights.md) | Other |
