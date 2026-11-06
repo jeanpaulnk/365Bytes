@@ -6,7 +6,7 @@ title: Home
 
 Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud identity.
 
-<div class="substack-signup" style="text-align:center;margin:1.5em 0;"><p><strong>Get the Bytes by email</strong></p><iframe src="https://jpnspace.substack.com/embed" width="480" height="150" style="border:1px solid #EEE;background:white;max-width:100%;" frameborder="0" scrolling="no"></iframe><p><a href="https://jpnspace.substack.com/subscribe" target="_blank" rel="noopener" style="display:inline-block;padding:10px 20px;background:#607C10;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;">Subscribe on Substack</a></p></div>
+<div class="substack-signup" style="text-align:center;margin:1.5em 0;"><p><strong>Subscribe to my Substack newsletter</strong></p><iframe src="https://jpnspace.substack.com/embed" width="480" height="150" style="border:1px solid #EEE;background:white;max-width:100%;" frameborder="0" scrolling="no"></iframe><p><a href="https://jpnspace.substack.com/subscribe" target="_blank" rel="noopener" style="display:inline-block;padding:10px 20px;background:#607C10;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;">Subscribe on Substack</a></p></div>
 
 ## Transport
 
