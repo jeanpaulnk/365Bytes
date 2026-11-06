@@ -32,7 +32,7 @@ def load(name, fetch):
 
 
 def http_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "JPN365Labs-build"})
+    req = urllib.request.Request(url, headers={"User-Agent": "365Bytes-build"})
     with urllib.request.urlopen(req, timeout=120) as r:
         return json.load(r)
 
