@@ -7,7 +7,7 @@ images that I created) is licensed under the
 [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
 
 You may share and adapt it for any purpose, including commercially, as long as you give appropriate credit
-(for example: "Jean Paul Nkundabose, JPN365Labs, https://jeanpaulnk.github.io/JPN365Labs/"), link to the
+(for example: "Jean Paul Nkundabose, 365Bytes, https://jeanpaulnk.github.io/365Bytes/"), link to the
 license, and indicate if changes were made. Full legal text:
 https://creativecommons.org/licenses/by/4.0/legalcode
 
