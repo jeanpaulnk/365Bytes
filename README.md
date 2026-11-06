@@ -1,9 +1,9 @@
-# JPN365Labs
+# 365Bytes
 
 Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud identity, plus short,
 automatically updated summaries of Microsoft's product blogs.
 
-**Site:** https://jeanpaulnk.github.io/JPN365Labs/
+**Site:** https://jeanpaulnk.github.io/365Bytes/
 
 ## What's on the site
 
@@ -30,7 +30,7 @@ pip install mkdocs-material mkdocs-rss-plugin
 mkdocs serve
 ```
 
-Then open http://127.0.0.1:8000/JPN365Labs/. (The Message Center list needs the deployed `/mc-data/` files,
+Then open http://127.0.0.1:8000/365Bytes/. (The Message Center list needs the deployed `/mc-data/` files,
 so it only fills on the live site.)
 
 ## "Bytes from Microsoft blogs" automation
@@ -107,7 +107,7 @@ Special runs are started with a `repository_dispatch` event of type `exchange-bl
 
 ```bash
 # Summarise the newest article with each AI and report it in the run log; publishes nothing
-echo '{"event_type":"exchange-blog","client_payload":{"test":"true"}}' | gh api repos/jeanpaulnk/JPN365Labs/dispatches --input -
+echo '{"event_type":"exchange-blog","client_payload":{"test":"true"}}' | gh api repos/jeanpaulnk/365Bytes/dispatches --input -
 ```
 
 | `client_payload` | What it does |
