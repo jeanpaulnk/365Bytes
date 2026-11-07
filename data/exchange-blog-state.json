@@ -386,5 +386,25 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-05-threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-defender-for-office/enhancements-to-the-protection-and-posture-insights-report/ba-p/4568163": {
+    "title": "Enhancements to the Protection and Posture Insights report",
+    "published": "2026-11-06T13:48:48+00:00",
+    "significant": true,
+    "reason": "The article introduces new general availability features and insights for the Protection and Posture Insights report in Microsoft Defender for Office 365.",
+    "category": "New feature",
+    "source": "Microsoft Defender for Office 365 Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-06-enhancements-to-the-protection-and-posture-insights-report.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/": {
+    "title": "ARTEX abuse expands as cybercriminals target financial sector",
+    "published": "2026-11-07T02:44:34+00:00",
+    "significant": true,
+    "reason": "Details active exploitation and tactics by threat actors using the ARTEX agentic AI framework to target the financial sector.",
+    "category": "Security update",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-07-artex-abuse-expands-as-cybercriminals-target-financial-sector.md"
   }
 }
