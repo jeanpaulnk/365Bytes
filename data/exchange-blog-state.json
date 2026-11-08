@@ -406,5 +406,15 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-07-artex-abuse-expands-as-cybercriminals-target-financial-sector.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/what-s-new-in-microsoft-entra-november-2026/ba-p/4556457": {
+    "title": "What’s new in Microsoft Entra: November 2026",
+    "published": "2026-11-06T21:04:04+00:00",
+    "significant": true,
+    "reason": "The article announces multiple public previews and general availability features for Microsoft Entra, including changes to authentication methods, lifecycle policies, and an action-required telephony provider migration.",
+    "category": "New feature",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-06-what-s-new-in-microsoft-entra-november-2026.md"
   }
 }

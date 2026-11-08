@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Entra Blog](https://techcomm
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-06 | [What’s new in Microsoft Entra: November 2026](2026-11-06-what-s-new-in-microsoft-entra-november-2026.md) | New feature |
 | 2026-11-04 | [Scale access controls with Microsoft Entra Conditional Access policy plans](2026-11-04-scale-access-controls-with-microsoft-entra-conditional-access-policy-p.md) | New feature |
 | 2026-11-02 | [Global Secure Access: Private Access and Internet Access in one offering](2026-11-02-global-secure-access-private-access-and-internet-access-in-one-offerin.md) | New feature |
 | 2026-11-02 | [Microsoft Entra Global Secure Access: one offering for Private Access and Internet Access](2026-11-02-microsoft-entra-global-secure-access-one-offering-for-private-access-a.md) | New feature |
