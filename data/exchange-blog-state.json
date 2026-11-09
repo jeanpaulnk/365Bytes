@@ -416,5 +416,15 @@
     "source": "Microsoft Entra Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-06-what-s-new-in-microsoft-entra-november-2026.md"
+  },
+  "https://techcommunity.microsoft.com/t5/exchange-team-blog/now-available-oauth-authentication-for-on-premises-exchange/ba-p/4571777": {
+    "title": "Now available: OAuth authentication for on-premises Exchange mailbox migrations to Microsoft 365",
+    "published": "2026-11-09T18:43:30+00:00",
+    "significant": true,
+    "reason": "Introduction of a new authentication feature for mailbox migrations that improves security by supporting OAuth instead of Basic authentication.",
+    "category": "New feature",
+    "source": "Exchange Team Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-09-now-available-oauth-authentication-for-on-premises-exchange-mailbox-mi.md"
   }
 }
