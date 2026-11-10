@@ -426,5 +426,15 @@
     "source": "Exchange Team Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-09-now-available-oauth-authentication-for-on-premises-exchange-mailbox-mi.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/09/forge-lab-uses-agentic-tools-to-identify-memory-safety-issues-in-rust/": {
+    "title": "FORGE Lab uses agentic tools to identify memory safety issues in Rust",
+    "published": "2026-11-09T20:17:31+00:00",
+    "significant": true,
+    "reason": "The article discusses security research and bugs found in Rust's standard library, but does not announce a Microsoft product update, vulnerability patch action, or breaking administrative change.",
+    "category": "Other",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-09-forge-lab-uses-agentic-tools-to-identify-memory-safety-issues-in-rust.md"
   }
 }

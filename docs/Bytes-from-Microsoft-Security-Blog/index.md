@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Security Blog](https://www.m
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-09 | [FORGE Lab uses agentic tools to identify memory safety issues in Rust](2026-11-09-forge-lab-uses-agentic-tools-to-identify-memory-safety-issues-in-rust.md) | Other |
 | 2026-11-07 | [ARTEX abuse expands as cybercriminals target financial sector](2026-11-07-artex-abuse-expands-as-cybercriminals-target-financial-sector.md) | Security update |
 | 2026-11-05 | [Threat actors use agentic AI tooling to find and abuse exposed secrets](2026-11-05-threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets.md) | Action required |
 | 2026-11-05 | [New investments to reduce on-premises security risk](2026-11-05-new-investments-to-reduce-on-premises-security-risk.md) | Action required |
