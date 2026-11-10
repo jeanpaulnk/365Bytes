@@ -8,6 +8,7 @@ Short summaries of new articles from the [Exchange Team Blog](https://techcommun
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-10 | [Released: November 2026 Exchange Server Security Updates](2026-11-10-released-november-2026-exchange-server-security-updates.md) | Security update |
 | 2026-11-09 | [Now available: OAuth authentication for on-premises Exchange mailbox migrations to Microsoft 365](2026-11-09-now-available-oauth-authentication-for-on-premises-exchange-mailbox-mi.md) | New feature |
 | 2026-10-29 | [Cross-tenant Free/Busy, MailTips, and Calendar Sharing are moving to Cross-Tenant Access Policy](2026-10-29-cross-tenant-free-busy-mailtips-and-calendar-sharing-are-moving-to-cro.md) | Change |
 | 2026-10-26 | [EWS Deprecation Is Here – What This Means To You](2026-10-26-ews-deprecation-is-here-what-this-means-to-you.md) | Retirement |

@@ -436,5 +436,15 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-09-forge-lab-uses-agentic-tools-to-identify-memory-safety-issues-in-rust.md"
+  },
+  "https://techcommunity.microsoft.com/t5/exchange-team-blog/released-november-2026-exchange-server-security-updates/ba-p/4570368": {
+    "title": "Released: November 2026 Exchange Server Security Updates",
+    "published": "2026-11-10T18:59:15+00:00",
+    "significant": true,
+    "reason": "Microsoft released critical security updates for Exchange Server Subscription Edition along with fixes for server instability caused by previous Windows updates.",
+    "category": "Security update",
+    "source": "Exchange Team Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-10-released-november-2026-exchange-server-security-updates.md"
   }
 }
