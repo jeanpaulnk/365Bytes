@@ -446,5 +446,15 @@
     "source": "Exchange Team Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-10-released-november-2026-exchange-server-security-updates.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/10/detecting-sleeper-agents-hiding-in-ai-model-neurons/": {
+    "title": "Detecting sleeper agents hiding in AI model neurons",
+    "published": "2026-11-10T23:00:00+00:00",
+    "significant": true,
+    "reason": "Microsoft Research released critical threat intelligence and mitigation guidance regarding AI model sleeper agents and weight-space backdoors.",
+    "category": "Action required",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-10-detecting-sleeper-agents-hiding-in-ai-model-neurons.md"
   }
 }
