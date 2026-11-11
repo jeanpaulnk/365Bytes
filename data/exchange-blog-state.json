@@ -456,5 +456,15 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-10-detecting-sleeper-agents-hiding-in-ai-model-neurons.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/11/lessons-from-59-linux-kernel-bug-reports/": {
+    "title": "Lessons from 59 Linux Kernel Bug Reports",
+    "published": "2026-11-11T16:55:00+00:00",
+    "significant": true,
+    "reason": "The article discusses AI-driven vulnerability research in the Linux kernel and does not impact Microsoft 365 or Exchange administration.",
+    "category": "Other",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-11-lessons-from-59-linux-kernel-bug-reports.md"
   }
 }

@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Security Blog](https://www.m
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-11 | [Lessons from 59 Linux Kernel Bug Reports](2026-11-11-lessons-from-59-linux-kernel-bug-reports.md) | Other |
 | 2026-11-10 | [Detecting sleeper agents hiding in AI model neurons](2026-11-10-detecting-sleeper-agents-hiding-in-ai-model-neurons.md) | Action required |
 | 2026-11-09 | [FORGE Lab uses agentic tools to identify memory safety issues in Rust](2026-11-09-forge-lab-uses-agentic-tools-to-identify-memory-safety-issues-in-rust.md) | Other |
 | 2026-11-07 | [ARTEX abuse expands as cybercriminals target financial sector](2026-11-07-artex-abuse-expands-as-cybercriminals-target-financial-sector.md) | Security update |
