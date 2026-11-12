@@ -466,5 +466,15 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-11-lessons-from-59-linux-kernel-bug-reports.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/11/global-socket-how-threat-actors-weaponizing-gsocket-stealthy-c2/": {
+    "title": "The global socket: how threat actors are weaponizing GSocket for stealthy C2",
+    "published": "2026-11-11T19:49:57+00:00",
+    "significant": true,
+    "reason": "The article details a significant rising threat trend involving threat actors weaponizing GSocket for stealthy C2 persistence on Linux servers, requiring administrative action beyond simple vulnerability patching.",
+    "category": "Action required",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-11-the-global-socket-how-threat-actors-are-weaponizing-gsocket-for-stealt.md"
   }
 }
