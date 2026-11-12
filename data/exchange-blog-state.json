@@ -476,5 +476,12 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-11-the-global-socket-how-threat-actors-are-weaponizing-gsocket-for-stealt.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-365-blog/what-you-ll-learn-explore-and-experience-at-espc-2026/ba-p/4572576": {
+    "title": "What You’ll Learn, Explore, and Experience at ESPC 2026",
+    "published": "2026-11-11T16:18:37+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft 365 Blog"
   }
 }

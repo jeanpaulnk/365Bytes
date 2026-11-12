@@ -3,8 +3,9 @@
     "failures": 0
   },
   "Microsoft Defender for Office 365 Blog": {
-    "failures": 2,
-    "last_error": "feed returned no articles"
+    "failures": 3,
+    "last_error": "feed returned no articles",
+    "issue": 5
   },
   "Microsoft Purview Blog": {
     "failures": 0
