@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Security Blog](https://www.m
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-12 | [Trained to betray: How post-training supply chain attacks hijack coding agents](2026-11-12-trained-to-betray-how-post-training-supply-chain-attacks-hijack-coding.md) | Security update |
 | 2026-11-11 | [The global socket: how threat actors are weaponizing GSocket for stealthy C2](2026-11-11-the-global-socket-how-threat-actors-are-weaponizing-gsocket-for-stealt.md) | Action required |
 | 2026-11-11 | [Lessons from 59 Linux Kernel Bug Reports](2026-11-11-lessons-from-59-linux-kernel-bug-reports.md) | Other |
 | 2026-11-10 | [Detecting sleeper agents hiding in AI model neurons](2026-11-10-detecting-sleeper-agents-hiding-in-ai-model-neurons.md) | Action required |

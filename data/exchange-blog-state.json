@@ -483,5 +483,15 @@
     "significant": false,
     "reason": "event announcement (title)",
     "source": "Microsoft 365 Blog"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/12/trained-to-betray-how-post-training-supply-chain-attacks-hijack-coding-agents/": {
+    "title": "Trained to betray: How post-training supply chain attacks hijack coding agents",
+    "published": "2026-11-12T17:00:00+00:00",
+    "significant": true,
+    "reason": "The article details novel supply chain attack vectors (dataset and model poisoning) targeting enterprise AI coding agents, highlighting critical security risks for organizations deploying autonomous tools.",
+    "category": "Security update",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-12-trained-to-betray-how-post-training-supply-chain-attacks-hijack-coding.md"
   }
 }
