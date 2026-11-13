@@ -3,7 +3,7 @@
     "failures": 0
   },
   "Microsoft Defender for Office 365 Blog": {
-    "failures": 4,
+    "failures": 5,
     "last_error": "feed returned no articles",
     "issue": 5
   },
