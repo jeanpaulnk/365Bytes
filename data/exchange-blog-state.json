@@ -510,5 +510,15 @@
     "significant": false,
     "reason": "event announcement (title)",
     "source": "Microsoft Entra Blog"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-purview-blog/microsoft-purview-referential-architecture-diagrams/ba-p/4510925": {
+    "title": "Microsoft Purview Referential Architecture Diagrams",
+    "published": "2026-11-13T21:36:31+00:00",
+    "significant": true,
+    "reason": "The post provides reference architecture diagrams and documentation updates for Microsoft Purview without introducing new features, breaking changes, or required actions.",
+    "category": "Other",
+    "source": "Microsoft Purview Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-13-microsoft-purview-referential-architecture-diagrams.md"
   }
 }

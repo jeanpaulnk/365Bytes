@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Purview Blog](https://techco
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-13 | [Microsoft Purview Referential Architecture Diagrams](2026-11-13-microsoft-purview-referential-architecture-diagrams.md) | Other |
 | 2026-11-03 | [What stops a service-side auto-labeling rollout from being approved — and how to unblock it](2026-11-03-what-stops-a-service-side-auto-labeling-rollout-from-being-approved-an.md) | Action required |
 | 2026-11-02 | [Scaling classification and labeling: an interactive reference architecture update](2026-11-02-scaling-classification-and-labeling-an-interactive-reference-architect.md) | New feature |
 | 2026-10-19 | [Troubleshooting playbook for Auto labelling in SharePoint and OneDrive](2026-10-19-troubleshooting-playbook-for-auto-labelling-in-sharepoint-and-onedrive.md) | Other |
