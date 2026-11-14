@@ -493,5 +493,15 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-12-trained-to-betray-how-post-training-supply-chain-attacks-hijack-coding.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/13/sckit-abuses-screenconnect-deploy-remote-access-target-technician-sessions/": {
+    "title": "SCKit abuses ScreenConnect to deploy remote access and target technician sessions",
+    "published": "2026-11-13T21:31:44+00:00",
+    "significant": true,
+    "reason": "Microsoft details an active threat campaign exploiting ScreenConnect to deploy the SCKit worm and target IT support technician sessions.",
+    "category": "Security update",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-13-sckit-abuses-screenconnect-to-deploy-remote-access-and-target-technici.md"
   }
 }
