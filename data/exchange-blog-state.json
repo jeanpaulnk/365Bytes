@@ -503,5 +503,12 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-13-sckit-abuses-screenconnect-to-deploy-remote-access-and-target-technici.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/ai-is-changing-access-catch-microsoft-entra-at-ignite-2026/ba-p/4513159": {
+    "title": "AI is changing access: Catch Microsoft Entra at Ignite 2026",
+    "published": "2026-11-14T00:13:31+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft Entra Blog"
   }
 }
