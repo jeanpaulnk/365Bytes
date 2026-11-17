@@ -62,6 +62,7 @@ Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud 
 |---|---|
 | [Cross-Tenant Message Recall in Exchange Online](Exchange-Online/Cross-Tenant-Message-Recall.md) | How Message Recall now works across trusted Microsoft 365 tenants, and how to enable it and manage the allow-list with PowerShell. |
 | [Get-GroupSendPermissions](Exchange-Online/Get-GroupSendPermissions.md) | List every DL, DDL and Microsoft 365 group on which a user has Send As or Send on Behalf permission. |
+| [Test-XtapM365Config](Exchange-Online/Test-XtapM365Config.md) | Read-only validation of cross-tenant access policy settings for Free/Busy, MailTips and Calendar Sharing, with multiple sign-in methods. |
 
 ## Tools
 
