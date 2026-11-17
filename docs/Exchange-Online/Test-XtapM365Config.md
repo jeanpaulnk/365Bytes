@@ -2,7 +2,7 @@
 
 Read-only validation of the Microsoft 365 **Cross-Tenant Access Policy (XTAP)** settings behind **Free/Busy**, **MailTips** and **Calendar Sharing** between tenants. Nothing is changed.
 
-[Download Test-XtapM365Config.ps1](Test-XtapM365Config.ps1){ .md-button }
+[Download Test-XtapM365Config.ps1](Test-XtapM365Config.ps1)
 
 ## What it checks
 
