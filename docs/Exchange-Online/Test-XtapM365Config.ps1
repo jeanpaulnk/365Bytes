@@ -26,7 +26,7 @@
   Snapshot exported from the other tenant.
 
 .PARAMETER AuthMethod
-  Interactive (default, delegated browser   sign-in), ClientSecret, Certificate
+  Interactive (default, delegated browser sign-in), ClientSecret, Certificate
   (app-only; needs Policy.Read.All application permission with admin consent),
   ManagedIdentity (Azure-hosted), AccessToken (pre-acquired token, SecureString),
   ExistingContext (reuse a prior Connect-MgGraph session).
@@ -35,8 +35,27 @@
   Inputs for the chosen auth method. ClientId also selects a user-assigned managed identity
   or a custom app for interactive sign-in. Environment: Global, USGov, USGovDoD, China.
 
+.PARAMETER ClientSecretEnvVar / KeyVaultName / KeyVaultSecretName
+  For -AuthMethod ClientSecret when -ClientSecret is not given: read the secret from Azure Key Vault
+  (needs Az.KeyVault and Connect-AzAccount) or from an environment variable (default XTAP_CLIENT_SECRET).
+
+.PARAMETER ResultPath
+  Writes the results to a file: JSON if the path ends in .json, otherwise CSV.
+
+.PARAMETER PassThru
+  Emits the result objects (Scope, Check, Status, Detail) to the pipeline.
+
+.NOTES
+  Partner display names are shown when the signed-in identity can call findTenantInformationByTenantId
+  (CrossTenantInformation.ReadBasic.All); otherwise only the tenant ID is shown.
+  Uses Microsoft Graph beta endpoints, which Microsoft may change without notice.
+  Exit code is 1 when any check fails.
+
 .EXAMPLE
   .\Test-XtapM365Config.ps1 -AuthMethod ClientSecret -TenantId <id> -ClientId <appId> -ClientSecret (Read-Host -AsSecureString)
+
+.EXAMPLE
+  .\Test-XtapM365Config.ps1 -AuthMethod ClientSecret -TenantId <id> -ClientId <appId> -KeyVaultName <vault> -KeyVaultSecretName <secret> -ResultPath .\xtap.csv
 
 .EXAMPLE
   .\Test-XtapM365Config.ps1 -AuthMethod Certificate -TenantId <id> -ClientId <appId> -CertificateThumbprint <thumb>
@@ -62,19 +81,36 @@ param(
     [string]$TenantId,
     [string]$ClientId,
     [securestring]$ClientSecret,
+    [string]$ClientSecretEnvVar = 'XTAP_CLIENT_SECRET',
+    [string]$KeyVaultName,
+    [string]$KeyVaultSecretName,
     [string]$CertificateThumbprint,
     [System.Security.Cryptography.X509Certificates.X509Certificate2]$Certificate,
     [securestring]$AccessToken,
     [ValidateSet('Global', 'USGov', 'USGovDoD', 'China')]
-    [string]$Environment = 'Global'
+    [string]$Environment = 'Global',
+    [string]$ResultPath,
+    [switch]$PassThru
 )
 
 $ErrorActionPreference = 'Stop'
+# The M365 capabilities (m365Capabilities) endpoints are only available in Graph beta, so this
+# script can break if Microsoft changes the beta schema. Re-validate after Graph updates.
 $base = 'https://graph.microsoft.com/beta/policies/crossTenantAccessPolicy'
 $results = New-Object System.Collections.Generic.List[object]
+$partnerNames = @{}
 
 function Add-Result($Scope, $Check, $Status, $Detail) {
+    if ($partnerNames.ContainsKey($Scope)) { $Scope = "$Scope ($($partnerNames[$Scope]))" }
     $results.Add([pscustomobject]@{ Scope = $Scope; Check = $Check; Status = $Status; Detail = $Detail })
+}
+
+function Get-PartnerName($Id) {
+    try {
+        $t = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/tenantRelationships/findTenantInformationByTenantId(tenantId='$Id')"
+        if ($t.displayName) { return [string]$t.displayName }
+    } catch { }   # needs CrossTenantInformation.ReadBasic.All; names are optional
+    return $null
 }
 
 function Get-Graph($Uri) {
@@ -129,7 +165,16 @@ if ($AuthMethod -eq 'ExistingContext') {
             if ($ClientId) { $connect.ClientId = $ClientId }
         }
         'ClientSecret' {
-            Require $TenantId 'TenantId'; Require $ClientId 'ClientId'; Require $ClientSecret 'ClientSecret'
+            Require $TenantId 'TenantId'; Require $ClientId 'ClientId'
+            if (-not $ClientSecret -and $KeyVaultName -and $KeyVaultSecretName) {
+                if (-not (Get-Command Get-AzKeyVaultSecret -ErrorAction SilentlyContinue)) { throw 'Az.KeyVault is required for -KeyVaultName (Install-Module Az.KeyVault) and an Az sign-in (Connect-AzAccount).' }
+                $ClientSecret = (Get-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultSecretName).SecretValue
+            }
+            if (-not $ClientSecret) {
+                $envValue = [Environment]::GetEnvironmentVariable($ClientSecretEnvVar)
+                if ($envValue) { $ClientSecret = ConvertTo-SecureString $envValue -AsPlainText -Force }
+            }
+            if (-not $ClientSecret) { throw "-ClientSecret, -KeyVaultName/-KeyVaultSecretName or the $ClientSecretEnvVar environment variable is required for -AuthMethod ClientSecret." }
             $connect.TenantId = $TenantId
             $connect.ClientSecretCredential = New-Object System.Management.Automation.PSCredential($ClientId, $ClientSecret)
         }
@@ -199,6 +244,8 @@ if (-not $partners) { Add-Result 'Partners' 'Partners found' 'WARN' 'No partner 
 $snapshotPartners = @()
 foreach ($p in $partners) {
     $id = $p.tenantId
+    $name = Get-PartnerName $id
+    if ($name) { $partnerNames[$id] = $name }
     try {
         $partnerCaps = @(Get-CapabilitySummary (Get-Graph "$base/partners/$id/m365Capabilities"))
 
@@ -268,7 +315,8 @@ if ($PeerSnapshotPath) {
 
 # Output
 $order = @{ FAIL = 0; WARN = 1; PASS = 2; INFO = 3 }
-$results | Sort-Object { $order[$_.Status] }, Scope | Format-Table -AutoSize -Wrap
+$sorted = @($results | Sort-Object { $order[$_.Status] }, Scope)
+$sorted | Format-Table -AutoSize -Wrap | Out-Host
 $counts = $results | Group-Object Status | ForEach-Object { "$($_.Name)=$($_.Count)" }
 Write-Host ("Summary: " + ($counts -join '  ')) -ForegroundColor Cyan
 
@@ -281,5 +329,12 @@ if ($ExportPath) {
     } | ConvertTo-Json -Depth 8 | Set-Content -Path $ExportPath -Encoding UTF8
     Write-Host "Snapshot written to $ExportPath" -ForegroundColor Cyan
 }
+
+if ($ResultPath) {
+    if ($ResultPath -match '\.json$') { $sorted | ConvertTo-Json -Depth 4 | Set-Content -Path $ResultPath -Encoding UTF8 }
+    else { $sorted | Export-Csv -Path $ResultPath -NoTypeInformation -Encoding UTF8 }
+    Write-Host "Results written to $ResultPath" -ForegroundColor Cyan
+}
+if ($PassThru) { $sorted }
 
 if ($results | Where-Object Status -eq 'FAIL') { exit 1 }

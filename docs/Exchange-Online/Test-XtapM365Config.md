@@ -22,7 +22,7 @@ Read-only validation of the Microsoft 365 **Cross-Tenant Access Policy (XTAP)** 
 | `-AuthMethod` | Required parameters | Notes |
 |---|---|---|
 | `Interactive` (default) | none | Browser sign-in. Optional `-TenantId`, `-ClientId`. |
-| `ClientSecret` | `-TenantId`, `-ClientId`, `-ClientSecret` | App-only. Secret is a `SecureString`. |
+| `ClientSecret` | `-TenantId`, `-ClientId`, plus a secret from `-ClientSecret` (`SecureString`), Azure Key Vault (`-KeyVaultName`, `-KeyVaultSecretName`) or the `XTAP_CLIENT_SECRET` environment variable (name set with `-ClientSecretEnvVar`) | App-only. Key Vault needs the Az.KeyVault module and `Connect-AzAccount`. |
 | `Certificate` | `-TenantId`, `-ClientId`, `-CertificateThumbprint` or `-Certificate` | App-only, no secret to store. |
 | `ManagedIdentity` | none | For Azure-hosted runs. Add `-ClientId` for a user-assigned identity. |
 | `AccessToken` | `-AccessToken` | Pre-acquired Graph token as a `SecureString`. |
