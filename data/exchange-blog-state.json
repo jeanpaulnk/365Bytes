@@ -530,5 +530,15 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-17-high-volume-phishing-campaign-uses-microsoft-365-outage-lures-to-targe.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/17/the-risks-of-device-code-authentication-for-ai-coding-agents/": {
+    "title": "The risks of device code authentication for AI coding agents",
+    "published": "2026-11-17T15:00:00+00:00",
+    "significant": true,
+    "reason": "Discusses research on device code phishing against AI coding agents using simulated labs rather than a new feature, vulnerability, or breaking change.",
+    "category": "Other",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-3.5-flash-lite",
+    "file": "2026-11-17-the-risks-of-device-code-authentication-for-ai-coding-agents.md"
   }
 }

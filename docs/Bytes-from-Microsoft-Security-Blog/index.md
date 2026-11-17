@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Security Blog](https://www.m
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-17 | [The risks of device code authentication for AI coding agents](2026-11-17-the-risks-of-device-code-authentication-for-ai-coding-agents.md) | Other |
 | 2026-11-17 | [High volume phishing campaign uses Microsoft 365 outage lures to target multiple industry sectors](2026-11-17-high-volume-phishing-campaign-uses-microsoft-365-outage-lures-to-targe.md) | Action required |
 | 2026-11-13 | [SCKit abuses ScreenConnect to deploy remote access and target technician sessions](2026-11-13-sckit-abuses-screenconnect-to-deploy-remote-access-and-target-technici.md) | Security update |
 | 2026-11-12 | [Trained to betray: How post-training supply chain attacks hijack coding agents](2026-11-12-trained-to-betray-how-post-training-supply-chain-attacks-hijack-coding.md) | Security update |
