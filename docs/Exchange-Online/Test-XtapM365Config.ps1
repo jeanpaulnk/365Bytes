@@ -98,9 +98,15 @@ function Get-CapabilitySummary($Caps) {
     }
 }
 
-function Test-TrustAllowed($Policy) {
-    $u = $Policy.m365CollaborationInbound.users
-    return ($u.accessType -eq 'allowed' -and (@($u.targets.target) -contains 'AllUsers'))
+# State: Allowed (all users), Scoped (allowed for specific users/groups), Blocked, NotConfigured (inherits default)
+function Get-TrustState($Policy) {
+    $in = $Policy.m365CollaborationInbound
+    $u = $in.users
+    if (-not $u -or -not $u.accessType) { return 'NotConfigured' }
+    if ($in.applications.accessType -eq 'blocked') { return 'Blocked' }
+    if ($u.accessType -ne 'allowed') { return 'Blocked' }
+    if (@($u.targets.target) -contains 'AllUsers') { return 'Allowed' }
+    return 'Scoped'
 }
 
 # Connect
@@ -162,10 +168,11 @@ Write-Host "Tenant: $orgName ($tenantId)  Auth: $AuthMethod" -ForegroundColor Cy
 $default = Get-Graph "$base/default"
 $defaultCaps = @(Get-CapabilitySummary (Get-Graph "$base/default/m365Capabilities"))
 
-if (Test-TrustAllowed $default) {
-    Add-Result 'Default' 'M365 collaboration inbound' 'WARN' 'Allowed for all users from ALL external tenants.'
-} else {
-    Add-Result 'Default' 'M365 collaboration inbound' 'PASS' 'Blocked by default; only partners with an explicit allow can use it.'
+$defaultState = Get-TrustState $default
+switch ($defaultState) {
+    'Allowed' { Add-Result 'Default' 'M365 collaboration inbound' 'WARN' 'Allowed for all users from ALL external tenants.' }
+    'Scoped'  { Add-Result 'Default' 'M365 collaboration inbound' 'WARN' 'Allowed for specific users/groups from ALL external tenants.' }
+    default   { Add-Result 'Default' 'M365 collaboration inbound' 'PASS' 'Blocked by default; only partners with an explicit allow can use it.' }
 }
 foreach ($c in $defaultCaps) {
     if ($c.Allowed -and $c.Name -match 'Reviewer') {
@@ -192,25 +199,50 @@ if (-not $partners) { Add-Result 'Partners' 'Partners found' 'WARN' 'No partner 
 $snapshotPartners = @()
 foreach ($p in $partners) {
     $id = $p.tenantId
-    $caps = @(Get-CapabilitySummary (Get-Graph "$base/partners/$id/m365Capabilities"))
-    $trust = Test-TrustAllowed $p
-    $snapshotPartners += [pscustomobject]@{ tenantId = $id; m365InboundAllowed = $trust; capabilities = $caps }
+    try {
+        $partnerCaps = @(Get-CapabilitySummary (Get-Graph "$base/partners/$id/m365Capabilities"))
 
-    if ($trust) { Add-Result $id 'M365 collaboration inbound (trust)' 'PASS' 'Allowed for all users.' }
-    else        { Add-Result $id 'M365 collaboration inbound (trust)' 'FAIL' 'Not allowed; capabilities will not take effect.' }
+        # Effective trust: a partner without its own setting inherits the default policy
+        $state = Get-TrustState $p
+        $inherited = $state -eq 'NotConfigured'
+        $effective = if ($inherited) { $defaultState } else { $state }
+        $src = if ($inherited) { ' (inherited from default)' } else { '' }
+        $trustOk = $effective -in 'Allowed', 'Scoped'
 
-    foreach ($name in $ExpectedCapabilities) {
-        $c = $caps | Where-Object { $_.Name -eq $name }
-        if (-not $c)           { Add-Result $id "Expected $name" 'FAIL' 'Missing.' }
-        elseif (-not $c.Allowed) { Add-Result $id "Expected $name" 'FAIL' 'Present but disabled (isAllowed=false).' }
-        elseif ($c.Scope -eq 'All/user' -or $c.Scope -eq 'All/group') {
-            Add-Result $id "Expected $name" 'PASS' 'Allowed for all users (consider limiting to a security group).'
-        } else { Add-Result $id "Expected $name" 'PASS' "Allowed. Scope=$($c.Scope)" }
+        # Effective capabilities: partner entry wins, otherwise the default entry applies
+        $caps = @($partnerCaps)
+        foreach ($d in $defaultCaps) {
+            if (-not ($partnerCaps | Where-Object { $_.Name -eq $d.Name })) {
+                $caps += [pscustomobject]@{ Name = $d.Name; Allowed = $d.Allowed; Scope = $d.Scope; Inherited = $true }
+            }
+        }
+        $snapshotPartners += [pscustomobject]@{
+            tenantId = $id; m365InboundAllowed = $trustOk; m365InboundState = $effective
+            m365InboundInherited = $inherited; capabilities = $caps
+        }
+
+        switch ($effective) {
+            'Allowed' { Add-Result $id 'M365 collaboration inbound (trust)' 'PASS' "Allowed for all users$src." }
+            'Scoped'  { Add-Result $id 'M365 collaboration inbound (trust)' 'PASS' "Allowed for specific users/groups$src." }
+            default   { Add-Result $id 'M365 collaboration inbound (trust)' 'FAIL' "Blocked$src; capabilities will not take effect." }
+        }
+
+        foreach ($name in $ExpectedCapabilities) {
+            $c = $caps | Where-Object { $_.Name -eq $name }
+            $csrc = if ($c.Inherited) { ' (inherited from default)' } else { '' }
+            if (-not $c)             { Add-Result $id "Expected $name" 'FAIL' 'Missing.' }
+            elseif (-not $c.Allowed) { Add-Result $id "Expected $name" 'FAIL' "Disabled$csrc." }
+            elseif ($c.Scope -eq 'All/user' -or $c.Scope -eq 'All/group') {
+                Add-Result $id "Expected $name" 'PASS' "Allowed for all users$csrc (consider limiting to a security group)."
+            } else { Add-Result $id "Expected $name" 'PASS' "Allowed$csrc. Scope=$($c.Scope)" }
+        }
+        foreach ($c in ($partnerCaps | Where-Object { $_.Allowed -and $ExpectedCapabilities -notcontains $_.Name })) {
+            Add-Result $id "Extra $($c.Name)" 'WARN' "Allowed but not in the expected list. Scope=$($c.Scope)"
+        }
+        if ($p.isInMultiTenantOrganization) { Add-Result $id 'Multitenant organization' 'INFO' 'Partner is in a multitenant organization.' }
+    } catch {
+        Add-Result $id 'Partner evaluation' 'FAIL' "Could not read partner settings: $($_.Exception.Message)"
     }
-    foreach ($c in ($caps | Where-Object { $_.Allowed -and $ExpectedCapabilities -notcontains $_.Name })) {
-        Add-Result $id "Extra $($c.Name)" 'WARN' "Allowed but not in the expected list. Scope=$($c.Scope)"
-    }
-    if ($p.isInMultiTenantOrganization) { Add-Result $id 'Multitenant organization' 'INFO' 'Partner is in a multitenant organization.' }
 }
 
 # Reciprocity

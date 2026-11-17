@@ -7,7 +7,8 @@ Read-only validation of the Microsoft 365 **Cross-Tenant Access Policy (XTAP)** 
 ## What it checks
 
 - **Default policy:** flags M365 collaboration inbound allowed from all external tenants, and broad capabilities such as calendar reviewer or anonymous publishing.
-- **Each partner** (or only the ones in `-PartnerTenantId`): inbound trust is allowed, expected capabilities are present and enabled, unexpected allowed capabilities, and resource scope.
+- **Each partner** (or only the ones in `-PartnerTenantId`): inbound trust is allowed, expected capabilities are present and enabled, unexpected allowed capabilities, and resource scope. Settings a partner doesn't define are evaluated against the default policy and labelled `(inherited from default)`. Trust limited to specific users or groups is reported as scoped, not blocked.
+- **Errors:** if one partner can't be read, it is reported as a FAIL and the remaining partners are still checked.
 - **Reciprocity (optional):** compares against a snapshot exported from the partner tenant, because XTAP capabilities are inbound-only and **both sides must allow**.
 
 ## Requirements
