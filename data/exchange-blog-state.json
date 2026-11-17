@@ -520,5 +520,15 @@
     "source": "Microsoft Purview Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-13-microsoft-purview-referential-architecture-diagrams.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/16/high-volume-phishing-campaign-uses-microsoft-365-outage-lures-target-multiple-industry-sectors-2/": {
+    "title": "High volume phishing campaign uses Microsoft 365 outage lures to target multiple industry sectors",
+    "published": "2026-11-17T00:08:41+00:00",
+    "significant": true,
+    "reason": "Microsoft detailed a high-volume credential phishing campaign impersonating Microsoft 365 service-health notifications.",
+    "category": "Action required",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-17-high-volume-phishing-campaign-uses-microsoft-365-outage-lures-to-targe.md"
   }
 }
