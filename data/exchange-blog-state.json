@@ -540,5 +540,35 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-3.5-flash-lite",
     "file": "2026-11-17-the-risks-of-device-code-authentication-for-ai-coding-agents.md"
+  },
+  "https://techcommunity.microsoft.com/t5/exchange-team-blog/reject-direct-send-now-generally-available-in-exchange-online/ba-p/4573787": {
+    "title": "Reject Direct Send now Generally Available in Exchange Online",
+    "published": "2026-11-17T03:55:07+00:00",
+    "significant": true,
+    "reason": "The Reject Direct Send feature has reached General Availability and will be enabled by default for new tenants.",
+    "category": "New feature",
+    "source": "Exchange Team Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-17-reject-direct-send-now-generally-available-in-exchange-online.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/ai-is-changing-access-see-how-entra-helps-you-stay-ahead/ba-p/4556456": {
+    "title": "AI is changing access. See how Entra helps you stay ahead.",
+    "published": "2026-11-17T16:00:00+00:00",
+    "significant": true,
+    "reason": "Microsoft announced multiple public previews and general availability features for Entra, focusing heavily on AI agent security, identity foundations, and governance.",
+    "category": "New feature",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-17-ai-is-changing-access-see-how-entra-helps-you-stay-ahead.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/17/security-for-the-agentic-era-powered-by-microsoft-perception/": {
+    "title": "Security for the agentic era, powered by Microsoft Perception",
+    "published": "2026-11-17T18:14:00+00:00",
+    "significant": true,
+    "reason": "Microsoft announced the general availability and new preview features of Microsoft Perception, ISOC in Microsoft Defender, and new agentic security capabilities at Microsoft Ignite.",
+    "category": "New feature",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-17-security-for-the-agentic-era-powered-by-microsoft-perception.md"
   }
 }
