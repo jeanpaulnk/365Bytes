@@ -199,7 +199,7 @@ Set-SharingPolicy -Identity "<PolicyName>" -Enabled $False   # re-enable with -E
 Contacts sharing and sharing with on-premises organizations still use the sharing policy:
 
 ```powershell
-# Contacts for all external domains
+# Contacts for all external domains (-Domains replaces the whole list, so include your existing entries)
 Set-SharingPolicy -Identity "Default Sharing Policy" -Domains "*:ContactsSharing"
 
 # Calendar details for an on-premises partner, free/busy for everyone else
@@ -214,7 +214,7 @@ Set-SharingPolicy -Identity "Default Sharing Policy" -Domains "partner.com:Calen
 |---|---|
 | Shared mailbox doesn't appear in classic Outlook | Wait up to an hour; AutoMapping only works for direct user grants, not groups. Add it manually via **Account Settings > More Settings > Advanced**. |
 | "You don't have permission" on a shared calendar | `Get-MailboxFolderPermission mailbox:\Calendar` and confirm the user or group is listed. |
-| External invite fails | Sharing policy for that domain is missing or too restrictive (see above). |
+| External invite fails | For another Microsoft 365 tenant, check the cross-tenant access policy capability and that **both** tenants have one. Otherwise the sharing policy for that domain is missing or too restrictive (see above). |
 | Contacts option missing | Contacts sharing needs classic Outlook for Windows. |
 
 ## References
@@ -222,3 +222,5 @@ Set-SharingPolicy -Identity "Default Sharing Policy" -Domains "partner.com:Calen
 - [Share calendar and contacts in Microsoft 365 - Microsoft Learn](https://learn.microsoft.com/microsoft-365-apps/outlook/calendaring/share-calendar-and-contacts)
 - [Add-MailboxFolderPermission](https://learn.microsoft.com/powershell/module/exchange/add-mailboxfolderpermission)
 - [Set-SharingPolicy](https://learn.microsoft.com/powershell/module/exchange/set-sharingpolicy)
+- [Migrate to Microsoft 365 Cross-Tenant Access Policy for sharing Free/Busy, Calendars, and MailTips](https://learn.microsoft.com/en-us/exchange/sharing/migrate-to-m365-xtap)
+- [Sharing policies in Exchange Online](https://learn.microsoft.com/en-us/exchange/sharing/sharing-policies/sharing-policies)
