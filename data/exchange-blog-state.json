@@ -570,5 +570,29 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-17-security-for-the-agentic-era-powered-by-microsoft-perception.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-365-blog/ignite-26-spotlight-announcing-microsoft-baseline-security-mode/ba-p/4572694": {
+    "title": "Ignite’26 Spotlight: Announcing Microsoft Baseline security mode 2026 General Availability",
+    "published": "2026-11-17T17:00:00+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft 365 Blog"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-365-blog/what-s-new-in-work-iq-at-ignite-2026-agents-that-get-work-done/ba-p/4572219": {
+    "title": "What's new in Work IQ at Ignite 2026: agents that get work done",
+    "published": "2026-11-17T18:05:09+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft 365 Blog"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-365-blog/multi-tenant-management-tenants-agents-and-ai-spend-in-one-place/ba-p/4573372": {
+    "title": "Multi-tenant management: Tenants, agents, and AI spend in one place",
+    "published": "2026-11-17T18:30:00+00:00",
+    "significant": true,
+    "reason": "New multi-tenant management capabilities, including agent management, desired-state configuration, and AI cost management reaching general availability or public preview in the Microsoft 365 admin center.",
+    "category": "New feature",
+    "source": "Microsoft 365 Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-17-multi-tenant-management-tenants-agents-and-ai-spend-in-one-place.md"
   }
 }

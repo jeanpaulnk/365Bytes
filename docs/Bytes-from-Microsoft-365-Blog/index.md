@@ -8,5 +8,6 @@ Short summaries of new articles from the [Microsoft 365 Blog](https://techcommun
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-17 | [Multi-tenant management: Tenants, agents, and AI spend in one place](2026-11-17-multi-tenant-management-tenants-agents-and-ai-spend-in-one-place.md) | New feature |
 | 2026-10-13 | [Office LTSC 2021 support ends today](2026-10-13-office-ltsc-2021-support-ends-today.md) | Retirement |
 | 2026-09-29 | [Now in public preview: Microsoft 365 SharePoint Storage and OneDrive Storage](2026-09-29-now-in-public-preview-microsoft-365-sharepoint-storage-and-onedrive-st.md) | New feature |
