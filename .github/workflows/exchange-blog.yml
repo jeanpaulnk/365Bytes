@@ -16,7 +16,7 @@ jobs:
   summarise:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 2   # linkedin_post.py diffs HEAD~1
       - uses: actions/setup-python@v5
