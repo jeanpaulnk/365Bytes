@@ -6,6 +6,7 @@ and posts each one to the LinkedIn Posts API with a link to the site page.
 Needs LINKEDIN_ACCESS_TOKEN and LINKEDIN_PERSON_URN (e.g. urn:li:person:abc123).
 Without them it does nothing. A LinkedIn failure never fails the workflow.
 """
+import datetime
 import json
 import os
 import re
@@ -16,7 +17,21 @@ import urllib.request
 
 SITE = "https://jeanpaulnk.github.io/365Bytes/"
 API = "https://api.linkedin.com/rest/posts"
-API_VERSION = os.environ.get("LINKEDIN_API_VERSION", "202511")
+
+
+def candidate_versions():
+    """LinkedIn API versions (YYYYMM) expire after ~12 months: try this month, then earlier ones."""
+    if os.environ.get("LINKEDIN_API_VERSION"):
+        return [os.environ["LINKEDIN_API_VERSION"]]
+    now = datetime.date.today()
+    y, m = now.year, now.month
+    out = []
+    for _ in range(11):
+        out.append(f"{y}{m:02d}")
+        y, m = (y, m - 1) if m > 1 else (y - 1, 12)
+    return out
+
+
 MAX_COMMENTARY = 2900
 # Characters LinkedIn's "little text" format treats as markup.
 RESERVED = re.compile(r"([\\|{}@\[\]()<>#*_~])")
@@ -72,14 +87,21 @@ def publish(token, author, meta, url):
         "lifecycleState": "PUBLISHED",
         "isReshareDisabledByAuthor": False,
     }
-    req = urllib.request.Request(API, data=json.dumps(body).encode(), method="POST", headers={
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json",
-        "X-Restli-Protocol-Version": "2.0.0",
-        "LinkedIn-Version": API_VERSION,
-    })
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return r.status
+    data = json.dumps(body).encode()
+    versions = candidate_versions()
+    for i, version in enumerate(versions):
+        req = urllib.request.Request(API, data=data, method="POST", headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "X-Restli-Protocol-Version": "2.0.0",
+            "LinkedIn-Version": version,
+        })
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return r.status
+        except urllib.error.HTTPError as e:
+            if e.code != 426 or i == len(versions) - 1:  # 426 = version not active
+                raise
 
 
 def main():
