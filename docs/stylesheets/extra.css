@@ -13,6 +13,9 @@
 /* Force colours over the theme defaults */
 /* Top bar (header and tabs) in dark grey */
 .md-header, .md-tabs { background-color: #424242 !important; }
+/* The wordmark is dark-on-transparent, so give it a light background on the dark header. */
+.md-header__button.md-logo { padding: .2rem; }
+.md-header__button.md-logo img { height: 1.6rem; width: auto; padding: .15rem .5rem; background: #fff; border-radius: .3rem; }
 .md-footer, .md-footer-meta { background-color: #424242 !important; }
 
 /* Hide the duplicate site name above the left menu on desktop */
