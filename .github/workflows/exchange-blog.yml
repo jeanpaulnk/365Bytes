@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # linkedin_post.py diffs HEAD~1
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
@@ -45,6 +47,8 @@ jobs:
       - name: Commit and publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
         run: |
           git add docs/Bytes-from-* data/exchange-blog-state.json data/feed-health.json
           if git diff --cached --quiet; then echo "Nothing new"; exit 0; fi
@@ -54,3 +58,5 @@ jobs:
           git push
           # Pushes made with GITHUB_TOKEN do not start other workflows, so start the deploy explicitly.
           if [ "${{ steps.run.outputs.posted || 0 }}" != "0" ]; then gh workflow run docs.yml --ref main; fi
+          # Share each new summary on LinkedIn (skipped without the secrets; never fails the run).
+          python scripts/linkedin_post.py || true
