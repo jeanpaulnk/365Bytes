@@ -624,5 +624,15 @@
     "source": "Microsoft Copilot Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-17-copilot-at-microsoft-ignite-expanding-what-s-possible-with-intelligenc.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay/ba-p/4556456": {
+    "title": "AI is changing access. See how Microsoft Entra helps you stay ahead.",
+    "published": "2026-11-18T00:39:46+00:00",
+    "significant": true,
+    "reason": "Microsoft Entra announced numerous new preview and generally available features focused on AI agent security, identity governance, and conditional access.",
+    "category": "New feature",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-18-ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead.md"
   }
 }
