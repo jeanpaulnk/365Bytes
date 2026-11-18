@@ -1,0 +1,31 @@
+name: LinkedIn token reminder
+on:
+  schedule:
+    - cron: '0 0 * * *'   # daily
+  workflow_dispatch:
+permissions:
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open an issue when the token is close to expiring
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPIRES: ${{ vars.LINKEDIN_TOKEN_EXPIRES }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -z "$EXPIRES" ]; then echo "LINKEDIN_TOKEN_EXPIRES variable not set: skipping"; exit 0; fi
+          days=$(( ( $(date -d "$EXPIRES" +%s) - $(date +%s) ) / 86400 ))
+          echo "LinkedIn token expires in $days day(s)"
+          if [ "$days" -gt 14 ]; then exit 0; fi
+          title="Renew the LinkedIn access token (expires $EXPIRES)"
+          if [ -n "$(gh issue list --repo "$REPO" --state open --search "Renew the LinkedIn access token in:title" --json number -q '.[0].number')" ]; then
+            echo "Reminder issue already open"; exit 0
+          fi
+          gh issue create --repo "$REPO" --title "$title" --body "The LinkedIn access token expires in about $days day(s). Generate a new token (scopes: openid, profile, w_member_social), then run:
+
+          \`gh secret set LINKEDIN_ACCESS_TOKEN\`
+          \`gh variable set LINKEDIN_TOKEN_EXPIRES --body YYYY-MM-DD\`   (new date, 60 days from today)
+
+          Then close this issue."
