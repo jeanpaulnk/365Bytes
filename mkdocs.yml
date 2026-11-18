@@ -8,6 +8,7 @@ docs_dir: docs
 
 not_in_nav: |
   /Message-Center/post.md
+  /404.md
 
 theme:
   name: material
