@@ -614,12 +614,5 @@
     "source": "Microsoft Copilot Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-16-what-ai-at-work-really-costs.md"
-  },
-  "https://www.microsoft.com/en-us/copilot/blog/2026/11/17/copilot-at-microsoft-ignite-expanding-whats-possible-with-intelligence-built-for-work/": {
-    "title": "Copilot at Microsoft Ignite: Expanding what’s possible with intelligence built for work",
-    "published": "2026-11-17T18:05:00+00:00",
-    "significant": false,
-    "reason": "event announcement (title)",
-    "source": "Microsoft Copilot Blog"
   }
 }
