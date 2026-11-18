@@ -46,6 +46,8 @@ SOURCES = [
      "home": "https://techcommunity.microsoft.com/category/microsoft-entra/blog/microsoft-entra-blog"},
     {"name": "Microsoft Security Blog", "feed": "https://www.microsoft.com/en-us/security/blog/feed/",
      "home": "https://www.microsoft.com/en-us/security/blog/"},
+    {"name": "Microsoft Copilot Blog", "feed": "https://www.microsoft.com/en-us/copilot/blog/feed/",
+     "home": "https://www.microsoft.com/en-us/copilot/blog/"},
 ]
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 # First-choice model: any OpenAI-compatible chat/completions endpoint; defaults to Gemini Flash
@@ -108,7 +110,7 @@ MAX_AGE_DAYS = 14      # ignore older articles, so the first run does not backfi
 MAX_PER_RUN = 3        # keep each run small; the rest are picked up next run
 
 SYSTEM = """You review articles from Microsoft's official blogs (Exchange, Outlook, Microsoft 365,
-Defender for Office 365, Purview, Entra, Microsoft Security) for a blog read by
+Defender for Office 365, Purview, Entra, Microsoft Security, Microsoft Copilot) for a blog read by
 Microsoft 365 / Exchange administrators. Summarise the article in your own words. Never copy
 sentences verbatim. Also say whether it is significant (the post is published either way).
 

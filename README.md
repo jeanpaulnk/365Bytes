@@ -56,7 +56,7 @@ so it only fills on the live site.)
 | Microsoft 365 Blog | `…board.id=microsoft_365blog` |
 | Microsoft Entra Blog | `…board.id=microsoft-entra-blog` |
 | Microsoft Security Blog | `https://www.microsoft.com/en-us/security/blog/feed/` |
-
+| Microsoft Copilot Blog | `https://www.microsoft.com/en-us/copilot/blog/feed/` |
 The list lives in `SOURCES` at the top of `scripts/exchange_blog.py`.
 
 ### Who writes the summaries
