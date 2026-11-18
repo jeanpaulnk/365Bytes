@@ -1,0 +1,4 @@
+mkdocs>=1.6,<2
+mkdocs-material>=9.5,<10
+mkdocs-rss-plugin>=1.12,<2
+mkdocs-git-revision-date-localized-plugin>=1.2,<2

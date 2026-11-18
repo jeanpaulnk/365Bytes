@@ -4,6 +4,7 @@ on:
     branches: [main]
   schedule:
     - cron: '17 */3 * * *'   # refresh Message Center posts every 3 hours
+  pull_request:   # build-only check, never deploys
   workflow_dispatch:
   repository_dispatch:
     types: [deploy-docs]
@@ -13,7 +14,7 @@ permissions:
   id-token: write
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,7 +25,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      - run: pip install mkdocs-material mkdocs-rss-plugin
+          cache: pip
+      - run: pip install -r requirements.txt
       - run: mkdocs build --site-dir site
       - run: python scripts/build_mc_data.py site/mc-data
       - uses: actions/upload-pages-artifact@v3
@@ -32,6 +34,7 @@ jobs:
           path: site
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
