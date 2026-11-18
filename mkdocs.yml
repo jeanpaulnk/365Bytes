@@ -13,6 +13,7 @@ not_in_nav: |
 theme:
   name: material
   custom_dir: overrides
+  favicon: assets/favicon.png
   features:
     - navigation.indexes
     - navigation.top
