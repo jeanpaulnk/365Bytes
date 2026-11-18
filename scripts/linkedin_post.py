@@ -89,7 +89,7 @@ def main():
         print("No LinkedIn secrets: skipping")
         return
     try:
-        posts = new_posts()
+        posts = os.environ.get("LINKEDIN_FILES", "").split() or new_posts()
     except subprocess.CalledProcessError as e:
         print(f"warning: could not list new posts: {e}", file=sys.stderr)
         return
