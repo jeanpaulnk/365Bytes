@@ -46,7 +46,9 @@ SOURCES = [
      "home": "https://techcommunity.microsoft.com/category/microsoft-entra/blog/microsoft-entra-blog"},
     {"name": "Microsoft Security Blog", "feed": "https://www.microsoft.com/en-us/security/blog/feed/",
      "home": "https://www.microsoft.com/en-us/security/blog/"},
-    {"name": "Microsoft Copilot Blog", "feed": "https://www.microsoft.com/en-us/copilot/blog/feed/",
+    # The RSS feed here stopped updating in September 2026, so read the WordPress API instead.
+    {"name": "Microsoft Copilot Blog",
+     "feed": "https://www.microsoft.com/en-us/copilot/blog/wp-json/wp/v2/posts?per_page=10&_fields=link,date_gmt,title,content",
      "home": "https://www.microsoft.com/en-us/copilot/blog/"},
 ]
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
@@ -156,8 +158,23 @@ def _text(el, *names):
     return (c.text or "").strip() if c is not None and c.text else ""
 
 
+def read_wp_posts(raw):
+    """WordPress REST API posts (used where the blog's RSS feed is not kept up to date)."""
+    items = []
+    for p in json.loads(raw):
+        link, title = p.get("link", ""), html.unescape(re.sub(r"<[^>]+>", "", (p.get("title") or {}).get("rendered", ""))).strip()
+        if not link.startswith("https://") or not title or re.search(r"[\s()<>]", link):
+            continue
+        when = datetime.fromisoformat(p["date_gmt"]).replace(tzinfo=timezone.utc)
+        body = (p.get("content") or {}).get("rendered") or (p.get("excerpt") or {}).get("rendered", "")
+        items.append({"link": link, "title": title, "published": when, "author": "", "body": body})
+    return items
+
+
 def read_feed(raw):
-    """RSS 2.0 or Atom, with or without namespaces."""
+    """RSS 2.0 or Atom, with or without namespaces; also WordPress JSON."""
+    if raw.lstrip().startswith(b"["):
+        return read_wp_posts(raw)
     root = ET.fromstring(raw)
     items = []
     for it in root.iter():
@@ -507,7 +524,7 @@ if __name__ == "__main__":
         except Exception as e:
             note("warning", f"Could not read the {src['name']} feed: {e}")
             return None
-        if not raw.lstrip().startswith(b"<?xml") and b"<rss" not in raw[:2000] and b"<feed" not in raw[:2000]:
+        if not raw.lstrip().startswith((b"<?xml", b"[")) and b"<rss" not in raw[:2000] and b"<feed" not in raw[:2000]:
             note("warning", f"{src['name']} feed did not return XML: {raw[:200]!r}")
             return None
         return raw
