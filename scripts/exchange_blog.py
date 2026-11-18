@@ -77,8 +77,13 @@ EVENT_TITLE = re.compile(
     r"\bkeynote|\bsessions? at\b|see you at|\bRSAC\b|Black Hat|\bbooth\b", re.I)
 
 
+# "Copilot at Microsoft Ignite: ..." style posts announce products, not event logistics.
+ANNOUNCEMENT_TITLE = re.compile(r"^\s*Copilot at\b", re.I)
+
+
 def is_event(title):
-    return bool(EVENT_TITLE.search(title or ""))
+    title = title or ""
+    return bool(EVENT_TITLE.search(title)) and not ANNOUNCEMENT_TITLE.search(title)
 
 
 CATEGORIES = [("Security update", r"security update|\bSUs?\b|vulnerab|CVE-"),
