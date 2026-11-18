@@ -594,5 +594,32 @@
     "source": "Microsoft 365 Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-17-multi-tenant-management-tenants-agents-and-ai-spend-in-one-place.md"
+  },
+  "https://www.microsoft.com/en-us/copilot/blog/2026/11/05/bringing-claude-models-in-microsoft-copilot-into-the-eu-data-boundary/": {
+    "title": "Bringing Claude models in Microsoft Copilot into the EU Data Boundary",
+    "published": "2026-11-05T16:00:00+00:00",
+    "significant": true,
+    "reason": "Anthropic's Claude models in Microsoft Copilot are being brought into the EU Data Boundary, impacting data processing and compliance for European organizations.",
+    "category": "New feature",
+    "source": "Microsoft Copilot Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-05-bringing-claude-models-in-microsoft-copilot-into-the-eu-data-boundary.md"
+  },
+  "https://www.microsoft.com/en-us/copilot/blog/2026/11/16/what-ai-at-work-really-costs/": {
+    "title": "What AI at work really costs",
+    "published": "2026-11-16T16:00:00+00:00",
+    "significant": true,
+    "reason": "The article discusses a sponsored total cost of ownership study for enterprise AI products rather than announcing a breaking change, security update, or new feature.",
+    "category": "Other",
+    "source": "Microsoft Copilot Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-16-what-ai-at-work-really-costs.md"
+  },
+  "https://www.microsoft.com/en-us/copilot/blog/2026/11/17/copilot-at-microsoft-ignite-expanding-whats-possible-with-intelligence-built-for-work/": {
+    "title": "Copilot at Microsoft Ignite: Expanding what’s possible with intelligence built for work",
+    "published": "2026-11-17T18:05:00+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft Copilot Blog"
   }
 }
