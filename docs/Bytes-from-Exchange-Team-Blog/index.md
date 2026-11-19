@@ -8,6 +8,7 @@ Short summaries of new articles from the [Exchange Team Blog](https://techcommun
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-18 | [Sending From Email Aliases – General Availability](2026-11-18-sending-from-email-aliases-general-availability.md) | New feature |
 | 2026-11-17 | [Reject Direct Send now Generally Available in Exchange Online](2026-11-17-reject-direct-send-now-generally-available-in-exchange-online.md) | New feature |
 | 2026-11-10 | [Released: November 2026 Exchange Server Security Updates](2026-11-10-released-november-2026-exchange-server-security-updates.md) | Security update |
 | 2026-11-09 | [Now available: OAuth authentication for on-premises Exchange mailbox migrations to Microsoft 365](2026-11-09-now-available-oauth-authentication-for-on-premises-exchange-mailbox-mi.md) | New feature |
