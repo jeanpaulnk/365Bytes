@@ -1,9 +1,7 @@
 // Message Center pages: latest-posts list, ID lookup, and an on-site reader.
 // Post data is built into /mc-data/ at deploy time (scripts/build_mc_data.py)
-// from github.com/merill/mc; the source site is https://mc.merill.net.
+// from Microsoft Graph and the public release communications feed, merged into our own archive.
 (function () {
-  var ARCHIVE = "https://mc.merill.net";
-  var RAW = "https://raw.githubusercontent.com/merill/mc/main/@data/";
   var SOURCE_LABEL = { messageCenter: "Message Center", roadmap: "Microsoft 365 Roadmap", azure: "Azure Updates", serviceHealth: "Service health" };
 
   var me = document.querySelector('script[src*="javascripts/message-center.js"]');
@@ -34,17 +32,21 @@
       var v = document.getElementById("mc-go-input").value.trim();
       if (!v) return;
       if (isId(v)) location.href = readerUrl(v.toUpperCase().indexOf("AZ-") === 0 ? "AZ-" + v.slice(3) : v.toUpperCase());
-      else window.open(ARCHIVE + "/?q=" + encodeURIComponent(v), "_blank", "noopener");
+      else {
+        var f = document.getElementById("mc-filter");
+        if (f) { f.value = v; f.dispatchEvent(new Event("input")); f.scrollIntoView({ behavior: "smooth", block: "center" }); }
+      }
     });
   }
 
   // ---------- Latest posts list ----------
   var list = document.getElementById("mc-latest");
   if (list) {
-    var all = [], src = "all";
+    var all = [], full = null, src = "all";
     var render = function () {
+      var pool = full || all;
       var q = document.getElementById("mc-filter").value.trim().toLowerCase();
-      var rows = all.filter(function (p) {
+      var rows = pool.filter(function (p) {
         if (src !== "all" && p.Source !== src) return false;
         return !q || (p.Title + " " + (p.Services || []).join(" ") + " " + p.Id).toLowerCase().indexOf(q) >= 0;
       }).slice(0, 30);
@@ -55,8 +57,8 @@
           '<div class="mc-meta">' + esc(meta) + "</div></li>";
       }).join("");
       document.getElementById("mc-status").textContent = rows.length
-        ? "Showing " + rows.length + " of the " + all.length + " most recently updated posts."
-        : "No recent posts match. Use the search box above to search the full archive.";
+        ? "Showing " + rows.length + " of the " + pool.length + (full ? " posts in the archive." : " most recently updated posts.")
+        : "No posts match.";
     };
     list.querySelectorAll(".mc-tabs button").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -65,12 +67,20 @@
         render();
       });
     });
-    document.getElementById("mc-filter").addEventListener("input", render);
+    var loadFull = function () {
+      if (full) return;
+      full = [];
+      getJson(DATA + "index.json").then(function (d) { full = Array.isArray(d) ? d : []; render(); })
+        .catch(function () { full = null; });
+    };
+    document.getElementById("mc-filter").addEventListener("input", function () {
+      if (this.value.trim()) loadFull();
+      render();
+    });
     getJson(DATA + "latest.json")
       .then(function (d) { all = Array.isArray(d) ? d : []; render(); })
       .catch(function () {
-        document.getElementById("mc-status").innerHTML =
-          'Could not load the latest posts. <a href="' + ARCHIVE + '/" target="_blank" rel="noopener">Open the archive</a> instead.';
+        document.getElementById("mc-status").textContent = "Could not load the latest posts. Try again later.";
       });
   }
 
@@ -88,23 +98,10 @@
     return;
   }
 
-  // Roadmap IDs here carry a platform suffix (RM564615-WDI); the archive uses the bare ID.
-  var archiveId = id.replace(/^(RM\d+)-[A-Z]+$/, "$1");
-  var sourceUrl = ARCHIVE + "/message/" + encodeURIComponent(archiveId);
-  var fallbacks = [DATA + "posts/" + id + ".json"];
-  fallbacks.push(RAW + (id.indexOf("AZ") === 0 ? "azure/" : "archive/") + archiveId + ".json");
-
-  function tryLoad(i) {
-    if (i >= fallbacks.length) return Promise.reject(new Error("not found"));
-    return getJson(fallbacks[i]).catch(function () { return tryLoad(i + 1); });
-  }
-
-  tryLoad(0).then(show).catch(function () {
+  getJson(DATA + "posts/" + id + ".json").then(show).catch(function () {
     if (titleEl) titleEl.textContent = id;
     box.innerHTML = back + '<div class="admonition warning"><p class="admonition-title">Not available here</p>' +
-      "<p>This post could not be loaded on this site. It may be new, or older than the posts kept here.</p></div>" +
-      '<p><a class="md-button md-button--primary" href="' + esc(sourceUrl) + '" target="_blank" rel="noopener">Read ' +
-      esc(id) + " on mc.merill.net</a></p>";
+      "<p>This post could not be loaded on this site. It may be new, or older than the posts kept here.</p></div>";
   });
 
   function detail(m, name) {
@@ -142,11 +139,11 @@
     var bodyHtml = sanitize(rawBody);
     if (!bodyHtml && summary) bodyHtml = sanitize(summary);
 
-    // Source links: always the archive, plus Microsoft's own page where there is one.
-    var links = ['<a class="md-button md-button--primary" href="' + esc(sourceUrl) + '" target="_blank" rel="noopener">View on mc.merill.net</a>'];
-    if (source === "messageCenter") links.push('<a class="md-button" href="https://admin.microsoft.com/#/MessageCenter/:/messages/' +
+    // Source links: Microsoft's own page where there is one.
+    var links = [];
+    if (source === "messageCenter") links.push('<a class="md-button md-button--primary" href="https://admin.microsoft.com/#/MessageCenter/:/messages/' +
       encodeURIComponent(id) + '" target="_blank" rel="noopener">Open in your Microsoft 365 admin center</a>');
-    if (source === "roadmap") links.push('<a class="md-button" href="https://www.microsoft.com/microsoft-365/roadmap?id=' +
+    if (source === "roadmap") links.push('<a class="md-button md-button--primary" href="https://www.microsoft.com/microsoft-365/roadmap?id=' +
       encodeURIComponent(id.replace(/\D/g, "")) + '" target="_blank" rel="noopener">Microsoft 365 Roadmap</a>');
     var azure = safeHref(detail(m, "AzureLink"));
     if (azure) links.push('<a class="md-button" href="' + esc(azure) + '" target="_blank" rel="noopener">Azure Updates</a>');
@@ -164,7 +161,7 @@
       '<div class="admonition warning"><p class="admonition-title">Tenant-specific</p><p>' +
       (source === "messageCenter" ? "Message Center posts differ between tenants. Check applicability and timing in your own Microsoft 365 admin center."
         : "Check the source for the latest status before you plan around it.") + "</p></div>" +
-      '<p class="mc-hint">Content: Microsoft, via the <a href="' + esc(sourceUrl) + '" target="_blank" rel="noopener">Microsoft 365 Message Center Archive</a> by Merill Fernando.</p>';
+      '<p class="mc-hint">Content: Microsoft, kept in this site\'s own archive.</p>';
   }
 
   // Images load only from Microsoft-owned hosts, so reading a post never sends the visitor's

@@ -10,7 +10,7 @@ automatically updated summaries of Microsoft's product blogs.
 | Section | What it is |
 |---|---|
 | Transport, Exchange Online, Outlook, Identity, Tools | Hand-written lab notes and how-tos. |
-| Message Center | Search and read Microsoft 365 Message Center, Service health, Microsoft 365 Roadmap and Azure Updates posts, read directly from Microsoft (see [Message Center data](#message-center-data)). [mc.merill.net](https://mc.merill.net/) is the fallback. |
+| Message Center | Search and read Microsoft 365 Message Center, Service health, Microsoft 365 Roadmap and Azure Updates posts, read directly from Microsoft (see [Message Center data](#message-center-data)). The site keeps its own archive of past posts. |
 | Bytes from … | AI summaries of every new article on seven Microsoft blogs, added automatically (see below). |
 
 ## How the site is built
@@ -43,11 +43,14 @@ so it only fills on the live site.)
 | Message Center posts (`MC…`) from one or more tenants, and Service health issues from the first tenant | Microsoft Graph `admin/serviceAnnouncement` (`messages`, `issues`) | Entra app with a GitHub OIDC federated credential; no client secret |
 | Microsoft 365 Roadmap (`RM…`) | `microsoft.com/releasecommunications/api/v2/m365` | None (public) |
 | Azure Updates (`AZ…`) | `microsoft.com/releasecommunications/api/v2/azure` | None (public) |
-| Fallback for all of the above | [github.com/merill/mc](https://github.com/merill/mc) (MIT) | None |
+| Our own archive of every post seen | `mc-archive/archive.json.gz`, kept in the Actions cache | None |
 
-Roadmap and Azure data is limited to items modified in the last 180 days; older archive roadmap items get the
+Each run restores the archive from the Actions cache, merges the fresh posts into it and saves it back, so posts
+that age out of Microsoft's feeds stay on the site. The archive was seeded once from
+[github.com/merill/mc](https://github.com/merill/mc) (MIT); that repo is only read again if the cache is evicted.
+Microsoft's feeds return items modified in the last 180 days; older archived roadmap items get the
 same platform suffix from the archive's own `Platforms` field, so an ID never changes when an item ages out.
-A source that fails or isn't configured falls back to the archive, so the deploy never fails because of it.
+A source that fails or isn't configured keeps its archived posts, so the deploy never fails because of it.
 
 Busy answers (429, 5xx) and network errors are retried twice (after 2 s and 4 s). If a source still fails, the
 deploy opens a single issue, "Message Center data: a source is failing", listing the failing sources and the
@@ -76,7 +79,7 @@ Letters always appear in the order `W D M I A L V O T X`. The bare ID (`RM564615
    `api://AzureADTokenExchange`, subject `repo:jeanpaulnk@165971893/365Bytes@1437785275:ref:refs/heads/main`.
    This repository uses GitHub's immutable OIDC subject (owner and repository IDs instead of names); check
    yours with `gh api repos/jeanpaulnk/365Bytes/actions/oidc/customization/sub`. A name-based subject fails
-   with `AADSTS700213`. Pull-request builds don't match the credential, so they use the archive.
+   with `AADSTS700213`. Pull-request builds don't match the credential, so they only use the public feeds and the archive.
 3. Add the repository secrets below. Without them the Graph source is simply skipped.
 
 ### Several tenants
@@ -170,7 +173,7 @@ closes itself when the feed works again.
 | Path | Purpose |
 |---|---|
 | `scripts/exchange_blog.py` | The job: feeds, AI summaries, posts, list pages, alerts. |
-| `scripts/build_mc_data.py` | Builds the Message Center post files at deploy time (Graph, Microsoft feeds, archive fallback, redaction). |
+| `scripts/build_mc_data.py` | Builds the Message Center post files at deploy time (Graph, Microsoft feeds, own archive, redaction). |
 | `data/exchange-blog-state.json` | Every article already handled (posted or skipped), so nothing is posted twice. |
 | `data/feed-health.json` | Consecutive failures per blog and any open alert issue. |
 | `docs/Bytes-from-*/` | The generated posts and each section's `index.md` list. |

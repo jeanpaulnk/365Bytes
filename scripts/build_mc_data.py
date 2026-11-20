@@ -1,6 +1,7 @@
 """Build per-post JSON for the Message Center reader.
 
-Downloads the public data from github.com/merill/mc (MIT) and writes:
+Keeps our own archive of every post seen (MC_ARCHIVE, a gzipped JSON file restored from the
+workflow cache and saved back after each run) and writes:
   <out>/posts/<ID>.json  one file per active Message Center, Roadmap and Azure post
   <out>/latest.json      the newest posts, for the list on the Message Center page
 
@@ -13,7 +14,9 @@ document. Message Center posts are merged across all tenants, Service health com
 from the first one, and tenants are never named in the published data. Roadmap and Azure Updates posts are read from Microsoft's public
 release-communications API (no credentials); roadmap IDs carry a platform suffix, for
 example RM564615-WDI (W=Web, D=Desktop, M=Mac, I=iOS, A=Android, L=Linux, V=Developer,
-O=Mobile, T=Teams and Surface Devices). The archive stays as the fallback for every source.
+O=Mobile, T=Teams and Surface Devices). Fresh data is merged into the archive, so posts that age out of Microsoft's feeds stay
+available. If there is no archive yet (first run or an evicted cache) it is seeded once from
+github.com/merill/mc (MIT); after that nothing is read from it.
 
 The tenant ID, app ID and any terms in MC_REDACT (comma separated) are scrubbed from
 everything written to the site.
@@ -21,6 +24,7 @@ everything written to the site.
 Runs after `mkdocs build` in the deploy workflow. A download failure never
 fails the deploy: the reader falls back to the source site.
 """
+import gzip
 import html
 import json
 import os
@@ -33,7 +37,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-RAW = "https://raw.githubusercontent.com/merill/mc/main/@data/"
+SEED = "https://raw.githubusercontent.com/merill/mc/main/@data/"  # one-time seed only
 AUDIENCES = {"microsoftonline.com": "api://AzureADTokenExchange",
              "microsoftonline.us": "api://AzureADTokenExchangeUSGov",
              "partner.microsoftonline.cn": "api://AzureADTokenExchangeChina"}
@@ -57,11 +61,12 @@ PROBLEMS = {}  # source -> short error, reported as a GitHub issue by report_pro
 
 
 def load(name, fetch):
+    """One source file of the seed archive."""
     try:
-        data = fetch(RAW + name)
+        data = fetch(SEED + name)
         return data if isinstance(data, list) else []
     except Exception as e:  # keep deploying with what we have
-        PROBLEMS[f"archive {name}"] = describe_error(e)
+        PROBLEMS[f"seed {name}"] = describe_error(e)
         print(f"warning: could not load {name}: {describe_error(e)}", file=sys.stderr)
         return []
 
@@ -143,9 +148,9 @@ def official_records(fetch=http_json):
             recs = [convert(i) for i in official_pages(kind, fetch) if str(i.get("id") or "").isdigit()]
             print(f"mc-data: read {len(recs)} {kind} records from Microsoft")
             out += recs
-        except Exception as e:  # keep the archive copy for this source
+        except Exception as e:  # the archive keeps its copy for this source
             PROBLEMS[f"Microsoft {kind} feed"] = describe_error(e)
-            print(f"warning: Microsoft {kind} feed unavailable, using archive data: {describe_error(e)}",
+            print(f"warning: Microsoft {kind} feed unavailable, keeping archived data: {describe_error(e)}",
                   file=sys.stderr)
     return out
 
@@ -398,7 +403,7 @@ def report_problems(problems, api=None):
                          if i.get("title") == ISSUE_TITLE and "pull_request" not in i), None)
         if problems:
             lines = "\n".join(f"- **{k}**: `{v}`" for k, v in sorted(problems.items()))
-            body = ("The Message Center page is using the archive (or missing data) for these sources "
+            body = ("The Message Center page is keeping archived data (or has missing data) for these sources "
                     f"on the latest deploy:\n\n{lines}\n\nThis issue updates itself and closes when "
                     "every source works again. Details are in the \"Deploy docs\" run log.")
             if existing:
@@ -413,21 +418,45 @@ def report_problems(problems, api=None):
         print(f"warning: could not update the status issue: {describe_error(e)}", file=sys.stderr)
 
 
-def build(out_dir, fetch=http_json, graph=graph_records, official=official_records):
+def read_archive(path):
+    try:
+        with gzip.open(path, "rt", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, list) else []
+    except (OSError, ValueError):
+        return []
+
+
+def write_archive(path, records):
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    tmp = p.with_suffix(".tmp")
+    with gzip.open(tmp, "wt", encoding="utf-8") as f:
+        json.dump(records, f, ensure_ascii=False)
+    tmp.replace(p)
+
+
+def build(out_dir, fetch=http_json, graph=graph_records, official=official_records, archive_path=None):
     out = Path(out_dir)
     posts = out / "posts"
     posts.mkdir(parents=True, exist_ok=True)
     PROBLEMS.clear()
     records = {}
-    for name in SOURCES:
-        for rec in map(platform_id, load(name, fetch)):
+    stored = read_archive(archive_path) if archive_path else []
+    if stored:
+        batches = [stored]
+    else:
+        print("mc-data: no archive yet, seeding it once from github.com/merill/mc")
+        batches = [load(name, fetch) for name in SOURCES]
+    for batch in batches:
+        for rec in map(platform_id, batch):
             i = str(rec.get("Id") or "")
             if not ID_RE.match(i):
                 continue
             old = records.get(i)
             if not old or (rec.get("LastModifiedDateTime") or "") >= (old.get("LastModifiedDateTime") or ""):
                 records[i] = rec
-    # Microsoft's own data wins over the archive copy.
+    # Fresh Microsoft data wins over the archived copy.
     microsoft = list(official(fetch)) + list(graph())
     fresh_roadmap = {m.group(1) for r in microsoft
                      if (m := re.match(r"RM(\d+)", str(r.get("Id") or "")))}
@@ -438,8 +467,11 @@ def build(out_dir, fetch=http_json, graph=graph_records, official=official_recor
         if ID_RE.match(i):
             records[i] = rec
     terms = redact_terms()
+    records = {i: scrub(rec, terms) for i, rec in records.items()}
+    if archive_path:
+        write_archive(archive_path, list(records.values()))
     for i, rec in records.items():
-        text = json.dumps(slim(scrub(rec, terms)), ensure_ascii=False)
+        text = json.dumps(slim(rec), ensure_ascii=False)
         (posts / f"{i}.json").write_text(text, encoding="utf-8")
         plain = re.fullmatch(r"(RM\d+)-[A-Z]+", i)
         if plain:  # Message Center posts link to the bare roadmap ID
@@ -449,14 +481,19 @@ def build(out_dir, fetch=http_json, graph=graph_records, official=official_recor
         return r.get("LastModifiedDateTime") or r.get("StartDateTime") or ""
 
     newest = sorted(records.values(), key=when, reverse=True)[:LATEST]
-    latest = [scrub({"Id": r["Id"], "Title": r.get("Title") or r["Id"], "Source": source_of(r),
-                     "Services": r.get("Services") or [], "Updated": when(r)}, terms)
-              for r in newest]
+    def entry(r):
+        return {"Id": r["Id"], "Title": r.get("Title") or r["Id"], "Source": source_of(r),
+                "Services": r.get("Services") or [], "Updated": when(r)}
+
+    latest = [entry(r) for r in newest]
+    everything = [entry(r) for r in sorted(records.values(), key=when, reverse=True)]
     (out / "latest.json").write_text(json.dumps(latest, ensure_ascii=False), encoding="utf-8")
+    (out / "index.json").write_text(json.dumps(everything, ensure_ascii=False), encoding="utf-8")  # search
     print(f"mc-data: wrote {len(records)} posts, {len(latest)} in latest.json")
     return len(records)
 
 
 if __name__ == "__main__":
-    build(sys.argv[1] if len(sys.argv) > 1 else "site/mc-data")
+    build(sys.argv[1] if len(sys.argv) > 1 else "site/mc-data",
+          archive_path=os.environ.get("MC_ARCHIVE") or None)
     report_problems(dict(PROBLEMS))
