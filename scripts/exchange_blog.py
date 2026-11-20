@@ -263,9 +263,11 @@ def ask_copilot(item, run=subprocess.run):
     It gets only the article text, runs in an empty folder, and may not use any tools."""
     prompt = (SYSTEM + "\n\n--- ARTICLE ---\n"
               f"Title: {item['title']}\nPublished: {item['published']:%Y-%m-%d}\n\n{to_text(item['body'], 12000)}")
-    env = {k: v for k, v in os.environ.items() if k not in ("GH_TOKEN", "GITHUB_TOKEN")}
+    keep = ("PATH", "HOME", "USERPROFILE", "TMPDIR", "TEMP", "TMP", "SYSTEMROOT", "COPILOT_GITHUB_TOKEN")
+    env = {k: v for k, v in os.environ.items() if k in keep}
     with tempfile.TemporaryDirectory() as empty:
-        out = run(["copilot", "-p", prompt, "-s"], cwd=empty, env=env, capture_output=True, text=True, timeout=300)
+        out = run(["copilot", "-p", prompt, "-s", "--available-tools=", "--deny-tool=shell",
+                   "--deny-tool=write", "--deny-tool=url"], cwd=empty, env=env, capture_output=True, text=True, timeout=300)
     if out.returncode != 0:
         raise RuntimeError(f"copilot exited {out.returncode}: {(out.stderr or out.stdout)[:300]}")
     return parse_review(out.stdout)
@@ -331,9 +333,14 @@ def _ask_one(item, model, post):
         raise ValueError(f"unreadable AI reply ({e}); first bytes: {raw[:300]!r}") from None
 
 
-def md(text):
-    """Plain text for Markdown: no raw HTML from the feed or the model."""
-    return str(text or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").strip()
+def md(text, markdown=True):
+    """Plain single-line text: no raw HTML, and (by default) no Markdown links or formatting
+    from the feed or the model. Newlines are collapsed so text cannot break out of a block."""
+    s = " ".join(str(text or "").split())
+    s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    if markdown:
+        s = re.sub(r"([\\`*_\[\]()!|#])", r"\\\1", s)
+    return s.strip()
 
 
 def slugify(title):
@@ -365,7 +372,7 @@ def write_post(item, ai, filename=None):
         action = ""
     text = f"""---
 title: {json.dumps(re.sub(r"[<>]", "", item['title']))}
-description: {json.dumps(md(ai.get('summary') or ai.get('excerpt'))[:300])}
+description: {json.dumps(md(ai.get('summary') or ai.get('excerpt'), markdown=False)[:300])}
 date: {date}
 category: {json.dumps(ai.get('category') or 'Other')}
 source: {json.dumps(item['link'])}
