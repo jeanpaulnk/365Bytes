@@ -1,7 +1,10 @@
-"""Publish a LinkedIn post for every summary added by the latest commit.
+"""Publish LinkedIn posts for the summaries added by the latest commit.
 
 Reads the new docs/Bytes-from-*/<post>.md files from `git diff HEAD~1 HEAD`,
-and posts each one to the LinkedIn Posts API with a link to the site page.
+and posts them to the LinkedIn Posts API with a link to the site page.
+
+Exchange Online, Exchange Server and Outlook posts always go, first. Every other topic is
+limited to LINKEDIN_OTHER_LIMIT posts per run (default 2); the rest stay site-only.
 
 Needs LINKEDIN_ACCESS_TOKEN and LINKEDIN_PERSON_URN (e.g. urn:li:person:abc123).
 Without them it does nothing. A LinkedIn failure never fails the workflow.
@@ -62,6 +65,28 @@ def parse(path):
     return meta
 
 
+# Posts from these sections are about the priority topics whatever their text says.
+PRIORITY_SECTIONS = ("Bytes-from-Exchange-Team-Blog", "Bytes-from-Outlook-Blog")
+# Exchange Online, Exchange Server, hybrid, EWS/OWA and Outlook (classic, new, web, mobile, Mac).
+PRIORITY_TOPICS = re.compile(r"\b(exchange|outlook|ews|owa|mailbox(?:es)?)\b", re.I)
+OTHER_LIMIT = 2
+
+
+def is_priority(path, meta):
+    if any(f"/{s}/" in path.replace("\\", "/") for s in PRIORITY_SECTIONS):
+        return True
+    text = " ".join([meta.get("title", ""), meta.get("description", ""), meta.get("summary", ""),
+                     *meta.get("points", [])])
+    return bool(PRIORITY_TOPICS.search(text))
+
+
+def choose(paths, metas, limit=OTHER_LIMIT):
+    """Priority-topic posts first (all of them), then at most `limit` of the rest."""
+    first = [p for p in paths if is_priority(p, metas[p])]
+    rest = [p for p in paths if p not in first]
+    return first + rest[:max(limit, 0)], rest[max(limit, 0):]
+
+
 def page_url(path):
     rel = path.removeprefix("docs/").removesuffix(".md")
     return SITE + rel + "/"
@@ -110,13 +135,23 @@ def main():
     if not token or not author:
         print("No LinkedIn secrets: skipping")
         return
+    explicit = os.environ.get("LINKEDIN_FILES", "").split()
     try:
-        posts = os.environ.get("LINKEDIN_FILES", "").split() or new_posts()
+        posts = explicit or new_posts()
     except subprocess.CalledProcessError as e:
         print(f"warning: could not list new posts: {e}", file=sys.stderr)
         return
+    metas = {p: parse(p) for p in posts}
+    if not explicit:  # files named by hand are always posted
+        try:
+            limit = int(os.environ.get("LINKEDIN_OTHER_LIMIT", OTHER_LIMIT))
+        except ValueError:
+            limit = OTHER_LIMIT
+        posts, skipped = choose(posts, metas, limit)
+        for path in skipped:
+            print(f"linkedin skipped (other topic, over the limit of {limit}): {metas[path].get('title')}")
     for path in posts:
-        meta = parse(path)
+        meta = metas[path]
         try:
             status = publish(token, author, meta, page_url(path))
             print(f"linkedin {status}: {meta.get('title')}")
