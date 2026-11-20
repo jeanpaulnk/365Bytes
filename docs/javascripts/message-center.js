@@ -167,6 +167,14 @@
       '<p class="mc-hint">Content: Microsoft, via the <a href="' + esc(sourceUrl) + '" target="_blank" rel="noopener">Microsoft 365 Message Center Archive</a> by Merill Fernando.</p>';
   }
 
+  // Images load only from Microsoft-owned hosts, so reading a post never sends the visitor's
+  // address to a third party; anything else is shown as its alt text.
+  var IMAGE_HOSTS = /(^|\.)(microsoft\.com|office\.com|office\.net|office365\.com|microsoftonline\.com|sharepoint\.com|azureedge\.net|azure\.com|msecnd\.net|windows\.net|onestore\.ms|aka\.ms)$/i;
+  function imageAllowed(src) {
+    try { var u = new URL(src); return u.protocol === "https:" && IMAGE_HOSTS.test(u.hostname); }
+    catch (e) { return false; }
+  }
+
   // Allow-list HTML sanitizer: keeps text formatting, lists, tables, links and
   // https images; drops scripts, styles, event handlers and everything else.
   function sanitize(html) {
@@ -189,7 +197,7 @@
         Array.prototype.slice.call(n.attributes).forEach(function (a) {
           var name = a.name.toLowerCase(), keep = false;
           if (tag === "A" && name === "href") keep = /^(https?:|mailto:)/i.test(a.value.trim());
-          else if (tag === "IMG" && name === "src") keep = /^https:/i.test(a.value.trim());
+          else if (tag === "IMG" && name === "src") keep = imageAllowed(a.value.trim());
           else if (/^(alt|title|colspan|rowspan)$/.test(name)) keep = true;
           if (!keep) n.removeAttribute(a.name);
         });
@@ -199,7 +207,11 @@
           if (m) { n.setAttribute("href", readerUrl(m[1])); }
           else if (href) { n.setAttribute("target", "_blank"); n.setAttribute("rel", "noopener"); }
         }
-        if (tag === "IMG") { if (!n.getAttribute("src")) n.remove(); else n.setAttribute("loading", "lazy"); }
+        if (tag === "IMG") {
+          if (n.getAttribute("src")) { n.setAttribute("loading", "lazy"); n.setAttribute("referrerpolicy", "no-referrer"); }
+          else if (n.getAttribute("alt")) n.replaceWith(doc.createTextNode("[" + n.getAttribute("alt") + "]"));
+          else n.remove();
+        }
       });
     })(root);
     return root.innerHTML;

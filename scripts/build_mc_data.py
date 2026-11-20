@@ -26,6 +26,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -52,20 +53,40 @@ KEEP = ["Id", "Title", "Source", "Category", "Severity", "IsMajorChange", "Start
         "SeenOnlyIn", "Details"]
 
 
+PROBLEMS = {}  # source -> short error, reported as a GitHub issue by report_problems()
+
+
 def load(name, fetch):
     try:
         data = fetch(RAW + name)
         return data if isinstance(data, list) else []
     except Exception as e:  # keep deploying with what we have
-        print(f"warning: could not load {name}: {e}", file=sys.stderr)
+        PROBLEMS[f"archive {name}"] = describe_error(e)
+        print(f"warning: could not load {name}: {describe_error(e)}", file=sys.stderr)
         return []
 
 
+RETRY_CODES = (429, 500, 502, 503, 504)
+
+
+def open_json(req, timeout=120, attempts=3, sleep=time.sleep):
+    """urlopen + JSON, retrying busy answers and network errors after 2 s, then 4 s."""
+    for attempt in range(1, attempts + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code not in RETRY_CODES or attempt == attempts:
+                raise
+        except (urllib.error.URLError, TimeoutError, ConnectionError):
+            if attempt == attempts:
+                raise
+        sleep(2 ** attempt)
+
+
 def http_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "365Bytes-build",
-                                               "Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=120) as r:
-        return json.load(r)
+    return open_json(urllib.request.Request(
+        url, headers={"User-Agent": "365Bytes-build", "Accept": "application/json"}))
 
 
 def official_pages(kind, fetch):
@@ -123,7 +144,8 @@ def official_records(fetch=http_json):
             print(f"mc-data: read {len(recs)} {kind} records from Microsoft")
             out += recs
         except Exception as e:  # keep the archive copy for this source
-            print(f"warning: Microsoft {kind} feed unavailable, using archive data: {e}",
+            PROBLEMS[f"Microsoft {kind} feed"] = describe_error(e)
+            print(f"warning: Microsoft {kind} feed unavailable, using archive data: {describe_error(e)}",
                   file=sys.stderr)
     return out
 
@@ -161,6 +183,18 @@ def scrub(rec, terms):
     return json.loads(text)
 
 
+EMAIL_RE = re.compile(r"[\w.+'-]+@[\w-]+(?:\.[\w-]+)+")
+GUID_RE = re.compile(r"\b[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\b", re.I)
+
+
+def scrub_pii(rec):
+    """Service health text is free-form and tenant specific: drop email addresses and GUIDs."""
+    text = json.dumps(rec, ensure_ascii=False)
+    text = EMAIL_RE.sub("[email]", text)
+    text = GUID_RE.sub("[id]", text)
+    return json.loads(text)
+
+
 def lookup_tenant(tenant, fetch=http_json):
     """Tenant GUID and cloud endpoints from the public OpenID discovery document."""
     cfg = fetch(f"https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-configuration")
@@ -184,8 +218,7 @@ def graph_token(info, client):
     req = urllib.request.Request(
         req_url + "&audience=" + urllib.parse.quote(info["audience"], safe=""),
         headers={"Authorization": f"Bearer {req_token}", "User-Agent": "365Bytes-build"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        assertion = json.load(r)["value"]
+    assertion = open_json(req, timeout=60)["value"]
     body = urllib.parse.urlencode({
         "grant_type": "client_credentials",
         "client_id": client,
@@ -195,8 +228,7 @@ def graph_token(info, client):
     }).encode()
     req = urllib.request.Request(info["token_endpoint"], data=body,
                                  headers={"User-Agent": "365Bytes-build"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.load(r)["access_token"]
+    return open_json(req, timeout=60)["access_token"]
 
 
 def graph_pages(token, path, fetch=None, host="graph.microsoft.com"):
@@ -207,8 +239,7 @@ def graph_pages(token, path, fetch=None, host="graph.microsoft.com"):
         else:
             req = urllib.request.Request(url, headers={
                 "Authorization": f"Bearer {token}", "User-Agent": "365Bytes-build"})
-            with urllib.request.urlopen(req, timeout=120) as r:
-                data = json.load(r)
+            data = open_json(req)
         yield from data.get("value", [])
         url = data.get("@odata.nextLink")
 
@@ -286,8 +317,10 @@ def graph_records(tenants=None, fetch=None, lookup=lookup_tenant, token_for=grap
             posts = [from_message(m) for m in graph_pages(token, "messages?$top=100", fetch, info["graph_host"])]
             if n == 1:  # incidents are tenant specific, so only the primary tenant contributes
                 stage = "issues"
-                health = [from_issue(i) for i in graph_pages(token, "issues?$top=100", fetch, info["graph_host"])]
+                health = [scrub_pii(from_issue(i))
+                          for i in graph_pages(token, "issues?$top=100", fetch, info["graph_host"])]
         except Exception as e:  # skip this tenant; the archive still covers the posts
+            PROBLEMS[f"Graph tenant {n} of {len(tenants)}"] = f"{stage}: {describe_error(e)}"
             print(f"warning: tenant {n} of {len(tenants)} unavailable at {stage}: {describe_error(e)}",
                   file=sys.stderr)
             continue
@@ -332,13 +365,62 @@ def summary(rec):
     return ""
 
 
+def platform_id(rec):
+    """Give an archive roadmap record the same platform-suffixed ID the official feed uses,
+    so an item keeps its ID when it ages out of the official feed's time window."""
+    m = re.fullmatch(r"RM(\d+)", str(rec.get("Id") or ""))
+    if not m:
+        return rec
+    names = next((d.get("Value") for d in rec.get("Details") or [] if d.get("Name") == "Platforms"), "")
+    suffix = platform_suffix([p.strip() for p in str(names or "").split(",") if p.strip()])
+    return {**rec, "Id": f"RM{m.group(1)}-{suffix}"} if suffix else rec
+
+
+ISSUE_TITLE = "Message Center data: a source is failing"
+
+
+def report_problems(problems, api=None):
+    """Keep one GitHub issue in step with the failing sources: open or update it while any
+    source fails, close it once everything works. Skipped outside Actions and on pull requests."""
+    token, repo = os.environ.get("GITHUB_TOKEN"), os.environ.get("GITHUB_REPOSITORY")
+    if api is None:
+        if not (token and repo) or os.environ.get("GITHUB_EVENT_NAME") == "pull_request":
+            return
+        def api(method, path, data=None):
+            req = urllib.request.Request(
+                f"https://api.github.com/repos/{repo}/{path}", method=method,
+                data=json.dumps(data).encode() if data is not None else None,
+                headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
+                         "User-Agent": "365Bytes-build"})
+            return open_json(req, timeout=30)
+    try:
+        existing = next((i for i in api("GET", "issues?state=open&per_page=100")
+                         if i.get("title") == ISSUE_TITLE and "pull_request" not in i), None)
+        if problems:
+            lines = "\n".join(f"- **{k}**: `{v}`" for k, v in sorted(problems.items()))
+            body = ("The Message Center page is using the archive (or missing data) for these sources "
+                    f"on the latest deploy:\n\n{lines}\n\nThis issue updates itself and closes when "
+                    "every source works again. Details are in the \"Deploy docs\" run log.")
+            if existing:
+                if existing.get("body") != body:
+                    api("PATCH", f"issues/{existing['number']}", {"body": body})
+            else:
+                api("POST", "issues", {"title": ISSUE_TITLE, "body": body})
+        elif existing:
+            api("POST", f"issues/{existing['number']}/comments", {"body": "All sources work again."})
+            api("PATCH", f"issues/{existing['number']}", {"state": "closed", "state_reason": "completed"})
+    except Exception as e:  # alerting must never fail the deploy
+        print(f"warning: could not update the status issue: {describe_error(e)}", file=sys.stderr)
+
+
 def build(out_dir, fetch=http_json, graph=graph_records, official=official_records):
     out = Path(out_dir)
     posts = out / "posts"
     posts.mkdir(parents=True, exist_ok=True)
+    PROBLEMS.clear()
     records = {}
     for name in SOURCES:
-        for rec in load(name, fetch):
+        for rec in map(platform_id, load(name, fetch)):
             i = str(rec.get("Id") or "")
             if not ID_RE.match(i):
                 continue
@@ -349,8 +431,8 @@ def build(out_dir, fetch=http_json, graph=graph_records, official=official_recor
     microsoft = list(official(fetch)) + list(graph())
     fresh_roadmap = {m.group(1) for r in microsoft
                      if (m := re.match(r"RM(\d+)", str(r.get("Id") or "")))}
-    for i in [i for i in records if (m := re.fullmatch(r"RM(\d+)", i)) and m.group(1) in fresh_roadmap]:
-        del records[i]  # the archive copy has no platform suffix
+    for i in [i for i in records if (m := re.fullmatch(r"RM(\d+)(?:-[A-Z]+)?", i)) and m.group(1) in fresh_roadmap]:
+        del records[i]  # the official copy replaces it, even if its platforms changed
     for rec in microsoft:
         i = str(rec.get("Id") or "")
         if ID_RE.match(i):
@@ -377,3 +459,4 @@ def build(out_dir, fetch=http_json, graph=graph_records, official=official_recor
 
 if __name__ == "__main__":
     build(sys.argv[1] if len(sys.argv) > 1 else "site/mc-data")
+    report_problems(dict(PROBLEMS))
