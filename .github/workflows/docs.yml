@@ -39,7 +39,7 @@ jobs:
           MC_TENANT_ID: ${{ secrets.MC_TENANT_ID }}
           MC_CLIENT_ID: ${{ secrets.MC_CLIENT_ID }}
           MC_REDACT: ${{ secrets.MC_REDACT }}
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
   deploy:
