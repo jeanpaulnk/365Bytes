@@ -16,17 +16,16 @@ jobs:
   summarise:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 2   # linkedin_post.py diffs HEAD~1
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.x'
-      - name: Install GitHub Copilot CLI (only when the token secret exists)
-        env:
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-        run: |
-          if [ -n "$COPILOT_GITHUB_TOKEN" ]; then npm install -g @github/copilot; else echo "No COPILOT_GITHUB_TOKEN secret: skipping"; fi
+      - name: Install GitHub Copilot CLI (pinned; no secrets in this step)
+        # Pinned so a new upstream release can't change what runs next to the token. Dependabot
+        # can't bump this: update the version by hand when you want a newer CLI.
+        run: npm install -g @github/copilot@1.0.114 || echo "::warning::Copilot CLI install failed; summaries fall back to Gemini"
       - name: LinkedIn test post
         if: inputs.linkedin_file != ''
         env:

@@ -1,10 +1,18 @@
 version: 2
 updates:
+  # Actions are pinned by commit SHA; Dependabot keeps the SHA and the "# vN" comment current.
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: monthly
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+  # requirements.txt pins exact versions; one grouped PR per week instead of one per package.
   - package-ecosystem: pip
     directory: /
     schedule:
-      interval: monthly
+      interval: weekly
+    groups:
+      mkdocs:
+        patterns: ["*"]

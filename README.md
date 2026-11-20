@@ -45,8 +45,14 @@ so it only fills on the live site.)
 | Azure Updates (`AZ…`) | `microsoft.com/releasecommunications/api/v2/azure` | None (public) |
 | Fallback for all of the above | [github.com/merill/mc](https://github.com/merill/mc) (MIT) | None |
 
-Roadmap and Azure data is limited to items modified in the last 180 days. A source that fails or isn't
-configured falls back to the archive, so the deploy never fails because of it.
+Roadmap and Azure data is limited to items modified in the last 180 days; older archive roadmap items get the
+same platform suffix from the archive's own `Platforms` field, so an ID never changes when an item ages out.
+A source that fails or isn't configured falls back to the archive, so the deploy never fails because of it.
+
+Busy answers (429, 5xx) and network errors are retried twice (after 2 s and 4 s). If a source still fails, the
+deploy opens a single issue, "Message Center data: a source is failing", listing the failing sources and the
+HTTP or AAD error code. The issue updates itself and closes when everything works again. Pull-request builds
+never touch issues and never receive the Graph secrets.
 
 ### Roadmap IDs
 

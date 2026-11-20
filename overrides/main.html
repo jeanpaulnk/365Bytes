@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {#- GitHub Pages can't send headers, so set the CSP directives that don't need script changes. -#}
+  <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'">
+  {{ super() }}
+{% endblock %}

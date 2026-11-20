@@ -10,6 +10,9 @@ Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts
 !!! info "Source"
     Message Center posts and Service health issues are read from Microsoft Graph. Roadmap and Azure Updates posts are read from Microsoft's public release communications feed. Roadmap IDs end with the platforms, for example `RM564615-WDI` (W Web, D Desktop, M Mac, I iOS, A Android, L Linux, V Developer, O Mobile, T Teams and Surface Devices). The [Microsoft 365 Message Center Archive](https://mc.merill.net/) by Merill Fernando backs up every source. Everything is refreshed on this site every few hours.
 
+!!! note "Content ownership"
+    Message Center, Service health, Roadmap and Azure Updates text is Microsoft's. It is shown here for convenience, so check the linked Microsoft source for the authoritative version. Service health items come from one tenant and have email addresses and IDs removed. Nothing here is a statement from your own tenant.
+
 <div class="mc-buttons">
   <a class="md-button md-button--primary" href="https://mc.merill.net/" target="_blank" rel="noopener">Browse the full archive</a>
   <a class="md-button" href="https://mc.merill.net/?source=messageCenter" target="_blank" rel="noopener">Message Center</a>
