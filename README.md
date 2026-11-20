@@ -67,8 +67,10 @@ Letters always appear in the order `W D M I A L V O T X`. The bare ID (`RM564615
 1. Register an Entra app (single tenant, or multi-tenant if you add [more tenants](#several-tenants)) with the **application** permissions `ServiceMessage.Read.All` and
    `ServiceHealth.Read.All`, and grant admin consent.
 2. Add a federated credential: issuer `https://token.actions.githubusercontent.com`, audience
-   `api://AzureADTokenExchange`, subject `repo:jeanpaulnk/365Bytes:ref:refs/heads/main`. Pull-request builds
-   don't match it, so they use the archive.
+   `api://AzureADTokenExchange`, subject `repo:jeanpaulnk@165971893/365Bytes@1437785275:ref:refs/heads/main`.
+   This repository uses GitHub's immutable OIDC subject (owner and repository IDs instead of names); check
+   yours with `gh api repos/jeanpaulnk/365Bytes/actions/oidc/customization/sub`. A name-based subject fails
+   with `AADSTS700213`. Pull-request builds don't match the credential, so they use the archive.
 3. Add the repository secrets below. Without them the Graph source is simply skipped.
 
 ### Several tenants
