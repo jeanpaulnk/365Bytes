@@ -2,7 +2,7 @@ name: Bytes from Microsoft blogs
 on:
   schedule:
     - cron: '41 */3 * * *'   # every 3 hours
-  workflow_dispatch: {inputs: {test: {description: 'Test the AI summary only (publishes nothing)', type: boolean, default: false}, linkedin_file: {description: 'Post only this existing summary file to LinkedIn (skips everything else)', type: string, default: ''}}}
+  workflow_dispatch: {inputs: {test: {description: 'Test the AI summary only (publishes nothing)', type: boolean, default: false}}}
   repository_dispatch:
     types: [exchange-blog]
 permissions:
@@ -17,8 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 2   # linkedin_post.py diffs HEAD~1
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.x'
@@ -26,15 +24,7 @@ jobs:
         # Pinned so a new upstream release can't change what runs next to the token. Dependabot
         # can't bump this: update the version by hand when you want a newer CLI.
         run: npm install -g @github/copilot@1.0.114 || echo "::warning::Copilot CLI install failed; summaries fall back to Gemini"
-      - name: LinkedIn test post
-        if: inputs.linkedin_file != ''
-        env:
-          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
-          LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
-          LINKEDIN_FILES: ${{ inputs.linkedin_file }}
-        run: python scripts/linkedin_post.py
       - id: run
-        if: inputs.linkedin_file == ''
         run: python scripts/exchange_blog.py
         env:
           # Backup: GitHub Copilot (any plan, including Free): fine-grained PAT with "Copilot Requests".
@@ -52,13 +42,8 @@ jobs:
           AI_MODEL: ${{ vars.AI_MODEL }}
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
       - name: Commit and publish
-        if: inputs.linkedin_file == ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
-          LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
-          # Optional repository variable: other-topic posts per run (default 2).
-          LINKEDIN_OTHER_LIMIT: ${{ vars.LINKEDIN_OTHER_LIMIT }}
         run: |
           git add docs/Bytes-from-* data/exchange-blog-state.json data/feed-health.json
           if git diff --cached --quiet; then echo "Nothing new"; exit 0; fi
@@ -68,5 +53,3 @@ jobs:
           git push
           # Pushes made with GITHUB_TOKEN do not start other workflows, so start the deploy explicitly.
           if [ "${{ steps.run.outputs.posted || 0 }}" != "0" ]; then gh workflow run docs.yml --ref main; fi
-          # Share each new summary on LinkedIn (skipped without the secrets; never fails the run).
-          python scripts/linkedin_post.py || true
