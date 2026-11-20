@@ -31,6 +31,12 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - run: mkdocs build --site-dir site
+      - id: archive
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: mc-archive
+          key: mc-archive-${{ github.run_id }}
+          restore-keys: mc-archive-
       - run: python scripts/build_mc_data.py site/mc-data
         env:
           # Optional: read Message Center and Service health from Microsoft Graph through
@@ -39,11 +45,17 @@ jobs:
           # separated list of extra terms (tenant names) scrubbed from the published data.
           # MC_TENANTS = "tenant[:clientId],..." for several tenants (first = primary).
           # Pull-request builds get none of these, so they only ever use the public sources.
+          MC_ARCHIVE: mc-archive/archive.json.gz
           GITHUB_TOKEN: ${{ github.event_name != 'pull_request' && github.token || '' }}
           MC_TENANTS: ${{ github.event_name != 'pull_request' && secrets.MC_TENANTS || '' }}
           MC_TENANT_ID: ${{ github.event_name != 'pull_request' && secrets.MC_TENANT_ID || '' }}
           MC_CLIENT_ID: ${{ github.event_name != 'pull_request' && secrets.MC_CLIENT_ID || '' }}
           MC_REDACT: ${{ github.event_name != 'pull_request' && secrets.MC_REDACT || '' }}
+      - if: github.event_name != 'pull_request'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: mc-archive
+          key: mc-archive-${{ github.run_id }}
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: site

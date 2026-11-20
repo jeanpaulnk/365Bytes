@@ -8,17 +8,15 @@ description: Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure 
 Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts here, without signing in to the Microsoft 365 admin center. Every post also links to its source.
 
 !!! info "Source"
-    Message Center posts and Service health issues are read from Microsoft Graph. Roadmap and Azure Updates posts are read from Microsoft's public release communications feed. Roadmap IDs end with the platforms, for example `RM564615-WDI` (W Web, D Desktop, M Mac, I iOS, A Android, L Linux, V Developer, O Mobile, T Teams and Surface Devices). The [Microsoft 365 Message Center Archive](https://mc.merill.net/) by Merill Fernando backs up every source. Everything is refreshed on this site every few hours.
+    Message Center posts and Service health issues are read from Microsoft Graph. Roadmap and Azure Updates posts are read from Microsoft's public release communications feed. Roadmap IDs end with the platforms, for example `RM564615-WDI` (W Web, D Desktop, M Mac, I iOS, A Android, L Linux, V Developer, O Mobile, T Teams and Surface Devices). This site keeps its own archive of every post it has seen, so older posts stay available after they leave Microsoft's feeds. Everything is refreshed every few hours.
 
 !!! note "Content ownership"
     Message Center, Service health, Roadmap and Azure Updates text is Microsoft's. It is shown here for convenience, so check the linked Microsoft source for the authoritative version. Service health items come from one tenant and have email addresses and IDs removed. Nothing here is a statement from your own tenant.
 
 <div class="mc-buttons">
-  <a class="md-button md-button--primary" href="https://mc.merill.net/" target="_blank" rel="noopener">Browse the full archive</a>
-  <a class="md-button" href="https://mc.merill.net/?source=messageCenter" target="_blank" rel="noopener">Message Center</a>
-  <a class="md-button" href="https://mc.merill.net/?source=roadmap" target="_blank" rel="noopener">M365 Roadmap</a>
-  <a class="md-button" href="https://mc.merill.net/?source=azure" target="_blank" rel="noopener">Azure Updates</a>
-  <a class="md-button" href="https://mc.merill.net/rss.xml" target="_blank" rel="noopener">RSS</a>
+  <a class="md-button md-button--primary" href="https://admin.microsoft.com/#/MessageCenter" target="_blank" rel="noopener">Microsoft 365 admin center</a>
+  <a class="md-button" href="https://www.microsoft.com/microsoft-365/roadmap" target="_blank" rel="noopener">M365 Roadmap</a>
+  <a class="md-button" href="https://azure.microsoft.com/updates/" target="_blank" rel="noopener">Azure Updates</a>
 </div>
 
 ## Go to a post or search
@@ -27,7 +25,7 @@ Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts
   <input type="text" id="mc-go-input" class="mc-input" placeholder="MC1234567, RM570662, or words like Teams passkeys" aria-label="Post ID or search text">
   <button type="submit" class="md-button md-button--primary">Go</button>
 </form>
-<p class="mc-hint">An ID (MC…, RM…, AZ…) opens the post here. Anything else searches the full archive on mc.merill.net.</p>
+<p class="mc-hint">An ID (MC…, RM…, AZ…) opens the post here. Anything else searches this site's archive.</p>
 
 ## Latest posts
 

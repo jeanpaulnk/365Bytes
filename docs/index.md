@@ -43,7 +43,7 @@ Hands-on lab notes on Exchange Online, Outlook, Security & Compliance and Cloud 
 
 | Article | Description |
 |---|---|
-| [Microsoft 365 Message Center](Message-Center/index.md) | Browse and search Microsoft 365 Message Center, Roadmap and Azure Updates posts without signing in to the admin center, powered by mc.merill.net. |
+| [Microsoft 365 Message Center](Message-Center/index.md) | Browse and search Microsoft 365 Message Center, Roadmap and Azure Updates posts without signing in to the admin center. |
 
 ## Blog summaries
 

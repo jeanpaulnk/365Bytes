@@ -157,6 +157,25 @@ class Build(Base):
             self.assertIn("new [redacted]", text)
             self.assertNotIn("contoso", " ".join(p.read_text() for p in Path(d).rglob("*.json")).lower())
 
+    def test_archive_keeps_old_posts_and_seeds_only_once(self):
+        seed = {"messages.json": [{"Id": "MC1", "Title": "old"}], "roadmap.json": [], "azure.json": []}
+        calls = []
+
+        def fetch(url):
+            calls.append(url)
+            return seed[url.rsplit("/", 1)[1]]
+
+        with tempfile.TemporaryDirectory() as d:
+            archive = os.path.join(d, "mc-archive", "archive.json.gz")
+            b.build(os.path.join(d, "a"), fetch=fetch, graph=lambda: [], official=lambda f: [],
+                    archive_path=archive)
+            self.assertEqual(len(calls), 3)
+            b.build(os.path.join(d, "b"), fetch=fetch, graph=lambda: [{"Id": "MC2", "Title": "new"}],
+                    official=lambda f: [], archive_path=archive)
+            self.assertEqual(len(calls), 3)  # the archive exists, so merill is not read again
+            names = sorted(p.name for p in (Path(d) / "b" / "posts").iterdir())
+            self.assertEqual(names, ["MC1.json", "MC2.json"])
+
     def test_failed_official_feed_keeps_archive_and_records_problem(self):
         archive = {"roadmap.json": [{"Id": "RM5", "Title": "kept"}], "messages.json": [], "azure.json": []}
 
