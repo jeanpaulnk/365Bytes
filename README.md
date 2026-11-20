@@ -123,7 +123,7 @@ review what appears on the Message Center page.
 | Section | Feed |
 |---|---|
 | Exchange Team Blog | `techcommunity.microsoft.com/…/rss/board?board.id=exchange` |
-| Microsoft Defender for Office 365 Blog | `…board.id=MicrosoftDefenderforOffice365Blog` |
+| Microsoft Defender Blog | `…board.id=MicrosoftThreatProtectionBlog` (replaces the Defender for Office 365 blog, whose feed Microsoft emptied; its earlier posts stay on the site) |
 | Microsoft Purview Blog | `…board.id=microsoft-purview-blog` |
 | Outlook Blog | `…board.id=Outlook` |
 | Microsoft 365 Blog | `…board.id=microsoft_365blog` |

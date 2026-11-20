@@ -34,8 +34,10 @@ RSS = "https://techcommunity.microsoft.com/t5/s/gxcuf89792/rss/board?board.id="
 SOURCES = [
     {"name": "Exchange Team Blog", "board": "exchange",
      "home": "https://techcommunity.microsoft.com/category/exchange/blog/exchange"},
-    {"name": "Microsoft Defender for Office 365 Blog", "board": "MicrosoftDefenderforOffice365Blog",
-     "home": "https://techcommunity.microsoft.com/category/microsoft-defender-for-office-365/blog/microsoftdefenderforoffice365blog"},
+    # The Defender for Office 365 blog was moved by Microsoft and its old feed is empty, so this follows
+    # the Microsoft Defender (XDR) blog instead. Earlier Defender for Office 365 posts stay on the site.
+    {"name": "Microsoft Defender Blog", "board": "MicrosoftThreatProtectionBlog",
+     "home": "https://techcommunity.microsoft.com/category/microsoft-security/blog/microsoftthreatprotectionblog"},
     {"name": "Microsoft Purview Blog", "board": "microsoft-purview-blog",
      "home": "https://techcommunity.microsoft.com/category/microsoft-purview/blog/microsoft-purview-blog"},
     {"name": "Outlook Blog", "board": "Outlook",
