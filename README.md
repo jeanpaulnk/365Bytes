@@ -165,8 +165,8 @@ secrets; without them it does nothing). Every summary is still published on the 
 
 - **Priority topics always go, first:** posts in the Exchange Team and Outlook sections, and any post whose
   title, summary or key points mention Exchange (Online, Server, hybrid), Outlook, EWS, OWA or mailboxes.
-- **Everything else is limited** to `LINKEDIN_OTHER_LIMIT` posts per run (default 2, set it as a variable or
-  environment value); the rest stay site-only and are listed as "skipped" in the run log.
+- **Everything else is limited** to `LINKEDIN_OTHER_LIMIT` posts per run (default 2; set it as a repository
+  variable, `0` means none); the rest stay site-only and are listed as "skipped" in the run log.
 - Posting a file by hand (the `linkedin_file` input) always posts it.
 
 The keyword list is `PRIORITY_TOPICS` and the sections are `PRIORITY_SECTIONS` in the script.
