@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Security Blog](https://www.m
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-20 | [Microsoft named a Leader in the 2026 Gartner® Magic Quadrant™ for SIEM](2026-11-20-microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-siem.md) | Other |
 | 2026-11-17 | [Security for the agentic era, powered by Microsoft Perception](2026-11-17-security-for-the-agentic-era-powered-by-microsoft-perception.md) | New feature |
 | 2026-11-17 | [The risks of device code authentication for AI coding agents](2026-11-17-the-risks-of-device-code-authentication-for-ai-coding-agents.md) | Other |
 | 2026-11-17 | [High volume phishing campaign uses Microsoft 365 outage lures to target multiple industry sectors](2026-11-17-high-volume-phishing-campaign-uses-microsoft-365-outage-lures-to-targe.md) | Action required |
