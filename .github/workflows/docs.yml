@@ -30,10 +30,13 @@ jobs:
       - run: mkdocs build --site-dir site
       - run: python scripts/build_mc_data.py site/mc-data
         env:
-          # Optional: read Message Center and Service health from Microsoft Graph
-          # through the GitHub OIDC federated credential (no secret). Unset = archive only.
-          MC_TENANT_ID: ${{ vars.MC_TENANT_ID }}
-          MC_CLIENT_ID: ${{ vars.MC_CLIENT_ID }}
+          # Optional: read Message Center and Service health from Microsoft Graph through
+          # the GitHub OIDC federated credential (no client secret). Unset = archive only.
+          # Kept as secrets so the identifiers are masked in logs; MC_REDACT is a comma
+          # separated list of extra terms (tenant names) scrubbed from the published data.
+          MC_TENANT_ID: ${{ secrets.MC_TENANT_ID }}
+          MC_CLIENT_ID: ${{ secrets.MC_CLIENT_ID }}
+          MC_REDACT: ${{ secrets.MC_REDACT }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

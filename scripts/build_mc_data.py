@@ -7,7 +7,13 @@ Downloads the public data from github.com/merill/mc (MIT) and writes:
 When MC_TENANT_ID and MC_CLIENT_ID are set and the job has an OIDC token
 (permissions: id-token: write), Message Center posts and Service health issues
 are read directly from Microsoft Graph (admin/serviceAnnouncement) and replace
-the archive copies. Roadmap and Azure posts still come from the archive.
+the archive copies. Roadmap and Azure Updates posts are read from Microsoft's public
+release-communications API (no credentials); roadmap IDs carry a platform suffix, for
+example RM564615-WDI (W=Web, D=Desktop, M=Mac, I=iOS, A=Android, L=Linux, V=Developer,
+O=Mobile, T=Teams and Surface Devices). The archive stays as the fallback for every source.
+
+The tenant ID, app ID and any terms in MC_REDACT (comma separated) are scrubbed from
+everything written to the site.
 
 Runs after `mkdocs build` in the deploy workflow. A download failure never
 fails the deploy: the reader falls back to the source site.
@@ -19,10 +25,19 @@ import re
 import sys
 import urllib.parse
 import urllib.request
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 RAW = "https://raw.githubusercontent.com/merill/mc/main/@data/"
 GRAPH = "https://graph.microsoft.com/v1.0/admin/serviceAnnouncement/"
+OFFICIAL = "https://www.microsoft.com/releasecommunications/api/v2/"
+RECENT_DAYS = 180
+PAGE = 100
+MAX_PAGES = 60
+PLATFORM_LETTERS = {"Web": "W", "Desktop": "D", "Mac": "M", "iOS": "I", "Android": "A",
+                    "Linux": "L", "Developer": "V", "Mobile": "O",
+                    "Teams and Surface Devices": "T"}
+LETTER_ORDER = "WDMIALVOTX"
 SOURCES = ["messages.json", "roadmap.json", "azure.json"]
 LATEST = 400
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9-]{1,120}$")
@@ -41,9 +56,85 @@ def load(name, fetch):
 
 
 def http_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "365Bytes-build"})
+    req = urllib.request.Request(url, headers={"User-Agent": "365Bytes-build",
+                                               "Accept": "application/json"})
     with urllib.request.urlopen(req, timeout=120) as r:
         return json.load(r)
+
+
+def official_pages(kind, fetch):
+    since = (datetime.now(timezone.utc) - timedelta(days=RECENT_DAYS)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    for page in range(MAX_PAGES):
+        query = urllib.parse.urlencode(
+            {"$top": PAGE, "$skip": page * PAGE, "$orderby": "modified desc",
+             "$filter": f"modified gt {since}"}, quote_via=urllib.parse.quote)
+        items = fetch(f"{OFFICIAL}{kind}?{query}").get("value", [])
+        yield from items
+        if len(items) < PAGE:
+            return
+
+
+def platform_suffix(platforms):
+    letters = {PLATFORM_LETTERS.get(p, "X") for p in platforms or []}
+    return "".join(c for c in LETTER_ORDER if c in letters)
+
+
+def from_roadmap(i):
+    platforms = i.get("platforms") or []
+    suffix = platform_suffix(platforms)
+    details = [{"Name": "Platforms", "Value": ", ".join(platforms)}] if platforms else []
+    for name, key in (("GeneralAvailabilityDate", "generalAvailabilityDate"),
+                      ("PreviewAvailabilityDate", "previewAvailabilityDate")):
+        if i.get(key):
+            details.append({"Name": name, "Value": i[key]})
+    tags = [t for t in (i.get("tags") or []) + [i.get("status")] + (i.get("releaseRings") or []) if t]
+    return {
+        "Id": f"RM{i['id']}" + (f"-{suffix}" if suffix else ""), "Title": i.get("title"),
+        "Source": "roadmap", "StartDateTime": i.get("created"),
+        "LastModifiedDateTime": i.get("modified"), "Services": i.get("products") or [],
+        "Tags": tags, "Details": details, "Body": {"Content": i.get("description") or ""},
+    }
+
+
+def from_azure(u):
+    tags = [t for t in (u.get("tags") or []) + [u.get("status")] if t]
+    return {
+        "Id": f"AZ{u['id']}", "Title": u.get("title"), "Source": "azure",
+        "StartDateTime": u.get("created"), "LastModifiedDateTime": u.get("modified"),
+        "Services": u.get("products") or [], "Tags": tags,
+        "Details": [{"Name": "AzureLink",
+                     "Value": f"https://azure.microsoft.com/updates?id={u['id']}"}],
+        "Body": {"Content": u.get("description") or ""},
+    }
+
+
+def official_records(fetch=http_json):
+    """Roadmap and Azure Updates straight from Microsoft; a failed source is skipped."""
+    out = []
+    for kind, convert in (("m365", from_roadmap), ("azure", from_azure)):
+        try:
+            recs = [convert(i) for i in official_pages(kind, fetch) if str(i.get("id") or "").isdigit()]
+            print(f"mc-data: read {len(recs)} {kind} records from Microsoft")
+            out += recs
+        except Exception as e:  # keep the archive copy for this source
+            print(f"warning: Microsoft {kind} feed unavailable, using archive data: {e}",
+                  file=sys.stderr)
+    return out
+
+
+def redact_terms():
+    terms = [os.environ.get("MC_TENANT_ID"), os.environ.get("MC_CLIENT_ID")]
+    terms += (os.environ.get("MC_REDACT") or "").split(",")
+    return sorted({t.strip() for t in terms if t and len(t.strip()) >= 3}, key=len, reverse=True)
+
+
+def scrub(rec, terms):
+    if not terms:
+        return rec
+    text = json.dumps(rec, ensure_ascii=False)
+    for t in terms:
+        text = re.sub(re.escape(json.dumps(t)[1:-1]), "[redacted]", text, flags=re.I)
+    return json.loads(text)
 
 
 def graph_token():
@@ -163,7 +254,7 @@ def summary(rec):
     return ""
 
 
-def build(out_dir, fetch=http_json, graph=graph_records):
+def build(out_dir, fetch=http_json, graph=graph_records, official=official_records):
     out = Path(out_dir)
     posts = out / "posts"
     posts.mkdir(parents=True, exist_ok=True)
@@ -176,19 +267,31 @@ def build(out_dir, fetch=http_json, graph=graph_records):
             old = records.get(i)
             if not old or (rec.get("LastModifiedDateTime") or "") >= (old.get("LastModifiedDateTime") or ""):
                 records[i] = rec
-    for rec in graph():  # Microsoft's own data wins over the archive copy
+    # Microsoft's own data wins over the archive copy.
+    microsoft = list(official(fetch)) + list(graph())
+    fresh_roadmap = {m.group(1) for r in microsoft
+                     if (m := re.match(r"RM(\d+)", str(r.get("Id") or "")))}
+    for i in [i for i in records if (m := re.fullmatch(r"RM(\d+)", i)) and m.group(1) in fresh_roadmap]:
+        del records[i]  # the archive copy has no platform suffix
+    for rec in microsoft:
         i = str(rec.get("Id") or "")
         if ID_RE.match(i):
             records[i] = rec
+    terms = redact_terms()
     for i, rec in records.items():
-        (posts / f"{i}.json").write_text(json.dumps(slim(rec), ensure_ascii=False), encoding="utf-8")
+        text = json.dumps(slim(scrub(rec, terms)), ensure_ascii=False)
+        (posts / f"{i}.json").write_text(text, encoding="utf-8")
+        plain = re.fullmatch(r"(RM\d+)-[A-Z]+", i)
+        if plain:  # Message Center posts link to the bare roadmap ID
+            (posts / f"{plain.group(1)}.json").write_text(text, encoding="utf-8")
 
     def when(r):
         return r.get("LastModifiedDateTime") or r.get("StartDateTime") or ""
 
     newest = sorted(records.values(), key=when, reverse=True)[:LATEST]
-    latest = [{"Id": r["Id"], "Title": r.get("Title") or r["Id"], "Source": source_of(r),
-               "Services": r.get("Services") or [], "Updated": when(r)} for r in newest]
+    latest = [scrub({"Id": r["Id"], "Title": r.get("Title") or r["Id"], "Source": source_of(r),
+                     "Services": r.get("Services") or [], "Updated": when(r)}, terms)
+              for r in newest]
     (out / "latest.json").write_text(json.dumps(latest, ensure_ascii=False), encoding="utf-8")
     print(f"mc-data: wrote {len(records)} posts, {len(latest)} in latest.json")
     return len(records)

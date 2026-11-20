@@ -88,9 +88,11 @@
     return;
   }
 
-  var sourceUrl = ARCHIVE + "/message/" + encodeURIComponent(id);
+  // Roadmap IDs here carry a platform suffix (RM564615-WDI); the archive uses the bare ID.
+  var archiveId = id.replace(/^(RM\d+)-[A-Z]+$/, "$1");
+  var sourceUrl = ARCHIVE + "/message/" + encodeURIComponent(archiveId);
   var fallbacks = [DATA + "posts/" + id + ".json"];
-  fallbacks.push(RAW + (id.indexOf("AZ") === 0 ? "azure/" : "archive/") + id + ".json");
+  fallbacks.push(RAW + (id.indexOf("AZ") === 0 ? "azure/" : "archive/") + archiveId + ".json");
 
   function tryLoad(i) {
     if (i >= fallbacks.length) return Promise.reject(new Error("not found"));
