@@ -644,5 +644,29 @@
     "source": "Exchange Team Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-18-sending-from-email-aliases-general-availability.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-defender-blog/catch-microsoft-defender-and-sentinel-at-ignite-2026/ba-p/4572639": {
+    "title": "Catch Microsoft Defender and Sentinel at Ignite 2026",
+    "published": "2026-11-11T22:22:31+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft Defender Blog"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-defender-blog/vulnerability-shielding-protect-the-time-before-the-patch/ba-p/4572135": {
+    "title": "Vulnerability shielding: Protect the time before the patch",
+    "published": "2026-11-17T18:15:00+00:00",
+    "significant": true,
+    "reason": "Introduces vulnerability shielding in Microsoft Defender in public preview, a new feature providing temporary protection between exposure and patching.",
+    "category": "New feature",
+    "source": "Microsoft Defender Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-17-vulnerability-shielding-protect-the-time-before-the-patch.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-defender-blog/ignite-2026-what-s-new-in-endpoint-security/ba-p/4573835": {
+    "title": "Ignite 2026: What’s new in endpoint security",
+    "published": "2026-11-17T20:14:42+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft Defender Blog"
   }
 }
