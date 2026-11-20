@@ -26,6 +26,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -249,6 +250,22 @@ def from_issue(i):
     }
 
 
+def describe_error(e):
+    """The error and AADSTS/Graph codes only; the response text can name tenants, so it is not logged."""
+    if not isinstance(e, urllib.error.HTTPError):
+        return f"{type(e).__name__}: {e}"
+    detail = ""
+    try:
+        body = json.loads(e.read().decode("utf-8", "replace"))
+        err = body.get("error")
+        code = (err.get("code") if isinstance(err, dict) else err) or ""
+        codes = ",".join(f"AADSTS{c}" for c in body.get("error_codes") or [])
+        detail = " ".join(x for x in (code, codes) if x)
+    except Exception:
+        pass
+    return f"HTTP {e.code} {detail}".strip()
+
+
 def graph_records(tenants=None, fetch=None, lookup=lookup_tenant, token_for=graph_token):
     """Message Center posts from every configured tenant and Service health from the primary one.
 
@@ -258,16 +275,21 @@ def graph_records(tenants=None, fetch=None, lookup=lookup_tenant, token_for=grap
     tenants = parse_tenants() if tenants is None else tenants
     merged, seen, health, reached = {}, {}, [], 0
     for n, (tenant, client) in enumerate(tenants, 1):
+        stage = "lookup"
         try:
             info = lookup(tenant)
+            stage = "token"
             token = token_for(info, client)
             if not token and not fetch:
                 raise RuntimeError("no OIDC token (id-token permission or credential missing)")
+            stage = "messages"
             posts = [from_message(m) for m in graph_pages(token, "messages?$top=100", fetch, info["graph_host"])]
             if n == 1:  # incidents are tenant specific, so only the primary tenant contributes
+                stage = "issues"
                 health = [from_issue(i) for i in graph_pages(token, "issues?$top=100", fetch, info["graph_host"])]
         except Exception as e:  # skip this tenant; the archive still covers the posts
-            print(f"warning: tenant {n} of {len(tenants)} unavailable: {e}", file=sys.stderr)
+            print(f"warning: tenant {n} of {len(tenants)} unavailable at {stage}: {describe_error(e)}",
+                  file=sys.stderr)
             continue
         reached += 1
         for rec in posts:
