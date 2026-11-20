@@ -8,7 +8,7 @@ description: Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure 
 Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts here, without signing in to the Microsoft 365 admin center. Every post also links to its source.
 
 !!! info "Source"
-    Posts come from the [Microsoft 365 Message Center Archive](https://mc.merill.net/) by Merill Fernando and are refreshed on this site every few hours.
+    Message Center posts and Service health issues are read from Microsoft Graph. Roadmap and Azure Updates posts are read from Microsoft's public release communications feed. Roadmap IDs end with the platforms, for example `RM564615-WDI` (W Web, D Desktop, M Mac, I iOS, A Android, L Linux, V Developer, O Mobile, T Teams and Surface Devices). The [Microsoft 365 Message Center Archive](https://mc.merill.net/) by Merill Fernando backs up every source. Everything is refreshed on this site every few hours.
 
 <div class="mc-buttons">
   <a class="md-button md-button--primary" href="https://mc.merill.net/" target="_blank" rel="noopener">Browse the full archive</a>

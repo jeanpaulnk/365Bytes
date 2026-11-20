@@ -4,7 +4,7 @@
 (function () {
   var ARCHIVE = "https://mc.merill.net";
   var RAW = "https://raw.githubusercontent.com/merill/mc/main/@data/";
-  var SOURCE_LABEL = { messageCenter: "Message Center", roadmap: "Microsoft 365 Roadmap", azure: "Azure Updates" };
+  var SOURCE_LABEL = { messageCenter: "Message Center", roadmap: "Microsoft 365 Roadmap", azure: "Azure Updates", serviceHealth: "Service health" };
 
   var me = document.querySelector('script[src*="javascripts/message-center.js"]');
   var SITE = me ? new URL("../", me.src).href : location.origin + "/";
@@ -88,9 +88,11 @@
     return;
   }
 
-  var sourceUrl = ARCHIVE + "/message/" + encodeURIComponent(id);
+  // Roadmap IDs here carry a platform suffix (RM564615-WDI); the archive uses the bare ID.
+  var archiveId = id.replace(/^(RM\d+)-[A-Z]+$/, "$1");
+  var sourceUrl = ARCHIVE + "/message/" + encodeURIComponent(archiveId);
   var fallbacks = [DATA + "posts/" + id + ".json"];
-  fallbacks.push(RAW + (id.indexOf("AZ") === 0 ? "azure/" : "archive/") + id + ".json");
+  fallbacks.push(RAW + (id.indexOf("AZ") === 0 ? "azure/" : "archive/") + archiveId + ".json");
 
   function tryLoad(i) {
     if (i >= fallbacks.length) return Promise.reject(new Error("not found"));
@@ -125,6 +127,7 @@
     add("Tags", esc((m.Tags || []).join(", ")));
     add("Status", esc([detail(m, "Status"), detail(m, "ReleasePhase")].filter(Boolean).join(" · ")));
     add("Platforms", esc(detail(m, "Platforms")));
+    add("Seen in", esc(detail(m, "SeenIn")));
     add("Published", esc(fmtDate(m.StartDateTime)));
     add("Last updated", esc(fmtDate(m.LastModifiedDateTime)));
     add("Act by", esc(fmtDate(m.ActionRequiredByDateTime)));
