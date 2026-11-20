@@ -52,7 +52,7 @@ Short AI summaries of new Microsoft blog articles, added automatically with link
 | Blog | Description |
 |---|---|
 | [Bytes from Exchange Team Blog](Bytes-from-Exchange-Team-Blog/index.md) | Short summaries of significant Exchange Team Blog articles (security updates, releases, retirements, new features), added automatically with links to the originals. |
-| [Bytes from Microsoft Defender for Office 365 Blog](Bytes-from-Microsoft-Defender-for-Office-365-Blog/index.md) | Short AI summaries of every new Microsoft Defender for Office 365 Blog article, added automatically with links to the originals. |
+| [Bytes from Microsoft Defender Blog](Bytes-from-Microsoft-Defender-Blog/index.md) | Short AI summaries of every new Microsoft Defender Blog article, including the earlier Defender for Office 365 posts, added automatically with links to the originals. |
 | [Bytes from Microsoft Purview Blog](Bytes-from-Microsoft-Purview-Blog/index.md) | Short AI summaries of every new Microsoft Purview Blog article, added automatically with links to the originals. |
 | [Bytes from Outlook Blog](Bytes-from-Outlook-Blog/index.md) | Short AI summaries of every new Outlook Blog article, added automatically with links to the originals. |
 | [Bytes from Microsoft 365 Blog](Bytes-from-Microsoft-365-Blog/index.md) | Short AI summaries of every new Microsoft 365 Blog article, added automatically with links to the originals. |
