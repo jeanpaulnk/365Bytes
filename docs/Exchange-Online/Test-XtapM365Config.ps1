@@ -61,7 +61,7 @@
   .\Test-XtapM365Config.ps1 -AuthMethod Certificate -TenantId <id> -ClientId <appId> -CertificateThumbprint <thumb>
 
 .EXAMPLE
-  .\Test-XtapM365Config.ps1 -PartnerTenantId 715761f0-c824-48cc-afb6-8d458bc8fa46 -ExportPath .\tenantA.json
+  .\Test-XtapM365Config.ps1 -PartnerTenantId 00000000-0000-0000-0000-000000000000 -ExportPath .\tenantA.json
 
 .EXAMPLE
   .\Test-XtapM365Config.ps1 -PartnerTenantId <tenantA-id> -PeerSnapshotPath .\tenantA.json
