@@ -57,6 +57,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
+          # Optional repository variable: other-topic posts per run (default 2).
+          LINKEDIN_OTHER_LIMIT: ${{ vars.LINKEDIN_OTHER_LIMIT }}
         run: |
           git add docs/Bytes-from-* data/exchange-blog-state.json data/feed-health.json
           if git diff --cached --quiet; then echo "Nothing new"; exit 0; fi
