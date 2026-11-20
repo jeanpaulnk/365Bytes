@@ -29,6 +29,11 @@ jobs:
       - run: pip install -r requirements.txt
       - run: mkdocs build --site-dir site
       - run: python scripts/build_mc_data.py site/mc-data
+        env:
+          # Optional: read Message Center and Service health from Microsoft Graph
+          # through the GitHub OIDC federated credential (no secret). Unset = archive only.
+          MC_TENANT_ID: ${{ vars.MC_TENANT_ID }}
+          MC_CLIENT_ID: ${{ vars.MC_CLIENT_ID }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

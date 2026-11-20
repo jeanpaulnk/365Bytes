@@ -4,7 +4,7 @@
 (function () {
   var ARCHIVE = "https://mc.merill.net";
   var RAW = "https://raw.githubusercontent.com/merill/mc/main/@data/";
-  var SOURCE_LABEL = { messageCenter: "Message Center", roadmap: "Microsoft 365 Roadmap", azure: "Azure Updates" };
+  var SOURCE_LABEL = { messageCenter: "Message Center", roadmap: "Microsoft 365 Roadmap", azure: "Azure Updates", serviceHealth: "Service health" };
 
   var me = document.querySelector('script[src*="javascripts/message-center.js"]');
   var SITE = me ? new URL("../", me.src).href : location.origin + "/";
