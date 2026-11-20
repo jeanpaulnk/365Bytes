@@ -4,10 +4,13 @@ Downloads the public data from github.com/merill/mc (MIT) and writes:
   <out>/posts/<ID>.json  one file per active Message Center, Roadmap and Azure post
   <out>/latest.json      the newest posts, for the list on the Message Center page
 
-When MC_TENANT_ID and MC_CLIENT_ID are set and the job has an OIDC token
-(permissions: id-token: write), Message Center posts and Service health issues
-are read directly from Microsoft Graph (admin/serviceAnnouncement) and replace
-the archive copies. Roadmap and Azure Updates posts are read from Microsoft's public
+When MC_TENANTS (or MC_TENANT_ID) and MC_CLIENT_ID are set and the job has an OIDC
+token (permissions: id-token: write), Message Center posts and Service health issues
+are read directly from Microsoft Graph (admin/serviceAnnouncement) and replace the
+archive copies. MC_TENANTS is "tenant[:clientId],..." where a tenant is a GUID or a
+domain; each is resolved (GUID and cloud endpoints) from its public OpenID discovery
+document. Message Center posts are merged across all tenants, Service health comes only
+from the first one, and tenants are never named in the published data. Roadmap and Azure Updates posts are read from Microsoft's public
 release-communications API (no credentials); roadmap IDs carry a platform suffix, for
 example RM564615-WDI (W=Web, D=Desktop, M=Mac, I=iOS, A=Android, L=Linux, V=Developer,
 O=Mobile, T=Teams and Surface Devices). The archive stays as the fallback for every source.
@@ -29,7 +32,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 RAW = "https://raw.githubusercontent.com/merill/mc/main/@data/"
-GRAPH = "https://graph.microsoft.com/v1.0/admin/serviceAnnouncement/"
+AUDIENCES = {"microsoftonline.com": "api://AzureADTokenExchange",
+             "microsoftonline.us": "api://AzureADTokenExchangeUSGov",
+             "partner.microsoftonline.cn": "api://AzureADTokenExchangeChina"}
 OFFICIAL = "https://www.microsoft.com/releasecommunications/api/v2/"
 RECENT_DAYS = 180
 PAGE = 100
@@ -122,8 +127,26 @@ def official_records(fetch=http_json):
     return out
 
 
+LOOKED_UP = set()  # tenant IDs/domains found by lookup_tenant; scrubbed from the output
+
+
+def parse_tenants():
+    """MC_TENANTS="tenant[:clientId],..." (falls back to MC_TENANT_ID); the first is primary."""
+    raw = os.environ.get("MC_TENANTS") or os.environ.get("MC_TENANT_ID") or ""
+    default_client = os.environ.get("MC_CLIENT_ID")
+    out = []
+    for item in raw.split(","):
+        tenant, _, client = item.strip().partition(":")
+        tenant, client = tenant.strip(), client.strip() or default_client
+        if tenant and client:
+            out.append((tenant, client))
+    return out
+
+
 def redact_terms():
     terms = [os.environ.get("MC_TENANT_ID"), os.environ.get("MC_CLIENT_ID")]
+    terms += [x for pair in parse_tenants() for x in pair]
+    terms += LOOKED_UP
     terms += (os.environ.get("MC_REDACT") or "").split(",")
     return sorted({t.strip() for t in terms if t and len(t.strip()) >= 3}, key=len, reverse=True)
 
@@ -137,16 +160,28 @@ def scrub(rec, terms):
     return json.loads(text)
 
 
-def graph_token():
+def lookup_tenant(tenant, fetch=http_json):
+    """Tenant GUID and cloud endpoints from the public OpenID discovery document."""
+    cfg = fetch(f"https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-configuration")
+    m = re.search(r"/([0-9a-fA-F-]{36})/", cfg.get("issuer") or "")
+    if not m:
+        raise ValueError("tenant not found")
+    cloud = cfg.get("cloud_instance_name") or "microsoftonline.com"
+    info = {"id": m.group(1), "token_endpoint": cfg["token_endpoint"],
+            "graph_host": cfg.get("msgraph_host") or "graph.microsoft.com",
+            "audience": AUDIENCES.get(cloud, AUDIENCES["microsoftonline.com"])}
+    LOOKED_UP.update({tenant, info["id"]})
+    return info
+
+
+def graph_token(info, client):
     """App-only Graph token via the GitHub OIDC federated credential (no stored secret)."""
-    tenant = os.environ.get("MC_TENANT_ID")
-    client = os.environ.get("MC_CLIENT_ID")
     req_url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
     req_token = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
-    if not (tenant and client and req_url and req_token):
+    if not (client and req_url and req_token):
         return None
     req = urllib.request.Request(
-        req_url + "&audience=api://AzureADTokenExchange",
+        req_url + "&audience=" + urllib.parse.quote(info["audience"], safe=""),
         headers={"Authorization": f"Bearer {req_token}", "User-Agent": "365Bytes-build"})
     with urllib.request.urlopen(req, timeout=60) as r:
         assertion = json.load(r)["value"]
@@ -155,17 +190,16 @@ def graph_token():
         "client_id": client,
         "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
         "client_assertion": assertion,
-        "scope": "https://graph.microsoft.com/.default",
+        "scope": f"https://{info['graph_host']}/.default",
     }).encode()
-    req = urllib.request.Request(
-        f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token", data=body,
-        headers={"User-Agent": "365Bytes-build"})
+    req = urllib.request.Request(info["token_endpoint"], data=body,
+                                 headers={"User-Agent": "365Bytes-build"})
     with urllib.request.urlopen(req, timeout=60) as r:
         return json.load(r)["access_token"]
 
 
-def graph_pages(token, path, fetch=None):
-    url = GRAPH + path
+def graph_pages(token, path, fetch=None, host="graph.microsoft.com"):
+    url = f"https://{host}/v1.0/admin/serviceAnnouncement/" + path
     while url:
         if fetch:
             data = fetch(url)
@@ -215,19 +249,41 @@ def from_issue(i):
     }
 
 
-def graph_records(token=None, fetch=None):
-    """Message Center posts and Service health issues straight from Microsoft Graph."""
-    try:
-        token = token or graph_token()
-        if not token and not fetch:
-            return []
-        out = [from_message(m) for m in graph_pages(token, "messages?$top=100", fetch)]
-        out += [from_issue(i) for i in graph_pages(token, "issues?$top=100", fetch)]
-        print(f"mc-data: read {len(out)} records from Microsoft Graph")
-        return out
-    except Exception as e:  # fall back to the archive copy
-        print(f"warning: Microsoft Graph unavailable, using archive data: {e}", file=sys.stderr)
-        return []
+def graph_records(tenants=None, fetch=None, lookup=lookup_tenant, token_for=graph_token):
+    """Message Center posts from every configured tenant and Service health from the primary one.
+
+    Tenants are only ever referred to by number: the published data says how many of the
+    tenants checked saw a post, never which ones.
+    """
+    tenants = parse_tenants() if tenants is None else tenants
+    merged, seen, health, reached = {}, {}, [], 0
+    for n, (tenant, client) in enumerate(tenants, 1):
+        try:
+            info = lookup(tenant)
+            token = token_for(info, client)
+            if not token and not fetch:
+                raise RuntimeError("no OIDC token (id-token permission or credential missing)")
+            posts = [from_message(m) for m in graph_pages(token, "messages?$top=100", fetch, info["graph_host"])]
+            if n == 1:  # incidents are tenant specific, so only the primary tenant contributes
+                health = [from_issue(i) for i in graph_pages(token, "issues?$top=100", fetch, info["graph_host"])]
+        except Exception as e:  # skip this tenant; the archive still covers the posts
+            print(f"warning: tenant {n} of {len(tenants)} unavailable: {e}", file=sys.stderr)
+            continue
+        reached += 1
+        for rec in posts:
+            i = rec["Id"]
+            seen[i] = seen.get(i, 0) + 1
+            old = merged.get(i)
+            if not old or (rec.get("LastModifiedDateTime") or "") >= (old.get("LastModifiedDateTime") or ""):
+                merged[i] = rec
+    if reached > 1:
+        for i, rec in merged.items():
+            rec["Details"] = (rec.get("Details") or []) + [
+                {"Name": "SeenIn", "Value": f"{seen[i]} of {reached} tenants checked"}]
+    out = list(merged.values()) + health
+    if reached:
+        print(f"mc-data: read {len(out)} records from Microsoft Graph ({reached} of {len(tenants)} tenants)")
+    return out
 
 
 def source_of(rec):

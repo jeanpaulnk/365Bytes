@@ -34,6 +34,8 @@ jobs:
           # the GitHub OIDC federated credential (no client secret). Unset = archive only.
           # Kept as secrets so the identifiers are masked in logs; MC_REDACT is a comma
           # separated list of extra terms (tenant names) scrubbed from the published data.
+          # MC_TENANTS = "tenant[:clientId],..." for several tenants (first = primary).
+          MC_TENANTS: ${{ secrets.MC_TENANTS }}
           MC_TENANT_ID: ${{ secrets.MC_TENANT_ID }}
           MC_CLIENT_ID: ${{ secrets.MC_CLIENT_ID }}
           MC_REDACT: ${{ secrets.MC_REDACT }}

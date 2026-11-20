@@ -127,6 +127,7 @@
     add("Tags", esc((m.Tags || []).join(", ")));
     add("Status", esc([detail(m, "Status"), detail(m, "ReleasePhase")].filter(Boolean).join(" · ")));
     add("Platforms", esc(detail(m, "Platforms")));
+    add("Seen in", esc(detail(m, "SeenIn")));
     add("Published", esc(fmtDate(m.StartDateTime)));
     add("Last updated", esc(fmtDate(m.LastModifiedDateTime)));
     add("Act by", esc(fmtDate(m.ActionRequiredByDateTime)));
