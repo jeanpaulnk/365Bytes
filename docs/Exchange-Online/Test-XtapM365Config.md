@@ -55,6 +55,15 @@ The built-in default list is `crossTenantCalendarSharingFreeBusyReviewer`, `cros
 - **Reciprocity (optional):** compares your tenant with a snapshot exported from the partner tenant, because both sides must allow.
 - **Errors:** if one partner can't be read, it is reported as a FAIL and the rest are still checked.
 
+!!! note "\"File is not digitally signed\" error"
+    Windows marks downloaded files as blocked, and the default execution policy refuses unsigned scripts. Review the script, then unblock it once before running:
+
+    ```powershell
+    Unblock-File .\Test-XtapM365Config.ps1
+    ```
+
+    If it still fails, allow local scripts for the current session only: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`.
+
 ## Requirements
 
 - The [Microsoft.Graph.Authentication](https://learn.microsoft.com/powershell/microsoftgraph/installation) module.
