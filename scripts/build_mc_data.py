@@ -6,12 +6,13 @@ workflow cache and saved back after each run) and writes:
   <out>/latest.json      the newest posts, for the list on the Message Center page
 
 When MC_TENANTS (or MC_TENANT_ID) and MC_CLIENT_ID are set and the job has an OIDC
-token (permissions: id-token: write), Message Center posts and Service health issues
-are read directly from Microsoft Graph (admin/serviceAnnouncement) and replace the
-archive copies. MC_TENANTS is "tenant[:clientId],..." where a tenant is a GUID or a
+token (permissions: id-token: write), Message Center posts are read directly from
+Microsoft Graph (admin/serviceAnnouncement/messages) and replace the archive copies.
+Service health incidents are tenant specific and are never published; any found in the
+archive are dropped. MC_TENANTS is "tenant[:clientId],..." where a tenant is a GUID or a
 domain; each is resolved (GUID and cloud endpoints) from its public OpenID discovery
-document. Message Center posts are merged across all tenants, Service health comes only
-from the first one, and tenants are never named in the published data. Roadmap and Azure Updates posts are read from Microsoft's public
+document. Message Center posts are merged across all tenants, and tenants are never
+named in the published data. Roadmap and Azure Updates posts are read from Microsoft's public
 release-communications API (no credentials); roadmap IDs carry a platform suffix, for
 example RM564615-WDI (W=Web, D=Desktop, M=Mac, I=iOS, A=Android, L=Linux, V=Developer,
 O=Mobile, T=Teams and Surface Devices). Fresh data is merged into the archive, so posts that age out of Microsoft's feeds stay
@@ -50,6 +51,7 @@ PLATFORM_LETTERS = {"Web": "W", "Desktop": "D", "Mac": "M", "iOS": "I", "Android
                     "Teams and Surface Devices": "T"}
 LETTER_ORDER = "WDMIALVOTX"
 SOURCES = ["messages.json", "roadmap.json", "azure.json"]
+UNPUBLISHED_SOURCES = {"serviceHealth"}
 LATEST = 400
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9-]{1,120}$")
 KEEP = ["Id", "Title", "Source", "Category", "Severity", "IsMajorChange", "StartDateTime",
@@ -188,18 +190,6 @@ def scrub(rec, terms):
     return json.loads(text)
 
 
-EMAIL_RE = re.compile(r"[\w.+'-]+@[\w-]+(?:\.[\w-]+)+")
-GUID_RE = re.compile(r"\b[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\b", re.I)
-
-
-def scrub_pii(rec):
-    """Service health text is free-form and tenant specific: drop email addresses and GUIDs."""
-    text = json.dumps(rec, ensure_ascii=False)
-    text = EMAIL_RE.sub("[email]", text)
-    text = GUID_RE.sub("[id]", text)
-    return json.loads(text)
-
-
 def lookup_tenant(tenant, fetch=http_json):
     """Tenant GUID and cloud endpoints from the public OpenID discovery document."""
     cfg = fetch(f"https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-configuration")
@@ -266,26 +256,6 @@ def from_message(m):
     }
 
 
-def from_issue(i):
-    parts = []
-    if i.get("impactDescription"):
-        parts.append("<p>" + html.escape(i["impactDescription"]).replace("\n", "<br>") + "</p>")
-    for p in i.get("posts") or []:
-        d = p.get("description") or {}
-        text = d.get("content") or ""
-        if d.get("contentType") == "text":
-            text = "<p>" + html.escape(text).replace("\n", "<br>") + "</p>"
-        parts.append(f"<h4>{html.escape(p.get('createdDateTime') or '')}</h4>{text}")
-    return {
-        "Id": i.get("id"), "Title": i.get("title"), "Source": "serviceHealth",
-        "Category": i.get("classification"), "StartDateTime": i.get("startDateTime"),
-        "LastModifiedDateTime": i.get("lastModifiedDateTime"), "EndDateTime": i.get("endDateTime"),
-        "Services": [i["service"]] if i.get("service") else [],
-        "Tags": [t for t in (i.get("status"), i.get("feature")) if t],
-        "Body": {"Content": "".join(parts)},
-    }
-
-
 def describe_error(e):
     """The error and AADSTS/Graph codes only; the response text can name tenants, so it is not logged."""
     if not isinstance(e, urllib.error.HTTPError):
@@ -303,13 +273,13 @@ def describe_error(e):
 
 
 def graph_records(tenants=None, fetch=None, lookup=lookup_tenant, token_for=graph_token):
-    """Message Center posts from every configured tenant and Service health from the primary one.
+    """Message Center posts from every configured tenant.
 
     Tenants are only ever referred to by number: the published data says how many of the
     tenants checked saw a post, never which ones.
     """
     tenants = parse_tenants() if tenants is None else tenants
-    merged, seen, health, reached = {}, {}, [], 0
+    merged, seen, reached = {}, {}, 0
     for n, (tenant, client) in enumerate(tenants, 1):
         stage = "lookup"
         try:
@@ -320,10 +290,6 @@ def graph_records(tenants=None, fetch=None, lookup=lookup_tenant, token_for=grap
                 raise RuntimeError("no OIDC token (id-token permission or credential missing)")
             stage = "messages"
             posts = [from_message(m) for m in graph_pages(token, "messages?$top=100", fetch, info["graph_host"])]
-            if n == 1:  # incidents are tenant specific, so only the primary tenant contributes
-                stage = "issues"
-                health = [scrub_pii(from_issue(i))
-                          for i in graph_pages(token, "issues?$top=100", fetch, info["graph_host"])]
         except Exception as e:  # skip this tenant; the archive still covers the posts
             PROBLEMS[f"Graph tenant {n} of {len(tenants)}"] = f"{stage}: {describe_error(e)}"
             print(f"warning: tenant {n} of {len(tenants)} unavailable at {stage}: {describe_error(e)}",
@@ -340,7 +306,7 @@ def graph_records(tenants=None, fetch=None, lookup=lookup_tenant, token_for=grap
         for i, rec in merged.items():
             rec["Details"] = (rec.get("Details") or []) + [
                 {"Name": "SeenIn", "Value": f"{seen[i]} of {reached} tenants checked"}]
-    out = list(merged.values()) + health
+    out = list(merged.values())
     if reached:
         print(f"mc-data: read {len(out)} records from Microsoft Graph ({reached} of {len(tenants)} tenants)")
     return out
@@ -466,6 +432,8 @@ def build(out_dir, fetch=http_json, graph=graph_records, official=official_recor
         i = str(rec.get("Id") or "")
         if ID_RE.match(i):
             records[i] = rec
+    # Service health incidents are tenant specific: purge any the archive still holds.
+    records = {i: r for i, r in records.items() if source_of(r) not in UNPUBLISHED_SOURCES}
     terms = redact_terms()
     records = {i: scrub(rec, terms) for i, rec in records.items()}
     if archive_path:

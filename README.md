@@ -10,7 +10,7 @@ automatically updated summaries of Microsoft's product blogs.
 | Section | What it is |
 |---|---|
 | Transport, Exchange Online, Outlook, Identity, Tools | Hand-written lab notes and how-tos. |
-| Message Center | Search and read Microsoft 365 Message Center, Service health, Microsoft 365 Roadmap and Azure Updates posts, read directly from Microsoft (see [Message Center data](#message-center-data)). The site keeps its own archive of past posts. |
+| Message Center | Search and read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts, read directly from Microsoft (see [Message Center data](#message-center-data)). The site keeps its own archive of past posts. |
 | Bytes from … | AI summaries of every new article on seven Microsoft blogs, added automatically (see below). |
 
 ## How the site is built
@@ -19,7 +19,7 @@ automatically updated summaries of Microsoft's product blogs.
   configuration in `mkdocs.yml`, pages in `docs/`, theme overrides in `overrides/`.
 - Published to GitHub Pages by `.github/workflows/docs.yml` ("Deploy docs"), which runs on every push to
   `main`, every 3 hours, and on demand.
-- The deploy step also runs `scripts/build_mc_data.py`, which collects Message Center, Service health,
+- The deploy step also runs `scripts/build_mc_data.py`, which collects Message Center,
   Roadmap and Azure Updates posts and writes one small JSON file per post into the site (`/mc-data/`).
   The Message Center pages read those files in the browser. Details are in
   [Message Center data](#message-center-data).
@@ -40,7 +40,7 @@ so it only fills on the live site.)
 
 | Content | Source | Credentials |
 |---|---|---|
-| Message Center posts (`MC…`) from one or more tenants, and Service health issues from the first tenant | Microsoft Graph `admin/serviceAnnouncement` (`messages`, `issues`) | Entra app with a GitHub OIDC federated credential; no client secret |
+| Message Center posts (`MC…`) from one or more tenants | Microsoft Graph `admin/serviceAnnouncement/messages` | Entra app with a GitHub OIDC federated credential; no client secret |
 | Microsoft 365 Roadmap (`RM…`) | `microsoft.com/releasecommunications/api/v2/m365` | None (public) |
 | Azure Updates (`AZ…`) | `microsoft.com/releasecommunications/api/v2/azure` | None (public) |
 | Our own archive of every post seen | `mc-archive/archive.json.gz`, kept in the Actions cache | None |
@@ -51,6 +51,8 @@ that age out of Microsoft's feeds stay on the site. The archive was seeded once 
 Microsoft's feeds return items modified in the last 180 days; older archived roadmap items get the
 same platform suffix from the archive's own `Platforms` field, so an ID never changes when an item ages out.
 A source that fails or isn't configured keeps its archived posts, so the deploy never fails because of it.
+Service health incidents are tenant specific and are never published: they are not read, and any left in the
+archive from earlier runs are removed on the next deploy.
 
 Busy answers (429, 5xx) and network errors are retried twice (after 2 s and 4 s). If a source still fails, the
 deploy opens a single issue, "Message Center data: a source is failing", listing the failing sources and the
@@ -73,8 +75,8 @@ Letters always appear in the order `W D M I A L V O T X`. The bare ID (`RM564615
 
 ### Microsoft Graph setup
 
-1. Register an Entra app (single tenant, or multi-tenant if you add [more tenants](#several-tenants)) with the **application** permissions `ServiceMessage.Read.All` and
-   `ServiceHealth.Read.All`, and grant admin consent.
+1. Register an Entra app (single tenant, or multi-tenant if you add [more tenants](#several-tenants)) with the **application** permission `ServiceMessage.Read.All`,
+   and grant admin consent.
 2. Add a federated credential: issuer `https://token.actions.githubusercontent.com`, audience
    `api://AzureADTokenExchange`, subject `repo:jeanpaulnk@165971893/365Bytes@1437785275:ref:refs/heads/main`.
    This repository uses GitHub's immutable OIDC subject (owner and repository IDs instead of names); check
@@ -92,11 +94,10 @@ Message Center posts differ between tenants (license, region, features). To coll
   (`login.microsoftonline.com/<tenant>/v2.0/.well-known/openid-configuration`), which gives its GUID, token
   endpoint and Graph host. This is the same information as the
   [Tenant Lookup tool](https://gettenantpartitionweb.azurewebsites.net/).
-- The app must be multi-tenant and an admin of every extra tenant must grant consent to the two permissions.
+- The app must be multi-tenant and an admin of every extra tenant must grant consent to the permission.
   Only add tenants you control or have permission to read; the app can read their announcements only.
 - A tenant without a `:clientId` uses `MC_CLIENT_ID`. Use a per-tenant client ID for a tenant in another cloud.
-- Message Center posts are merged across tenants and show "Seen in N of M tenants checked". Service health
-  issues come only from the first (primary) tenant, because incidents are tenant specific.
+- Message Center posts are merged across tenants and show "Seen in N of M tenants checked".
 - A tenant that can't be reached is skipped with a numbered warning; the rest still work.
 - US Government and China tenants use their own Graph host and token audience (taken from the lookup), but this
   path has not been tested.
@@ -106,8 +107,7 @@ Message Center posts differ between tenants (license, region, features). To coll
 The tenant IDs, domains, app IDs (including the GUIDs found by the lookup) and any terms listed in
 `MC_REDACT` are scrubbed from everything written to the published site. Tenants are only ever shown as
 counts, never named, and logs refer to them by number. The identifiers are stored as secrets (masked in
-Actions logs) and are never committed. Service health text can still contain tenant-specific wording, so
-review what appears on the Message Center page.
+Actions logs) and are never committed.
 
 ## "Bytes from Microsoft blogs" automation
 
@@ -155,7 +155,7 @@ Set in **Settings → Secrets and variables → Actions → Repository secrets**
 | `BYTES365_GEMINI_API_KEY` (or `GEMINI_API_KEY`) | Gemini summaries | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 | `COPILOT_GITHUB_TOKEN` | Copilot backup summaries | Fine-grained personal access token with the **Copilot Requests** account permission. Expires: renew it under the same name. |
 | `AI_API_KEY` + variables `AI_ENDPOINT`, `AI_MODEL` | Optional: any other OpenAI-compatible model instead of Gemini | Your provider |
-| `MC_TENANT_ID`, `MC_CLIENT_ID` | Optional: read Message Center and Service health from Microsoft Graph | Entra tenant ID and the app (client) ID from [Microsoft Graph setup](#microsoft-graph-setup) |
+| `MC_TENANT_ID`, `MC_CLIENT_ID` | Optional: read Message Center posts from Microsoft Graph | Entra tenant ID and the app (client) ID from [Microsoft Graph setup](#microsoft-graph-setup) |
 | `MC_TENANTS` | Optional: several tenants, `tenant[:clientId],...` (replaces `MC_TENANT_ID`; first is primary) | See [Several tenants](#several-tenants) |
 | `MC_REDACT` | Optional: comma-separated terms (for example a tenant name) removed from the published data | Your choice |
 

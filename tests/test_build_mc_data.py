@@ -61,10 +61,6 @@ class Redaction(Base):
         out = b.scrub({"t": "see ALPHA.example now"}, ["alpha.example"])
         self.assertEqual(out["t"], "see [redacted] now")
 
-    def test_scrub_pii_removes_emails_and_guids(self):
-        rec = b.scrub_pii({"t": "mail a.b@contoso.com id 11111111-2222-3333-4444-555555555555"})
-        self.assertEqual(rec["t"], "mail [email] id [id]")
-
 
 class Retry(Base):
     def test_retries_busy_answers_then_succeeds(self):
@@ -105,7 +101,10 @@ class Graph(Base):
                 raise ValueError("tenant not found")
             return {"id": lookups[t], "token_endpoint": "x", "graph_host": "graph.test", "audience": "a"}
 
+        self.paths = []
+
         def pages(token, path, fetch=None, host=None):
+            self.paths.append(path)
             kind = "issues" if path.startswith("issues") else "messages"
             return iter(data[token][kind])
 
@@ -113,19 +112,18 @@ class Graph(Base):
             return b.graph_records(tenants=tenants, fetch=True, lookup=lookup,
                                    token_for=lambda info, client: info["id"])
 
-    def test_merges_tenants_and_health_comes_from_the_primary_only(self):
+    def test_merges_tenants_and_never_reads_service_health(self):
         data = {"t1": {"messages": [msg("MC1", "2026-01-02"), msg("MC2")],
-                       "issues": [{"id": "EX1", "title": "Incident", "impactDescription": "mail a@b.com"}]},
+                       "issues": [{"id": "EX1", "title": "Incident"}]},
                 "t2": {"messages": [msg("MC1", "2026-01-03", "newer")],
                        "issues": [{"id": "EX9", "title": "Other tenant"}]}}
         recs = self.run_graph(data, {"a": "t1", "b": "t2"}, [("a", "c"), ("b", "c")])
         ids = sorted(r["Id"] for r in recs)
-        self.assertEqual(ids, ["EX1", "MC1", "MC2"])
+        self.assertEqual(ids, ["MC1", "MC2"])
+        self.assertTrue(all(p.startswith("messages") for p in self.paths))
         mc1 = next(r for r in recs if r["Id"] == "MC1")
         self.assertEqual(mc1["Title"], "newer")
         self.assertIn({"Name": "SeenIn", "Value": "2 of 2 tenants checked"}, mc1["Details"])
-        ex1 = next(r for r in recs if r["Id"] == "EX1")
-        self.assertNotIn("a@b.com", json.dumps(ex1))
 
     def test_unreachable_tenant_is_skipped_and_recorded(self):
         data = {"t1": {"messages": [msg("MC1")], "issues": []}}
@@ -175,6 +173,19 @@ class Build(Base):
             self.assertEqual(len(calls), 3)  # the archive exists, so merill is not read again
             names = sorted(p.name for p in (Path(d) / "b" / "posts").iterdir())
             self.assertEqual(names, ["MC1.json", "MC2.json"])
+
+    def test_archived_service_health_is_purged_everywhere(self):
+        with tempfile.TemporaryDirectory() as d:
+            archive = os.path.join(d, "archive.json.gz")
+            b.write_archive(archive, [
+                {"Id": "MC1", "Title": "post", "Source": "messageCenter"},
+                {"Id": "EX1561765", "Title": "incident", "Source": "serviceHealth"}])
+            out = Path(d) / "site"
+            b.build(out, graph=lambda: [], official=lambda f: [], archive_path=archive)
+            self.assertEqual(sorted(p.name for p in (out / "posts").iterdir()), ["MC1.json"])
+            for name in ("latest.json", "index.json"):
+                self.assertEqual([r["Id"] for r in json.loads((out / name).read_text())], ["MC1"])
+            self.assertEqual([r["Id"] for r in b.read_archive(archive)], ["MC1"])
 
     def test_failed_official_feed_keeps_archive_and_records_problem(self):
         archive = {"roadmap.json": [{"Id": "RM5", "Title": "kept"}], "messages.json": [], "azure.json": []}

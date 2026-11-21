@@ -8,10 +8,10 @@ description: Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure 
 Read Microsoft 365 Message Center, Microsoft 365 Roadmap and Azure Updates posts here, without signing in to the Microsoft 365 admin center. Every post also links to its source.
 
 !!! info "Source"
-    Message Center posts and Service health issues are read from Microsoft Graph. Roadmap and Azure Updates posts are read from Microsoft's public release communications feed. Roadmap IDs end with the platforms, for example `RM564615-WDI` (W Web, D Desktop, M Mac, I iOS, A Android, L Linux, V Developer, O Mobile, T Teams and Surface Devices). This site keeps its own archive of every post it has seen, so older posts stay available after they leave Microsoft's feeds. Everything is refreshed every few hours.
+    Message Center posts are read from Microsoft Graph. Roadmap and Azure Updates posts are read from Microsoft's public release communications feed. Roadmap IDs end with the platforms, for example `RM564615-WDI` (W Web, D Desktop, M Mac, I iOS, A Android, L Linux, V Developer, O Mobile, T Teams and Surface Devices). This site keeps its own archive of every post it has seen, so older posts stay available after they leave Microsoft's feeds. Everything is refreshed every few hours.
 
 !!! note "Content ownership"
-    Message Center, Service health, Roadmap and Azure Updates text is Microsoft's. It is shown here for convenience, so check the linked Microsoft source for the authoritative version. Service health items come from one tenant and have email addresses and IDs removed. Nothing here is a statement from your own tenant.
+    Message Center, Roadmap and Azure Updates text is Microsoft's. It is shown here for convenience, so check the linked Microsoft source for the authoritative version. Nothing here is a statement from your own tenant.
 
 <div class="mc-buttons">
   <a class="md-button md-button--primary" href="https://admin.microsoft.com/#/MessageCenter" target="_blank" rel="noopener">Microsoft 365 admin center</a>

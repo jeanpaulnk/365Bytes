@@ -39,7 +39,7 @@ jobs:
           restore-keys: mc-archive-
       - run: python scripts/build_mc_data.py site/mc-data
         env:
-          # Optional: read Message Center and Service health from Microsoft Graph through
+          # Optional: read Message Center posts from Microsoft Graph through
           # the GitHub OIDC federated credential (no client secret). Unset = archive only.
           # Kept as secrets so the identifiers are masked in logs; MC_REDACT is a comma
           # separated list of extra terms (tenant names) scrubbed from the published data.
