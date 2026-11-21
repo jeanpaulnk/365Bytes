@@ -22,6 +22,15 @@ Lists every Distribution List (DL), Dynamic Distribution List (DDL) and Microsof
 
 ## Usage
 
+!!! note "\"File is not digitally signed\" error"
+    Windows marks downloaded files as blocked, and the default execution policy refuses unsigned scripts. Review the script, then unblock it once before running:
+
+    ```powershell
+    Unblock-File .\Get-GroupSendPermissions.ps1
+    ```
+
+    If it still fails, allow local scripts for the current session only: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`.
+
 ```powershell
 Connect-ExchangeOnline
 
