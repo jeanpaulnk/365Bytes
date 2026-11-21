@@ -340,6 +340,8 @@ def md(text, markdown=True):
     s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     if markdown:
         s = re.sub(r"([\\`*_\[\]()!|#])", r"\\\1", s)
+    else:  # plain values end up in theme HTML attributes (meta description) without escaping
+        s = s.replace('"', "&quot;").replace("'", "&#39;")
     return s.strip()
 
 
