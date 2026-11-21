@@ -2,7 +2,7 @@
 // Post data is built into /mc-data/ at deploy time (scripts/build_mc_data.py)
 // from Microsoft Graph and the public release communications feed, merged into our own archive.
 (function () {
-  var SOURCE_LABEL = { messageCenter: "Message Center", roadmap: "Microsoft 365 Roadmap", azure: "Azure Updates", serviceHealth: "Service health" };
+  var SOURCE_LABEL = { messageCenter: "Message Center", roadmap: "Microsoft 365 Roadmap", azure: "Azure Updates" };
 
   var me = document.querySelector('script[src*="javascripts/message-center.js"]');
   var SITE = me ? new URL("../", me.src).href : location.origin + "/";
