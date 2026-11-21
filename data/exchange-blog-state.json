@@ -685,5 +685,15 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-20-microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-siem.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/demystifying-macos-platform-sso-how-apple-and-microsoft-entra-id/ba-p/4437423": {
+    "title": "Demystifying macOS Platform SSO: How Apple and Microsoft Entra ID work together",
+    "published": "2026-11-20T16:00:00+00:00",
+    "significant": true,
+    "reason": "The article explains the architecture and underlying mechanisms of macOS Platform SSO with Microsoft Entra ID rather than announcing a new breaking change or required action.",
+    "category": "Other",
+    "source": "Microsoft Entra Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-20-demystifying-macos-platform-sso-how-apple-and-microsoft-entra-id-work.md"
   }
 }

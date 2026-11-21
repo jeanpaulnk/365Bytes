@@ -8,6 +8,7 @@ Short summaries of new articles from the [Microsoft Entra Blog](https://techcomm
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-20 | [Demystifying macOS Platform SSO: How Apple and Microsoft Entra ID work together](2026-11-20-demystifying-macos-platform-sso-how-apple-and-microsoft-entra-id-work.md) | Other |
 | 2026-11-18 | [AI is changing access. See how Microsoft Entra helps you stay ahead.](2026-11-18-ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead.md) | New feature |
 | 2026-11-17 | [AI is changing access. See how Entra helps you stay ahead.](2026-11-17-ai-is-changing-access-see-how-entra-helps-you-stay-ahead.md) | New feature |
 | 2026-11-06 | [What’s new in Microsoft Entra: November 2026](2026-11-06-what-s-new-in-microsoft-entra-november-2026.md) | New feature |
