@@ -8,6 +8,8 @@ Short summaries of new articles from the [Microsoft Security Blog](https://www.m
 
 | Date | Article | Type |
 |---|---|---|
+| 2026-11-25 | [What defenders need to know about ARTEX, the agentic AI framework threat actors abuse](2026-11-25-what-defenders-need-to-know-about-artex-the-agentic-ai-framework-threa.md) | Action required |
+| 2026-11-25 | [Microsoft named a Leader in the 2026 Gartner® Magic Quadrant™ for Email Security](2026-11-25-microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-email.md) | Other |
 | 2026-11-20 | [Microsoft named a Leader in the 2026 Gartner® Magic Quadrant™ for SIEM](2026-11-20-microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-siem.md) | Other |
 | 2026-11-17 | [Security for the agentic era, powered by Microsoft Perception](2026-11-17-security-for-the-agentic-era-powered-by-microsoft-perception.md) | New feature |
 | 2026-11-17 | [The risks of device code authentication for AI coding agents](2026-11-17-the-risks-of-device-code-authentication-for-ai-coding-agents.md) | Other |

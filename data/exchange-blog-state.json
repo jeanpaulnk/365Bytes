@@ -704,5 +704,25 @@
     "category": "Other",
     "source": "Microsoft Entra Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/25/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-email-security/": {
+    "title": "Microsoft named a Leader in the 2026 Gartner® Magic Quadrant™ for Email Security",
+    "published": "2026-11-25T17:15:00+00:00",
+    "significant": true,
+    "reason": "The article is an award announcement celebrating Microsoft being named a Leader in the Gartner Magic Quadrant for Email Security, containing no required actions or new feature releases.",
+    "category": "Other",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-25-microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-email.md"
+  },
+  "https://www.microsoft.com/en-us/security/blog/2026/11/25/what-defenders-need-to-know-artex-agentic-ai-framework-threat-actors-abuse/": {
+    "title": "What defenders need to know about ARTEX, the agentic AI framework threat actors abuse",
+    "published": "2026-11-25T18:09:06+00:00",
+    "significant": true,
+    "reason": "Microsoft has issued an important threat intelligence warning regarding threat actors abusing the ARTEX AI framework for automated attacks.",
+    "category": "Action required",
+    "source": "Microsoft Security Blog",
+    "summarised_by": "Google Gemini, gemini-flash-lite-latest",
+    "file": "2026-11-25-what-defenders-need-to-know-about-artex-the-agentic-ai-framework-threa.md"
   }
 }
