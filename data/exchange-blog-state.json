@@ -724,5 +724,12 @@
     "source": "Microsoft Security Blog",
     "summarised_by": "Google Gemini, gemini-flash-lite-latest",
     "file": "2026-11-25-what-defenders-need-to-know-about-artex-the-agentic-ai-framework-threa.md"
+  },
+  "https://techcommunity.microsoft.com/t5/microsoft-365-blog/microsoft-ignite-2026-recap-celebrating-community-connection-and/ba-p/4576748": {
+    "title": "Microsoft Ignite 2026 Recap: Celebrating Community, Connection, and the Power of Learning Together",
+    "published": "2026-11-25T18:57:11+00:00",
+    "significant": false,
+    "reason": "event announcement (title)",
+    "source": "Microsoft 365 Blog"
   }
 }
